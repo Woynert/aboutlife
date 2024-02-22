@@ -7,6 +7,7 @@ pkgs.mkShell {
 		pkgs.gtk3
 		pkgs.python311Packages.pygobject3
         pkgs.python311Packages.tornado
+        pkgs.python311Packages.xlib
         pkgs.gobject-introspection
 
         pkgs.vte

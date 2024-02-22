@@ -3,3 +3,6 @@ run:
 
 format:
 	ruff format .
+
+test:
+	python -m unittest discover tests/overlay
