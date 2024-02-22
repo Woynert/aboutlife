@@ -1,27 +1,25 @@
-from aboutlife.plugin import Plugin
 import threading
 import time
 import urllib.request
-from http.server import SimpleHTTPRequestHandler, HTTPServer
-
-
-class Handler(SimpleHTTPRequestHandler):
-    def do_GET(self):
-        if self.path == "/tab_close":
-            self.send_response(200)
-            self.send_header("Content-type", "application/json")
-            self.end_headers()
-            self.wfile.write(b'{"close":false}')
+from http.server import HTTPServer
+from aboutlife.plugin import Plugin
+from aboutlife.context import Context
+from aboutlife.rest.handler import Handler
 
 
 class RestPlugin(Plugin):
     def __init__(self):
         self.server = None
-        self.port = ""
+        self.port: int = 80
+        self.ctx: Context = None
 
-    def setup(self, port):
+    def setup(self, ctx: Context, port: int):
+        self.ctx = ctx
         self.port = port
-        self.server = HTTPServer(("0.0.0.0", port), Handler)
+        self.server = HTTPServer(
+            ("0.0.0.0", port),
+            lambda *args, **kwargs: Handler(ctx=self.ctx, *args, **kwargs),
+        )
         self.server.running = True
         print("D: serving rest")
 
@@ -47,7 +45,7 @@ class RestPlugin(Plugin):
 
 def thread_helper(plugin):
     time.sleep(5)
-    plugin.cleanup()
+    # plugin.cleanup()
 
 
 if __name__ == "__main__":

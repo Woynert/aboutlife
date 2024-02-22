@@ -2,6 +2,7 @@ import gi
 import threading
 import time
 from aboutlife.plugin import Plugin
+from aboutlife.context import Context
 
 gi.require_version("Gtk", "3.0")
 from gi.repository import Gtk
@@ -10,14 +11,20 @@ from gi.repository import Gtk
 class OverlayPlugin(Plugin):
     def __init__(self):
         self.main_window = None
+        self.ctx: Context = None
 
-    def setup(self):
+    def setup(self, ctx: Context):
+        self.ctx = ctx
+        print("Got context ", self.ctx.state)
+
         builder = Gtk.Builder()
         builder.add_from_file("aboutlife/overlay/ui.glade")
         builder.connect_signals(self)
 
         self.main_window = builder.get_object("main_window")
-        self.main_window.connect("destroy", Gtk.main_quit)
+        # self.main_window.connect("destroy", Gtk.main_quit)
+        self.main_window.connect("destroy", on_destroy)
+        # self.main_window.connect("delete-event", lambda x, y: True)
 
         self.button = builder.get_object("button")
         self.button.connect("clicked", lambda x: print("Hello"))
@@ -36,13 +43,14 @@ class OverlayPlugin(Plugin):
         Gtk.main()
 
     def process(self):
+        print("Got context ", self.ctx.state)
         if not self.main_window:
             return
 
         # steal focus
         # TODO: while state != work
         print("D: stealing focus...")
-        self.main_window.present()
+        # self.main_window.present()
 
     def health_check(self):
         pass
@@ -51,10 +59,17 @@ class OverlayPlugin(Plugin):
         Gtk.main_quit()
 
 
+def on_destroy(event):
+    print("mip")
+    Gtk.main_quit()
+    return True
+
+
 def thread_helper(plugin):
     while True:
         plugin.process()
         time.sleep(2)
+        print("D: tick")
 
 
 if __name__ == "__main__":
@@ -63,3 +78,4 @@ if __name__ == "__main__":
     thread.daemon = True
     thread.start()
     plugin.setup()
+    thread.join()
