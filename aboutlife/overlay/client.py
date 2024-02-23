@@ -7,12 +7,12 @@ HOST = "localhost:8080"
 
 
 @dataclass
-class StateResponse:
+class RespContext:
     state: State
     time_left: int
 
 
-def get_state() -> StateResponse:
+def get_state() -> RespContext:
     try:
         conn = http.client.HTTPConnection(HOST)
         conn.request("GET", "/state")
@@ -22,10 +22,10 @@ def get_state() -> StateResponse:
         if resp_raw.status == 200:
             resp_data = resp_raw.read().decode("utf-8")
             resp_json = json.loads(resp_data)
-            resp_obj = StateResponse(resp_json["state"], resp_json["time_left"])
+            resp_obj = RespContext(resp_json["state"], resp_json["time_end"])
             return resp_obj
-    except:
-        pass
+    except Exception as e:
+        print(e)
     return None
 
 
@@ -40,5 +40,6 @@ def post_start_work_cycle(task_info: str) -> bool:
         conn.close()
 
         return resp.status == 200
-    except:
+    except Exception as e:
+        print(e)
         return False

@@ -3,22 +3,18 @@ pkgs.mkShell {
 	name = "dev-environment";
 	buildInputs = [
 		pkgs.git
-		pkgs.python3
-		pkgs.gtk3
-		pkgs.python311Packages.pygobject3
-        pkgs.python311Packages.tornado
-        pkgs.python311Packages.xlib
-        pkgs.gobject-introspection
+        pkgs.wrapGAppsHook
+        pkgs.ruff
+
+        pkgs.python310
+        pkgs.python310Packages.pygobject3
+        pkgs.python310Packages.xlib
 
         pkgs.vte
         pkgs.libgudev
         pkgs.pcre2
-
-        pkgs.meson
-        pkgs.ninja
-        pkgs.pkg-config
-        pkgs.wrapGAppsHook
-        pkgs.ruff
+		pkgs.gtk3
+        pkgs.gobject-introspection
 	];
 	shellHook = ''
 		echo "Starting development shell"

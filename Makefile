@@ -1,5 +1,8 @@
 run:
-	python -m aboutlife.main
+	python -m aboutlife
+
+run-overlay:
+	python -m aboutlife --overlay
 
 format:
 	ruff format .

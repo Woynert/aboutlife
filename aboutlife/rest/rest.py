@@ -11,15 +11,10 @@ class RestPlugin(Plugin):
     def __init__(self):
         self.server = None
         self.port: int = 80
-        self.ctx: Context = None
 
-    def setup(self, ctx: Context, port: int):
-        self.ctx = ctx
+    def setup(self, port: int):
         self.port = port
-        self.server = HTTPServer(
-            ("0.0.0.0", port),
-            lambda *args, **kwargs: Handler(ctx=self.ctx, *args, **kwargs),
-        )
+        self.server = HTTPServer(("0.0.0.0", port), Handler)
         self.server.running = True
         print("D: serving rest")
 

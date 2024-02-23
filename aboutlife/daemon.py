@@ -3,9 +3,9 @@ import time
 from typing import List
 from aboutlife.plugin import Plugin
 from aboutlife.tray.tray import TrayPlugin
-from aboutlife.overlay.overlay import OverlayPlugin
 from aboutlife.rest.rest import RestPlugin
-from aboutlife.context import Context
+from aboutlife.overlay.watcher import OverlayWatcherPlugin
+from aboutlife.context import Context, State
 
 plugins: List[Plugin] = []
 plugins_args: List = []
@@ -22,7 +22,7 @@ def process_loop():
         time.sleep(1)
 
 
-if __name__ == "__main__":
+def main():
     ctx = Context()
     ctx.reset()
 
@@ -30,8 +30,11 @@ if __name__ == "__main__":
     plugins.append(TrayPlugin())
     plugins_args.append([])
 
-    plugins.append(OverlayPlugin())
-    plugins_args.append([ctx])
+    plugins.append(RestPlugin())
+    plugins_args.append([8080])
+
+    plugins.append(OverlayWatcherPlugin())
+    plugins_args.append([])
 
     for i in range(len(plugins)):
         plugin = plugins[i]
@@ -42,13 +45,24 @@ if __name__ == "__main__":
         thread.start()
         plugins_threads.append(thread)
 
+    counter = 0
+
     # process loop
-    thread = threading.Thread(target=process_loop)
-    thread.daemon = True
-    thread.start()
+    while True:
+        time.sleep(1)
+        print("D: tick")
 
-    # for thread in plugins_threads:
-    # thread.join()
+        for plugin in plugins:
+            if not plugin:
+                continue
+            plugin.process()
 
-    rest_plugin = RestPlugin()
-    rest_plugin.setup(ctx, 8080)
+        counter += 1
+        if counter == 5:
+            print("UPDATING STATE")
+            with Context.get_mutex():
+                Context.get_singleton().state = State.WORKING
+        if counter == 10:
+            print("UPDATING STATE")
+            with Context.get_mutex():
+                Context.get_singleton().state = State.RESTING

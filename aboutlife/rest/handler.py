@@ -4,8 +4,7 @@ from aboutlife.context import Context
 
 
 class Handler(BaseHTTPRequestHandler):
-    def __init__(self, request, client_address, server, ctx: Context):
-        self.ctx = ctx
+    def __init__(self, request, client_address, server):
         super().__init__(request, client_address, server)
 
     def do_GET(self):
@@ -20,12 +19,16 @@ class Handler(BaseHTTPRequestHandler):
             self.send_header("Content-type", "application/json")
             self.end_headers()
 
-            res = json.dumps(
-                {
-                    "state": self.ctx.state.value,
-                    "time_end": self.ctx.time_end,
-                }
-            )
+            res = ""
+            with Context.get_mutex():
+                ctx = Context.get_singleton()
+                res = json.dumps(
+                    {
+                        "state": ctx.state.value,
+                        "time_end": ctx.time_end,
+                    }
+                )
+
             self.wfile.write(res.encode("utf-8"))
 
     def do_POST(self):
@@ -35,6 +38,4 @@ class Handler(BaseHTTPRequestHandler):
             data = json.loads(post_data)
 
             self.send_response(200)
-            self.send_header("Content-type", "application/json")
             self.end_headers()
-            self.wfile.write(b'{"close":true}')  # Adjust the response as needed

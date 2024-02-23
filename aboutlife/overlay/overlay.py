@@ -1,8 +1,10 @@
+import sys
 import gi
 import threading
 import time
 from aboutlife.plugin import Plugin
-from aboutlife.context import Context
+from aboutlife.context import Context, State
+from aboutlife.overlay import client 
 
 gi.require_version("Gtk", "3.0")
 from gi.repository import Gtk
@@ -11,18 +13,13 @@ from gi.repository import Gtk
 class OverlayPlugin(Plugin):
     def __init__(self):
         self.main_window = None
-        self.ctx: Context = None
 
-    def setup(self, ctx: Context):
-        self.ctx = ctx
-        print("Got context ", self.ctx.state)
-
+    def setup(self):
         builder = Gtk.Builder()
         builder.add_from_file("aboutlife/overlay/ui.glade")
         builder.connect_signals(self)
 
         self.main_window = builder.get_object("main_window")
-        # self.main_window.connect("destroy", Gtk.main_quit)
         self.main_window.connect("destroy", on_destroy)
         # self.main_window.connect("delete-event", lambda x, y: True)
 
@@ -43,14 +40,22 @@ class OverlayPlugin(Plugin):
         Gtk.main()
 
     def process(self):
-        print("Got context ", self.ctx.state)
         if not self.main_window:
             return
 
-        # steal focus
-        # TODO: while state != work
         print("D: stealing focus...")
         # self.main_window.present()
+
+        # get current state
+
+        context = client.get_state()
+        if not context:
+            return
+
+        if context.state == State.WORKING.value:
+            Gtk.main_quit()
+            exit(0)
+
 
     def health_check(self):
         pass
@@ -60,22 +65,24 @@ class OverlayPlugin(Plugin):
 
 
 def on_destroy(event):
-    print("mip")
     Gtk.main_quit()
     return True
 
 
-def thread_helper(plugin):
+def loop(plugin):
     while True:
-        plugin.process()
         time.sleep(2)
+        plugin.process()
         print("D: tick")
 
 
-if __name__ == "__main__":
+def main():
     plugin = OverlayPlugin()
-    thread = threading.Thread(target=thread_helper, args=(plugin,))
+    thread = threading.Thread(target=loop, args=(plugin,))
     thread.daemon = True
     thread.start()
     plugin.setup()
-    thread.join()
+
+
+if __name__ == "__main__":
+    main()
