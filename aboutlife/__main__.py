@@ -1,6 +1,3 @@
-import threading
-import time
-from typing import List
 import argparse
 from aboutlife.overlay import overlay
 from aboutlife import daemon

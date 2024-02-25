@@ -3,7 +3,6 @@ import time
 import urllib.request
 from http.server import HTTPServer
 from aboutlife.plugin import Plugin
-from aboutlife.context import Context
 from aboutlife.rest.handler import Handler
 
 
@@ -19,7 +18,6 @@ class RestPlugin(Plugin):
         print("D: serving rest")
 
         while self.server.running:
-            print("tick ", self.server.running)
             self.server.handle_request()
 
     def process(self):
