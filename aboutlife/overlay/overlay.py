@@ -2,7 +2,7 @@ import gi
 import threading
 import time
 from aboutlife.plugin import Plugin
-from aboutlife.context import State
+from aboutlife.context import STATE
 from aboutlife.overlay import client
 
 gi.require_version("Gtk", "3.0")
@@ -17,6 +17,8 @@ class OverlayPlugin(Plugin):
     def __init__(self):
         self.main_window = None
         self.terminal = None
+        self.tbx_task = None
+        self.cbx_duration = None
 
     def setup(self):
         builder = Gtk.Builder()
@@ -28,11 +30,27 @@ class OverlayPlugin(Plugin):
         self.main_window.connect("show", self.reset)
         # self.main_window.connect("delete-event", lambda x, y: True)
 
-        self.button = builder.get_object("button")
-        self.button.connect("clicked", lambda x: print("Hello"))
         self.terminal = builder.get_object("terminal")
+        self.tbx_task = builder.get_object("tbx-task")
+        self.cbx_duration = builder.get_object("cbx-duration")
         # TODO: fallback font
         self.terminal.set_font(Pango.FontDescription("IosevkaTermNerdFontMono 12"))
+
+        # signals
+        button = builder.get_object("btn-close-tabs-1")
+        button.connect("clicked", self.on_close_tabs)
+        button = builder.get_object("btn-close-tabs-2")
+        button.connect("clicked", self.on_close_tabs)
+        button = builder.get_object("btn-tomato-1")
+        button.connect("clicked", self.on_tomato_break)
+        button = builder.get_object("btn-tomato-2")
+        button.connect("clicked", self.on_tomato_break)
+        button = builder.get_object("btn-shutdown-1")
+        button.connect("clicked", self.on_shutdown)
+        button = builder.get_object("btn-shutdown-2")
+        button.connect("clicked", self.on_shutdown)
+        button = builder.get_object("btn-start-session")
+        button.connect("clicked", self.on_start_session)
 
         # set high priority
         self.main_window.set_type_hint(Gtk.WindowType.POPUP)
@@ -71,7 +89,7 @@ class OverlayPlugin(Plugin):
         if not context:
             return
 
-        if context.state == State.WORKING.value:
+        if context.state == STATE.WORKING.value:
             Gtk.main_quit()
             exit(0)
 
@@ -80,6 +98,35 @@ class OverlayPlugin(Plugin):
 
     def cleanup():
         Gtk.main_quit()
+
+    def on_tomato_break(self, widget):
+        print("D: triggered 'tomato break'")
+        success = client.put_start_tomato_break()
+        print(success)
+        pass
+
+    def on_shutdown(self, widget):
+        print("D: triggered 'shutdown'")
+        success = client.delete_shutdown_system()
+        print(success)
+        pass
+
+    def on_close_tabs(self, widget):
+        print("D: triggered 'close tabs'")
+        success = client.delete_close_tabs()
+        print(success)
+        pass
+
+    def on_start_session(self, widget):
+        print("D: triggered 'start session'")
+        try:
+            task_info = self.tbx_task.get_text()
+            duration = int(self.cbx_duration.get_active_text())
+
+            success = client.put_start_work_session(task_info, duration)
+            print(success)
+        except Exception as e:
+            print(e)
 
 
 def on_destroy(event):
