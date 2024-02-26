@@ -3,7 +3,7 @@ import time
 import subprocess
 import sys
 from aboutlife.plugin import Plugin
-from aboutlife.context import Context, State
+from aboutlife.context import Context, STATE
 
 
 class OverlayWatcherPlugin(Plugin):
@@ -16,7 +16,7 @@ class OverlayWatcherPlugin(Plugin):
             time.sleep(1)
             with Context.get_mutex():
                 ctx = Context.get_singleton()
-                overlay_active = ctx.state == State.IDLE or ctx.state == State.RESTING
+                overlay_active = ctx.state != STATE.WORKING
 
             if overlay_active:
                 process = subprocess.Popen(

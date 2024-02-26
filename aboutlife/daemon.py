@@ -5,7 +5,7 @@ from aboutlife.plugin import Plugin
 from aboutlife.tray.tray import TrayPlugin
 from aboutlife.rest.rest import RestPlugin
 from aboutlife.overlay.watcher import OverlayWatcherPlugin
-from aboutlife.context import Context, State
+from aboutlife.context import Context, STATE
 
 plugins: List[Plugin] = []
 plugins_args: List = []
@@ -57,12 +57,12 @@ def main():
                 continue
             plugin.process()
 
-        counter += 1
-        if counter == 5:
-            print("UPDATING STATE")
-            with Context.get_mutex():
-                Context.get_singleton().state = State.WORKING
-        if counter == 10:
-            print("UPDATING STATE")
-            with Context.get_mutex():
-                Context.get_singleton().state = State.RESTING
+        # counter += 1
+        # if counter == 5:
+        # print("UPDATING STATE")
+        # with Context.get_mutex():
+        # Context.get_singleton().state = STATE.WORKING
+        # if counter == 10:
+        # print("UPDATING STATE")
+        # with Context.get_mutex():
+        # Context.get_singleton().state = STATE.RESTING
