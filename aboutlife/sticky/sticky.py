@@ -42,7 +42,9 @@ class StickyPlugin(Plugin):
         self.window.set_decorated(False)
         self.window.stick()
 
-        # self.window.set_position(Gtk.WindowPosition.NONE)
+        # prefer dark theme
+        settings = Gtk.Settings.get_default()
+        settings.set_property("gtk-application-prefer-dark-theme", True)
 
         # start
         self.window.show_all()

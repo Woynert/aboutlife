@@ -78,6 +78,10 @@ class OverlayPlugin(Plugin):
         self.main_window.present()
         self.main_window.stick()
 
+        # prefer dark theme
+        settings = Gtk.Settings.get_default()
+        settings.set_property("gtk-application-prefer-dark-theme", True)
+
         # grab keyboard
         thread = threading.Thread(target=keygrab_loop, args=(self.main_window,))
         thread.daemon = True
