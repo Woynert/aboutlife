@@ -10,11 +10,6 @@ class Plugin(ABC):
     def process(self):
         pass
 
-    # info useful for restarting the plugin
-    @abstractmethod
-    def health_check(self) -> bool:
-        pass
-
     # frees resources on exit
     @abstractmethod
     def cleanup():

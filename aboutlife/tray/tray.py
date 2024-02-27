@@ -37,9 +37,6 @@ class TrayPlugin(Plugin):
     def cleanup(self):
         Gtk.main_quit()
 
-    def health_check(self):
-        pass
-
     def open_menu(self, status_icon, button, time):
         self.menu.popup(None, None, None, status_icon, button, time)
 

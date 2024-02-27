@@ -106,11 +106,7 @@ class StickyPlugin(Plugin):
             self.task_info = ctx.task_info
             GLib.idle_add(self.lbl_msg.set_text, "Task: " + ctx.task_info)
 
-
-    def health_check(self):
-        pass
-
-    def cleanup():
+    def cleanup(self):
         Gtk.main_quit()
 
 

@@ -28,8 +28,5 @@ class StickyWatcherPlugin(Plugin):
     def process(self):
         pass
 
-    def health_check(self):
-        pass
-
-    def cleanup():
+    def cleanup(self):
         pass

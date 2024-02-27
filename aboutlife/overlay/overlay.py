@@ -135,10 +135,7 @@ class OverlayPlugin(Plugin):
             else:
                 GLib.idle_add(self.notebook.set_current_page, 1)
 
-    def health_check(self):
-        pass
-
-    def cleanup():
+    def cleanup(self):
         Gtk.main_quit()
 
     def on_tomato_break(self, widget):
