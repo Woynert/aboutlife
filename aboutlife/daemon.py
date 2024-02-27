@@ -13,34 +13,7 @@ plugins_args: List = []
 plugins_threads: List[threading.Thread] = []
 
 
-def main():
-    Context().get_singleton().reset()
-
-    # setup plugins
-    plugins.append(TrayPlugin())
-    plugins_args.append([])
-
-    plugins.append(RestPlugin())
-    plugins_args.append([8080])
-
-    plugins.append(OverlayWatcherPlugin())
-    plugins_args.append([])
-
-    plugins.append(StickyWatcherPlugin())
-    plugins_args.append([])
-
-    for i in range(len(plugins)):
-        plugin = plugins[i]
-        args = plugins_args[i]
-
-        thread = threading.Thread(target=plugin.setup, args=args)
-        thread.daemon = True
-        thread.start()
-        plugins_threads.append(thread)
-
-    counter = 0
-
-    # process loop
+def process_loop():
     while True:
         time.sleep(1)
         print("D: tick")
@@ -57,3 +30,34 @@ def main():
             if not plugin:
                 continue
             plugin.process()
+
+
+def main():
+    Context().get_singleton().reset()
+
+    # setup plugins
+    plugins.append(TrayPlugin())
+    plugins_args.append([])
+
+    plugins.append(OverlayWatcherPlugin())
+    plugins_args.append([])
+
+    plugins.append(StickyWatcherPlugin())
+    plugins_args.append([])
+
+    for i in range(len(plugins)):
+        plugin = plugins[i]
+        args = plugins_args[i]
+
+        thread = threading.Thread(target=plugin.setup, args=args)
+        thread.daemon = True
+        thread.start()
+        plugins_threads.append(thread)
+
+    # process loop
+    thread = threading.Thread(target=process_loop)
+    thread.daemon = True
+    thread.start()
+
+    rest = RestPlugin()
+    rest.setup(8080)
