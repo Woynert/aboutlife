@@ -1,4 +1,9 @@
+# caches files
 __pycache__
 .ruff_cache
 *.bk.py
 *.glade~
+# nixos build
+result
+# python venv
+venv

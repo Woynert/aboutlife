@@ -1,10 +1,19 @@
+#!/usr/bin/env python
+import sys
+from pathlib import Path
+
+# support to run as module or script
+file = Path(__file__).resolve()
+parent, root = file.parent, file.parents[1]
+sys.path.append(str(root))
+
 import argparse
 from aboutlife.overlay import overlay
 from aboutlife.sticky import sticky
 from aboutlife import daemon
 
 
-if __name__ == "__main__":
+def main():
     parser = argparse.ArgumentParser(description="Aboutlife")
     parser.add_argument("--overlay", action="store_true", help="Launch overlay plugin")
     parser.add_argument("--sticky", action="store_true", help="Launch sticky plugin")
@@ -21,3 +30,7 @@ if __name__ == "__main__":
     else:
         print("I: Launching daemon")
         daemon.main()
+
+
+if __name__ == "__main__":
+    main()

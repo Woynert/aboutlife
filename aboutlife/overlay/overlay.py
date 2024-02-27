@@ -5,7 +5,7 @@ from datetime import datetime
 from aboutlife.plugin import Plugin
 from aboutlife.context import STATE
 from aboutlife.overlay import client
-from aboutlife.utils import send_notification, keygrab_loop
+from aboutlife.utils import get_resource_path, send_notification, keygrab_loop
 
 gi.require_version("Gtk", "3.0")
 gi.require_version("Gdk", "3.0")
@@ -31,7 +31,7 @@ class OverlayPlugin(Plugin):
 
     def setup(self):
         builder = Gtk.Builder()
-        builder.add_from_file("aboutlife/overlay/ui.glade")
+        builder.add_from_file(get_resource_path("/overlay/ui.glade"))
         builder.connect_signals(self)
 
         self.main_window = builder.get_object("main-window")
@@ -96,7 +96,7 @@ class OverlayPlugin(Plugin):
         self.terminal.spawn_sync(
             Vte.PtyFlags.DEFAULT,
             None,
-            ["/bin/vim", "/tmp/mimumi"],
+            ["/usr/bin/env", "vim", "/tmp/mimumi"],
             None,
             GLib.SpawnFlags.DEFAULT,
         )

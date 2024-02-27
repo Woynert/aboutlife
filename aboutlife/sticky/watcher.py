@@ -1,4 +1,3 @@
-import os
 import time
 import subprocess
 import sys
@@ -8,8 +7,7 @@ from aboutlife.context import Context, STATE
 
 class StickyWatcherPlugin(Plugin):
     def setup(self):
-        interp_path = sys.executable
-        script_path = sys.argv[0]
+        bin_path = sys.argv[0]
         active = False
 
         while True:
@@ -19,10 +17,7 @@ class StickyWatcherPlugin(Plugin):
                 active = ctx.state == STATE.WORKING
 
             if active:
-                process = subprocess.Popen(
-                    [interp_path, "-m", "aboutlife.sticky.sticky"],
-                    cwd=os.path.dirname(script_path) + "/../",
-                )
+                process = subprocess.Popen([bin_path, "--sticky"])
                 process.wait()
 
     def process(self):

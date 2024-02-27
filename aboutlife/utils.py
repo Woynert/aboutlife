@@ -1,9 +1,16 @@
+import os
 import subprocess
 import gi
 from Xlib import X, display, protocol
 
 gi.require_version("Gtk", "3.0")
 from gi.repository import Gtk
+
+ORIGIN_PATH = os.path.dirname(os.path.realpath(__file__))
+
+
+def get_resource_path(path: str) -> str:
+    return ORIGIN_PATH + path
 
 
 def send_notification(title: str, message: str):
