@@ -12,19 +12,8 @@ plugins_args: List = []
 plugins_threads: List[threading.Thread] = []
 
 
-def process_loop():
-    while True:
-        print("D: tick")
-        for plugin in plugins:
-            if not plugin:
-                continue
-            plugin.process()
-        time.sleep(1)
-
-
 def main():
-    ctx = Context()
-    ctx.reset()
+    Context().get_singleton().reset()
 
     # setup plugins
     plugins.append(TrayPlugin())
@@ -52,17 +41,18 @@ def main():
         time.sleep(1)
         print("D: tick")
 
+        with Context.get_mutex():
+            ctx = Context.get_singleton()
+            print(int(time.time()), " : ", ctx.end_time)
+            if ctx.state != STATE.IDLE and (int(time.time()) > ctx.end_time):
+                if ctx.state == STATE.WORKING:
+                    print("AAA")
+                    ctx.setup_obligatory_break()
+                else:
+                    print("BBB")
+                    ctx.state = STATE.IDLE
+
         for plugin in plugins:
             if not plugin:
                 continue
             plugin.process()
-
-        # counter += 1
-        # if counter == 5:
-        # print("UPDATING STATE")
-        # with Context.get_mutex():
-        # Context.get_singleton().state = STATE.WORKING
-        # if counter == 10:
-        # print("UPDATING STATE")
-        # with Context.get_mutex():
-        # Context.get_singleton().state = STATE.RESTING

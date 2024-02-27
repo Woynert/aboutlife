@@ -46,7 +46,7 @@
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="halign">end</property>
-                    <property name="label" translatable="yes">Tomato break 04:20</property>
+                    <property name="label" translatable="yes">...</property>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -288,6 +288,7 @@
                                         <property name="visible">True</property>
                                         <property name="can-focus">False</property>
                                         <items>
+                                          <item translatable="yes">1</item>
                                           <item translatable="yes">5</item>
                                           <item translatable="yes">7</item>
                                           <item translatable="yes">10</item>

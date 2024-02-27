@@ -3,6 +3,7 @@ import threading
 from enum import Enum
 
 TOMATO_BREAK_DURATION = 5 * 60
+OBLIGATORY_BREAK_DURATION = 30
 
 
 class STATE(Enum):
@@ -61,4 +62,12 @@ class Context:
         self.state = STATE.WORKING
         self.task_info = task_info
         self.end_time = int(time.time()) + duration * 60
+        return True
+
+    def setup_obligatory_break(self) -> bool:
+        if self.state != STATE.WORKING:
+            return False
+
+        self.state = STATE.OBLIGATORY_BREAK
+        self.end_time = int(time.time()) + OBLIGATORY_BREAK_DURATION
         return True

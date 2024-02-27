@@ -102,6 +102,8 @@ class OverlayPlugin(Plugin):
                 else f"Obligatory break {text}"
             )
             GLib.idle_add(self.lbl_waiting.set_text, text)
+        else:
+            GLib.idle_add(self.lbl_waiting.set_text, "")
 
         if self.tick % 2 == 0:  # each second
             pass
