@@ -1,6 +1,6 @@
 import json
 from http.server import BaseHTTPRequestHandler
-from aboutlife.context import Context, STATE
+from aboutlife.context import Context
 from aboutlife.rest.endpoints import ENDPOINT
 
 

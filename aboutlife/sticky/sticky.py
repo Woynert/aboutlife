@@ -2,14 +2,13 @@ import gi
 import threading
 import time
 from random import choice
-from datetime import datetime
 from aboutlife.plugin import Plugin
 from aboutlife.context import STATE
 from aboutlife.overlay import client
 
 gi.require_version("Gtk", "3.0")
 gi.require_version("Gdk", "3.0")
-from gi.repository import GObject, Gtk, Gdk, GLib, Pango
+from gi.repository import Gtk, Gdk, GLib
 
 MARGIN = 60
 

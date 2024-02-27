@@ -6,6 +6,7 @@
     <property name="can-focus">False</property>
     <property name="default-width">1280</property>
     <property name="default-height">720</property>
+    <property name="type-hint">tooltip</property>
     <child>
       <object class="GtkAlignment">
         <property name="visible">True</property>
@@ -284,25 +285,69 @@
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkComboBoxText" id="cbx-duration">
+                                      <object class="GtkBox">
                                         <property name="visible">True</property>
                                         <property name="can-focus">False</property>
-                                        <items>
-                                          <item translatable="yes">1</item>
-                                          <item translatable="yes">5</item>
-                                          <item translatable="yes">7</item>
-                                          <item translatable="yes">10</item>
-                                          <item translatable="yes">12</item>
-                                          <item translatable="yes">15</item>
-                                          <item translatable="yes">20</item>
-                                          <item translatable="yes">25</item>
-                                          <item translatable="yes">30</item>
-                                        </items>
+                                        <child>
+                                          <object class="GtkComboBoxText" id="cbx-duration">
+                                            <property name="visible">True</property>
+                                            <property name="can-focus">False</property>
+                                            <property name="focus-on-click">False</property>
+                                            <property name="button-sensitivity">off</property>
+                                            <items>
+                                              <item translatable="yes">1</item>
+                                              <item translatable="yes">5</item>
+                                              <item translatable="yes">7</item>
+                                              <item translatable="yes">10</item>
+                                              <item translatable="yes">12</item>
+                                              <item translatable="yes">15</item>
+                                              <item translatable="yes">20</item>
+                                              <item translatable="yes">25</item>
+                                              <item translatable="yes">30</item>
+                                            </items>
+                                          </object>
+                                          <packing>
+                                            <property name="expand">True</property>
+                                            <property name="fill">True</property>
+                                            <property name="position">0</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkButton" id="btn-duration-down">
+                                            <property name="label" translatable="yes">⇩</property>
+                                            <property name="visible">True</property>
+                                            <property name="can-focus">True</property>
+                                            <property name="receives-default">True</property>
+                                            <property name="relief">none</property>
+                                          </object>
+                                          <packing>
+                                            <property name="expand">False</property>
+                                            <property name="fill">True</property>
+                                            <property name="position">1</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkButton" id="btn-duration-up">
+                                            <property name="label" translatable="yes">⇧</property>
+                                            <property name="visible">True</property>
+                                            <property name="can-focus">True</property>
+                                            <property name="receives-default">True</property>
+                                            <property name="relief">none</property>
+                                          </object>
+                                          <packing>
+                                            <property name="expand">False</property>
+                                            <property name="fill">True</property>
+                                            <property name="position">2</property>
+                                          </packing>
+                                        </child>
                                       </object>
                                       <packing>
                                         <property name="left-attach">1</property>
                                         <property name="top-attach">1</property>
                                       </packing>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
                                     </child>
                                     <child>
                                       <placeholder/>

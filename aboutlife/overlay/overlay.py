@@ -5,7 +5,7 @@ from datetime import datetime
 from aboutlife.plugin import Plugin
 from aboutlife.context import STATE
 from aboutlife.overlay import client
-from aboutlife.utils import send_notification
+from aboutlife.utils import send_notification, keygrab_loop
 
 gi.require_version("Gtk", "3.0")
 gi.require_version("Gdk", "3.0")
@@ -61,6 +61,10 @@ class OverlayPlugin(Plugin):
         button.connect("clicked", self.on_shutdown)
         button = builder.get_object("btn-start-session")
         button.connect("clicked", self.on_start_session)
+        button = builder.get_object("btn-duration-up")
+        button.connect("clicked", lambda widget: self.on_spin_combobox(True))
+        button = builder.get_object("btn-duration-down")
+        button.connect("clicked", lambda widget: self.on_spin_combobox(False))
 
         # set high priority
         self.main_window.set_type_hint(Gtk.WindowType.POPUP)
@@ -70,6 +74,11 @@ class OverlayPlugin(Plugin):
         self.main_window.set_decorated(False)
         self.main_window.present()
         self.main_window.stick()
+
+        # grab keyboard
+        thread = threading.Thread(target=keygrab_loop, args=(self.main_window,))
+        thread.daemon = True
+        thread.start()
 
         # start
         self.main_window.show_all()
@@ -111,7 +120,7 @@ class OverlayPlugin(Plugin):
             pass
         if self.tick % 4 == 0:  # each two seconds
             print("D: stealing focus...")
-            # self.main_window.present()
+            self.main_window.present()
 
             ctx = client.get_state()
             if not ctx:
@@ -138,6 +147,15 @@ class OverlayPlugin(Plugin):
 
     def cleanup(self):
         Gtk.main_quit()
+
+    def on_spin_combobox(self, up: bool):
+        current = self.cbx_duration.get_active()
+        desired = current - 1
+        if up:
+            desired = current + 1
+        if desired < 0:
+            return
+        self.cbx_duration.set_active(desired)
 
     def on_tomato_break(self, widget):
         print("D: triggered 'tomato break'")
