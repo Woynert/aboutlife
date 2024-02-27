@@ -5,6 +5,7 @@ from aboutlife.plugin import Plugin
 from aboutlife.tray.tray import TrayPlugin
 from aboutlife.rest.rest import RestPlugin
 from aboutlife.overlay.watcher import OverlayWatcherPlugin
+from aboutlife.sticky.watcher import StickyWatcherPlugin
 from aboutlife.context import Context, STATE
 
 plugins: List[Plugin] = []
@@ -25,6 +26,9 @@ def main():
     plugins.append(OverlayWatcherPlugin())
     plugins_args.append([])
 
+    plugins.append(StickyWatcherPlugin())
+    plugins_args.append([])
+
     for i in range(len(plugins)):
         plugin = plugins[i]
         args = plugins_args[i]
@@ -43,13 +47,10 @@ def main():
 
         with Context.get_mutex():
             ctx = Context.get_singleton()
-            print(int(time.time()), " : ", ctx.end_time)
             if ctx.state != STATE.IDLE and (int(time.time()) > ctx.end_time):
                 if ctx.state == STATE.WORKING:
-                    print("AAA")
                     ctx.setup_obligatory_break()
                 else:
-                    print("BBB")
                     ctx.state = STATE.IDLE
 
         for plugin in plugins:

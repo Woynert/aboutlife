@@ -4,6 +4,9 @@ run:
 run-overlay:
 	python -m aboutlife --overlay
 
+run-sticky:
+	python -m aboutlife --sticky
+
 format:
 	ruff format .
 

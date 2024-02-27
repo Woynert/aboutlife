@@ -93,15 +93,16 @@ class OverlayPlugin(Plugin):
         # each half a second
         if self.state == STATE.TOMATO_BREAK or self.state == STATE.OBLIGATORY_BREAK:
             now = int(time.time())
-            sec = (self.end_time - now) % 60
-            min = int((self.end_time - now - sec) / 60)
-            text = f"{str(min).zfill(2)}:{str(sec).zfill(2)}"
-            text = (
-                f"Tomato break {text}"
-                if self.state == STATE.TOMATO_BREAK
-                else f"Obligatory break {text}"
-            )
-            GLib.idle_add(self.lbl_waiting.set_text, text)
+            if now <= self.end_time:
+                sec = (self.end_time - now) % 60
+                min = int((self.end_time - now - sec) / 60)
+                text = f"{str(min).zfill(2)}:{str(sec).zfill(2)}"
+                text = (
+                    f"Tomato break {text}"
+                    if self.state == STATE.TOMATO_BREAK
+                    else f"Obligatory break {text}"
+                )
+                GLib.idle_add(self.lbl_waiting.set_text, text)
         else:
             GLib.idle_add(self.lbl_waiting.set_text, "")
 
