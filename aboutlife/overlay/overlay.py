@@ -21,6 +21,7 @@ class OverlayPlugin(Plugin):
         self.end_time: int = int(time.time())
 
         self.main_window = None
+        self.notebook = None
         self.terminal = None
         self.tbx_task = None
         self.cbx_duration = None
@@ -37,6 +38,7 @@ class OverlayPlugin(Plugin):
         self.main_window.connect("show", self.reset)
         # self.main_window.connect("delete-event", lambda x, y: True)
 
+        self.notebook = builder.get_object("main-notebook")
         self.terminal = builder.get_object("terminal")
         self.tbx_task = builder.get_object("tbx-task")
         self.cbx_duration = builder.get_object("cbx-duration")
@@ -51,8 +53,6 @@ class OverlayPlugin(Plugin):
         button = builder.get_object("btn-close-tabs-2")
         button.connect("clicked", self.on_close_tabs)
         button = builder.get_object("btn-tomato-1")
-        button.connect("clicked", self.on_tomato_break)
-        button = builder.get_object("btn-tomato-2")
         button.connect("clicked", self.on_tomato_break)
         button = builder.get_object("btn-shutdown-1")
         button.connect("clicked", self.on_shutdown)
@@ -91,7 +91,7 @@ class OverlayPlugin(Plugin):
             return
 
         # each half a second
-        if self.state == STATE.TOMATO_BREAK or self.state == STATE.TOMATO_BREAK:
+        if self.state == STATE.TOMATO_BREAK or self.state == STATE.OBLIGATORY_BREAK:
             now = int(time.time())
             sec = (self.end_time - now) % 60
             min = int((self.end_time - now - sec) / 60)
@@ -126,6 +126,11 @@ class OverlayPlugin(Plugin):
 
             text = datetime.now().strftime("%I:%M %p, %d of %B %Y")
             GLib.idle_add(self.lbl_time.set_text, text)
+
+            if self.state == STATE.TOMATO_BREAK:
+                GLib.idle_add(self.notebook.set_current_page, 2)
+            else:
+                GLib.idle_add(self.notebook.set_current_page, 1)
 
     def health_check(self):
         pass

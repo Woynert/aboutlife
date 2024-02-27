@@ -2,7 +2,7 @@ import time
 import threading
 from enum import Enum
 
-TOMATO_BREAK_DURATION = 6
+TOMATO_BREAK_DURATION = 5 * 60
 
 
 class STATE(Enum):
@@ -45,7 +45,7 @@ class Context:
             return False
 
         self.state = STATE.TOMATO_BREAK
-        self.end_time = int(time.time()) + TOMATO_BREAK_DURATION * 60
+        self.end_time = int(time.time()) + TOMATO_BREAK_DURATION
         return True
 
     def setup_work_session(self, task_info: str, duration: int) -> bool:

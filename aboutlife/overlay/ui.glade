@@ -69,6 +69,7 @@
                   <object class="GtkNotebook" id="main-notebook">
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
+                    <property name="show-tabs">False</property>
                     <property name="show-border">False</property>
                     <child>
                       <object class="GtkLabel">
@@ -158,9 +159,6 @@
                                         <property name="visible">True</property>
                                         <property name="can-focus">False</property>
                                         <property name="label" translatable="yes">Actions</property>
-                                        <attributes>
-                                          <attribute name="font-desc" value="Comic Relief 10"/>
-                                        </attributes>
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>
@@ -361,9 +359,6 @@
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
                                     <property name="label" translatable="yes">Actions</property>
-                                    <attributes>
-                                      <attribute name="font-desc" value="Comic Relief 10"/>
-                                    </attributes>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
@@ -385,19 +380,6 @@
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkButton" id="btn-tomato-2">
-                                    <property name="label" translatable="yes">Tomato break</property>
-                                    <property name="visible">True</property>
-                                    <property name="can-focus">True</property>
-                                    <property name="receives-default">True</property>
-                                  </object>
-                                  <packing>
-                                    <property name="expand">False</property>
-                                    <property name="fill">True</property>
-                                    <property name="position">2</property>
-                                  </packing>
-                                </child>
-                                <child>
                                   <object class="GtkButton" id="btn-shutdown-2">
                                     <property name="label" translatable="yes">Shutdown system</property>
                                     <property name="visible">True</property>
@@ -407,7 +389,7 @@
                                   <packing>
                                     <property name="expand">False</property>
                                     <property name="fill">True</property>
-                                    <property name="position">3</property>
+                                    <property name="position">2</property>
                                   </packing>
                                 </child>
                               </object>
