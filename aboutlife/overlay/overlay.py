@@ -5,6 +5,7 @@ from datetime import datetime
 from aboutlife.plugin import Plugin
 from aboutlife.context import STATE
 from aboutlife.overlay import client
+from aboutlife.utils import send_notification
 
 gi.require_version("Gtk", "3.0")
 gi.require_version("Gdk", "3.0")
@@ -34,9 +35,9 @@ class OverlayPlugin(Plugin):
         builder.connect_signals(self)
 
         self.main_window = builder.get_object("main-window")
-        self.main_window.connect("destroy", on_destroy)
+        self.main_window.connect("destroy", Gtk.main_quit)
         self.main_window.connect("show", self.reset)
-        # self.main_window.connect("delete-event", lambda x, y: True)
+        self.main_window.connect("delete-event", lambda x, y: True)
 
         self.notebook = builder.get_object("main-notebook")
         self.terminal = builder.get_object("terminal")
@@ -141,43 +142,47 @@ class OverlayPlugin(Plugin):
     def on_tomato_break(self, widget):
         print("D: triggered 'tomato break'")
         success = client.put_start_tomato_break()
-        print(success)
-        pass
+        send_notification(
+            "Tomato break",
+            "Sent successfully" if success else "Can't do that right now",
+        )
 
     def on_shutdown(self, widget):
         print("D: triggered 'shutdown'")
         success = client.delete_shutdown_system()
-        print(success)
-        pass
+        send_notification(
+            "Shutdown", "Sent successfully" if success else "Can't do that right now"
+        )
 
     def on_close_tabs(self, widget):
         print("D: triggered 'close tabs'")
         success = client.delete_close_tabs()
-        print(success)
-        pass
+        send_notification(
+            "Close tabs", "Sent successfully" if success else "Can't do that right now"
+        )
 
     def on_start_session(self, widget):
         print("D: triggered 'start session'")
+        success = False
         try:
             task_info = self.tbx_task.get_text()
             duration = int(self.cbx_duration.get_active_text())
 
             success = client.put_start_work_session(task_info, duration)
-            print(success)
         except Exception as e:
+            success = False
             print(e)
-
-
-def on_destroy(event):
-    Gtk.main_quit()
-    return True
+        send_notification(
+            "Start Session",
+            "Sent successfully" if success else "Can't do that right now",
+        )
 
 
 def loop(plugin):
     while True:
         time.sleep(0.5)
         plugin.process()
-        print("D: tick")
+        print("D: tick (overlay)")
 
 
 def main():
