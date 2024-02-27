@@ -10,7 +10,7 @@ from aboutlife.utils import send_notification, keygrab_loop
 gi.require_version("Gtk", "3.0")
 gi.require_version("Gdk", "3.0")
 gi.require_version("Vte", "2.91")
-from gi.repository import GObject, Gtk, GLib, Vte, Pango
+from gi.repository import GObject, Gtk, Gdk, GLib, Vte, Pango
 
 GObject.type_register(Vte.Terminal)
 
@@ -67,6 +67,9 @@ class OverlayPlugin(Plugin):
         button.connect("clicked", lambda widget: self.on_spin_combobox(False))
 
         # set high priority
+        screen = Gdk.Screen.get_default()
+        self.main_window.set_default_size(screen.get_width(), screen.get_height())
+        self.main_window.fullscreen()
         self.main_window.set_type_hint(Gtk.WindowType.POPUP)
         self.main_window.set_skip_taskbar_hint(True)
         self.main_window.set_skip_pager_hint(True)

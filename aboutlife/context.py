@@ -54,7 +54,7 @@ class Context:
             duration > 0
             and duration <= 30
             and len(task_info) > 0
-            and len(task_info) <= 40
+            and len(task_info) <= 50
             and self.state == STATE.IDLE
         ):
             return False

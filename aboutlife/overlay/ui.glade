@@ -4,6 +4,7 @@
   <requires lib="gtk+" version="3.24"/>
   <object class="GtkWindow" id="main-window">
     <property name="can-focus">False</property>
+    <property name="type">popup</property>
     <property name="default-width">1280</property>
     <property name="default-height">720</property>
     <property name="type-hint">tooltip</property>
@@ -254,6 +255,8 @@
                                       <object class="GtkEntry" id="tbx-task">
                                         <property name="visible">True</property>
                                         <property name="can-focus">True</property>
+                                        <property name="max-length">50</property>
+                                        <property name="width-chars">25</property>
                                       </object>
                                       <packing>
                                         <property name="left-attach">1</property>
@@ -313,8 +316,8 @@
                                           </packing>
                                         </child>
                                         <child>
-                                          <object class="GtkButton" id="btn-duration-down">
-                                            <property name="label" translatable="yes">⇩</property>
+                                          <object class="GtkButton" id="btn-duration-up">
+                                            <property name="label" translatable="yes">⮝</property>
                                             <property name="visible">True</property>
                                             <property name="can-focus">True</property>
                                             <property name="receives-default">True</property>
@@ -327,8 +330,8 @@
                                           </packing>
                                         </child>
                                         <child>
-                                          <object class="GtkButton" id="btn-duration-up">
-                                            <property name="label" translatable="yes">⇧</property>
+                                          <object class="GtkButton" id="btn-duration-down">
+                                            <property name="label" translatable="yes">⮟</property>
                                             <property name="visible">True</property>
                                             <property name="can-focus">True</property>
                                             <property name="receives-default">True</property>
