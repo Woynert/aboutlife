@@ -29,7 +29,7 @@
                 <property name="can-focus">False</property>
                 <property name="homogeneous">True</property>
                 <child>
-                  <object class="GtkLabel">
+                  <object class="GtkLabel" id="lbl-time">
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="halign">start</property>
@@ -42,11 +42,11 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkLabel">
+                  <object class="GtkLabel" id="lbl-waiting">
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="halign">end</property>
-                    <property name="label" translatable="yes">Tomato break: 04:20</property>
+                    <property name="label" translatable="yes">Tomato break 04:20</property>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -70,6 +70,23 @@
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
                     <property name="show-border">False</property>
+                    <child>
+                      <object class="GtkLabel">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="label" translatable="yes">Connecting...</property>
+                      </object>
+                    </child>
+                    <child type="tab">
+                      <object class="GtkLabel">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="label" translatable="yes">One</property>
+                      </object>
+                      <packing>
+                        <property name="tab-fill">False</property>
+                      </packing>
+                    </child>
                     <child>
                       <!-- n-columns=2 n-rows=2 -->
                       <object class="GtkGrid">
@@ -305,6 +322,20 @@
                           </packing>
                         </child>
                       </object>
+                      <packing>
+                        <property name="position">1</property>
+                      </packing>
+                    </child>
+                    <child type="tab">
+                      <object class="GtkLabel">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="label" translatable="yes">Two</property>
+                      </object>
+                      <packing>
+                        <property name="position">1</property>
+                        <property name="tab-fill">False</property>
+                      </packing>
                     </child>
                     <child>
                       <object class="GtkFrame">
@@ -388,28 +419,14 @@
                         </child>
                       </object>
                       <packing>
-                        <property name="position">1</property>
+                        <property name="position">2</property>
                       </packing>
                     </child>
                     <child type="tab">
                       <object class="GtkLabel">
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
-                        <property name="label" translatable="yes">Tomato Break</property>
-                      </object>
-                      <packing>
-                        <property name="position">1</property>
-                        <property name="tab-fill">False</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <placeholder/>
-                    </child>
-                    <child type="tab">
-                      <object class="GtkLabel">
-                        <property name="visible">True</property>
-                        <property name="can-focus">False</property>
-                        <property name="label" translatable="yes">Untitled</property>
+                        <property name="label" translatable="yes">Three</property>
                       </object>
                       <packing>
                         <property name="position">2</property>

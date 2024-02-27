@@ -1,6 +1,7 @@
 import gi
 import threading
 import time
+from datetime import datetime
 from aboutlife.plugin import Plugin
 from aboutlife.context import STATE
 from aboutlife.overlay import client
@@ -15,10 +16,16 @@ GObject.type_register(Vte.Terminal)
 
 class OverlayPlugin(Plugin):
     def __init__(self):
+        self.tick: int = 0
+        self.state: STATE = STATE.IDLE
+        self.end_time: int = int(time.time())
+
         self.main_window = None
         self.terminal = None
         self.tbx_task = None
         self.cbx_duration = None
+        self.lbl_time = None
+        self.lbl_waiting = None
 
     def setup(self):
         builder = Gtk.Builder()
@@ -33,6 +40,8 @@ class OverlayPlugin(Plugin):
         self.terminal = builder.get_object("terminal")
         self.tbx_task = builder.get_object("tbx-task")
         self.cbx_duration = builder.get_object("cbx-duration")
+        self.lbl_time = builder.get_object("lbl-time")
+        self.lbl_waiting = builder.get_object("lbl-waiting")
         # TODO: fallback font
         self.terminal.set_font(Pango.FontDescription("IosevkaTermNerdFontMono 12"))
 
@@ -77,21 +86,46 @@ class OverlayPlugin(Plugin):
         print("D: Done setting up terminal")
 
     def process(self):
+        self.tick += 1
         if not self.main_window:
             return
 
-        print("D: stealing focus...")
-        # self.main_window.present()
+        # each half a second
+        if self.state == STATE.TOMATO_BREAK or self.state == STATE.TOMATO_BREAK:
+            now = int(time.time())
+            sec = (self.end_time - now) % 60
+            min = int((self.end_time - now - sec) / 60)
+            text = f"{str(min).zfill(2)}:{str(sec).zfill(2)}"
+            text = (
+                f"Tomato break {text}"
+                if self.state == STATE.TOMATO_BREAK
+                else f"Obligatory break {text}"
+            )
+            GLib.idle_add(self.lbl_waiting.set_text, text)
 
-        # get current state
+        if self.tick % 2 == 0:  # each second
+            pass
+        if self.tick % 4 == 0:  # each two seconds
+            print("D: stealing focus...")
+            # self.main_window.present()
 
-        context = client.get_state()
-        if not context:
-            return
+            ctx = client.get_state()
+            if not ctx:
+                print("E: overlay process. couldn't connect to server")
+                Gtk.main_quit()
+                exit(1)
+                return
+            self.state = STATE(ctx.state)
+            self.end_time = ctx.end_time
 
-        if context.state == STATE.WORKING.value:
-            Gtk.main_quit()
-            exit(0)
+            if self.state == STATE.WORKING:
+                print("I: overlay process. state changed to WORKING")
+                Gtk.main_quit()
+                exit(0)
+                return
+
+            text = datetime.now().strftime("%I:%M %p, %d of %B %Y")
+            GLib.idle_add(self.lbl_time.set_text, text)
 
     def health_check(self):
         pass
@@ -136,7 +170,7 @@ def on_destroy(event):
 
 def loop(plugin):
     while True:
-        time.sleep(2)
+        time.sleep(0.5)
         plugin.process()
         print("D: tick")
 
