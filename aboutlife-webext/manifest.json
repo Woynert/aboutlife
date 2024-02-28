@@ -1,0 +1,26 @@
+{
+  "manifest_version": 2,
+  "name": "Aboutlife Webext",
+  "version": "1.0",
+  "description": "Communicates with the local Aboutlife instance",
+  "icons": {
+    "48": "icons/border-48.png"
+  },
+
+  "permissions": [
+    "storage", 
+    "<all_urls>",
+    "tabs"
+  ],
+
+  "background": {
+    "scripts": ["main.js"],
+    "persistent": true
+  },
+
+  "options_ui": {
+    "page": "options.html",
+    "browser_style": true
+  }
+}
+

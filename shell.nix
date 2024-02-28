@@ -12,6 +12,9 @@ pkgs.mkShell {
     pkgs.python310Packages.pygobject3
     pkgs.python310Packages.xlib
     pkgs.python310Packages.hatchling
+
+    pkgs.corepack
+    pkgs.nodejs-slim
   ];
   shellHook = ''
     echo "Starting development shell"

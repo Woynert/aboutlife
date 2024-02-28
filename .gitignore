@@ -7,3 +7,7 @@ __pycache__
 result
 # python venv
 venv
+# node
+node_modules
+package.json
+pnpm-lock.yaml
