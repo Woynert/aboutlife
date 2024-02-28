@@ -4,6 +4,7 @@ pkgs.mkShell {
   buildInputs = [
     pkgs.git
     pkgs.ruff
+    pkgs.zip
 
     pkgs.gtk3
     pkgs.vte

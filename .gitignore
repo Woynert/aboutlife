@@ -7,7 +7,8 @@ __pycache__
 result
 # python venv
 venv
-# node
+# web extension
 node_modules
 package.json
 pnpm-lock.yaml
+extension-*.zip

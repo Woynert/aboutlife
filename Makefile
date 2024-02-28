@@ -14,4 +14,4 @@ test:
 	python -m unittest discover tests/overlay
 
 webext:
-	zip -r extension-$(shell date +%s).zip aboutlife-webext/manifest.json aboutlife-webext/icons aboutlife-webext/*.js aboutlife-webext/*.html
+	cd aboutlife-webext; zip -r ../extension-$(shell date +%s).zip *.js *.html icons manifest.json 
