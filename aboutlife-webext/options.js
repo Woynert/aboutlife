@@ -34,11 +34,14 @@ function sleep(ms) {
 }
 
 async function loop() {
-  sleep(1000);
-  try {
-    const response = await fetch(`http://localhost:${PORT}/state`);
-    document.getElementById("lbl_info").innerText = "Connection status: OK";
-  } catch (error) {
-    document.getElementById("lbl_info").innerText = "Connection status: ERROR";
+  while (true) {
+    console.log("I: Checking connection")
+    await sleep(1000);
+    try {
+      const response = await fetch(`http://localhost:${PORT}/state`);
+      document.getElementById("lbl_info").innerText = "Connection status: OK";
+    } catch (error) {
+      document.getElementById("lbl_info").innerText = "Connection status: UNREACHABLE";
+    }
   }
 }

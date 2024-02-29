@@ -3,10 +3,6 @@ var PORT = "8080";
 var ENDPOINT_QUERY = `http://localhost:${PORT}/close_tabs_query`;
 var ENDPOINT_RESET = `http://localhost:${PORT}/close_tabs_reset`;
 
-function log(str) {
-  console.log(str);
-}
-
 function sleep(ms) {
   return new Promise((resolve) => {
     setTimeout(() => {
@@ -16,7 +12,7 @@ function sleep(ms) {
 }
 
 async function close_tabs() {
-  log("I: Closing tabs");
+  console.log("I: Closing tabs");
 
   try {
     tabs = await browser.tabs.query({});
@@ -26,7 +22,7 @@ async function close_tabs() {
 
     browser.tabs.create({});
   } catch (error) {
-    log(error);
+    console.log(error);
   }
 }
 
@@ -49,7 +45,8 @@ async function loop() {
   }
 }
 
-browser.runtime.onInstalled.addListener(async () => {
+(async () => {
+  console.log("I: Background script started");
   try {
     result = await browser.storage.local.get({
       port: "8080",
@@ -61,6 +58,5 @@ browser.runtime.onInstalled.addListener(async () => {
       ENDPOINT_RESET = `http://localhost:${PORT}/close_tabs_reset`;
     }
   } catch (error) {}
-
   loop();
-});
+})();
