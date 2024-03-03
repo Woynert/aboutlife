@@ -22,7 +22,7 @@ in
       startLimitBurst = 10;
       serviceConfig = {
         ExecStart = "${aboutlife}/bin/aboutlife";
-        Restart = "on-failure";
+        Restart = "always";
         RestartSec = 3;
       };
     };
