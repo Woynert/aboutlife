@@ -147,7 +147,7 @@ class OverlayPlugin(Plugin):
             text = datetime.now().strftime("%I:%M %p, %d of %B %Y")
             GLib.idle_add(self.lbl_time.set_text, text)
 
-            if self.state == STATE.TOMATO_BREAK:
+            if self.state == STATE.TOMATO_BREAK or self.state == STATE.OBLIGATORY_BREAK:
                 GLib.idle_add(self.notebook.set_current_page, 2)
             else:
                 GLib.idle_add(self.notebook.set_current_page, 1)
