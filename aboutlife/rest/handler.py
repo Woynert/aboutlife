@@ -1,4 +1,5 @@
 import json
+import subprocess
 from http.server import BaseHTTPRequestHandler
 from aboutlife.context import Context
 from aboutlife.rest.endpoints import ENDPOINT
@@ -77,3 +78,5 @@ class Handler(BaseHTTPRequestHandler):
             self.send_response(200)
             self.end_headers()
             print("D: Shutting down")
+            subprocess.run(['shutdown', 'now'])
+
