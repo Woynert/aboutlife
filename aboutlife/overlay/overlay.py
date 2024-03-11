@@ -96,7 +96,7 @@ class OverlayPlugin(Plugin):
         self.terminal.spawn_sync(
             Vte.PtyFlags.DEFAULT,
             None,
-            ["/usr/bin/env", "vim", "/tmp/mimumi"],
+            ["/usr/bin/env", "vim", "/plan/1-wiki/syncthing/horario.md"],
             None,
             GLib.SpawnFlags.DEFAULT,
         )

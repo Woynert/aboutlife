@@ -106,7 +106,7 @@ class StickyPlugin(Plugin):
 
             self.end_time = ctx.end_time
             self.task_info = ctx.task_info
-            GLib.idle_add(self.lbl_msg.set_text, "Task: " + ctx.task_info)
+            GLib.idle_add(self.lbl_msg.set_text, "🌀️ Objetivo: " + ctx.task_info)
 
     def cleanup(self):
         Gtk.main_quit()
