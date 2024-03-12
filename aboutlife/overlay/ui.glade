@@ -2,16 +2,6 @@
 <!-- Generated with glade 3.40.0 -->
 <interface>
   <requires lib="gtk+" version="3.24"/>
-  <object class="GtkAdjustment" id="adjustment1">
-    <property name="upper">100</property>
-    <property name="step-increment">1</property>
-    <property name="page-increment">10</property>
-  </object>
-  <object class="GtkAdjustment" id="adjustment2">
-    <property name="upper">100</property>
-    <property name="step-increment">1</property>
-    <property name="page-increment">10</property>
-  </object>
   <object class="GtkWindow" id="main-window">
     <property name="can-focus">False</property>
     <property name="type">popup</property>
@@ -344,7 +334,6 @@
                             <property name="visible">True</property>
                             <property name="can-focus">False</property>
                             <property name="orientation">vertical</property>
-                            <property name="spacing">10</property>
                             <child>
                               <object class="GtkFrame">
                                 <property name="visible">True</property>
@@ -357,15 +346,15 @@
                                     <property name="can-focus">False</property>
                                     <child>
                                       <object class="VteTerminal" id="terminal">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="hscroll_policy">natural</property>
-                                    <property name="vscroll_policy">natural</property>
-                                    <property name="encoding">UTF-8</property>
-                                    <property name="scroll_on_keystroke">True</property>
-                                    <property name="scroll_on_output">False</property>
-                                    <property name="font_scale">1.2</property>
-                                  </object>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="hscroll_policy">natural</property>
+                                        <property name="vscroll_policy">natural</property>
+                                        <property name="encoding">UTF-8</property>
+                                        <property name="scroll_on_keystroke">True</property>
+                                        <property name="scroll_on_output">False</property>
+                                        <property name="font_scale">1.2</property>
+                                      </object>
                                     </child>
                                   </object>
                                 </child>
@@ -403,7 +392,7 @@
                                           <object class="GtkImage">
                                             <property name="visible">True</property>
                                             <property name="can-focus">False</property>
-                                            <property name="pixbuf">./freenaturestock-1088-cropped.jpg</property>
+                                            <property name="pixbuf">freenaturestock-905-cropped.jpg</property>
                                           </object>
                                         </child>
                                       </object>
