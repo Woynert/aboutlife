@@ -54,14 +54,16 @@ class Handler(BaseHTTPRequestHandler):
             data = json.loads(self.rfile.read(content_length).decode("utf-8"))
             task_info = data["task_info"]
             duration = int(data["duration"])
+            network_required = bool(data["network_required"])
 
             print(task_info)
             print(duration)
+            print(network_required)
 
             success = False
             with Context.get_mutex():
                 success = Context.get_singleton().setup_work_session(
-                    task_info, duration
+                    task_info, duration, network_required
                 )
 
             self.send_response(200) if success else self.send_response(400)
@@ -78,5 +80,4 @@ class Handler(BaseHTTPRequestHandler):
             self.send_response(200)
             self.end_headers()
             print("D: Shutting down")
-            subprocess.run(['shutdown', 'now'])
-
+            subprocess.run(["shutdown", "now"])

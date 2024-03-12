@@ -6,6 +6,7 @@ from aboutlife.tray.tray import TrayPlugin
 from aboutlife.rest.rest import RestPlugin
 from aboutlife.overlay.watcher import OverlayWatcherPlugin
 from aboutlife.sticky.watcher import StickyWatcherPlugin
+from aboutlife.networkmanager.watcher import NetworkManagerPlugin
 from aboutlife.context import Context, STATE
 
 plugins: List[Plugin] = []
@@ -43,6 +44,9 @@ def main():
     plugins_args.append([])
 
     plugins.append(StickyWatcherPlugin())
+    plugins_args.append([])
+
+    plugins.append(NetworkManagerPlugin())
     plugins_args.append([])
 
     for i in range(len(plugins)):

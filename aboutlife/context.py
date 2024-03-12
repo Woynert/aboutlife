@@ -23,6 +23,7 @@ class Context:
         self.close_tabs: bool = False
         self.end_time: int = 0  # unix time from system
         self.task_info: str = ""
+        self.network_required: bool = True
         self.reset()
 
     def reset(self):
@@ -30,6 +31,7 @@ class Context:
         self.close_tabs = False
         self.end_time = 0
         self.task_info = "Sample Task Info"
+        self.network_required: bool = True
 
     @classmethod
     def get_singleton(cls) -> "Context":
@@ -49,7 +51,9 @@ class Context:
         self.end_time = int(time.time()) + TOMATO_BREAK_DURATION
         return True
 
-    def setup_work_session(self, task_info: str, duration: int) -> bool:
+    def setup_work_session(
+        self, task_info: str, duration: int, network_required: bool
+    ) -> bool:
         if not (
             duration > 0
             and duration <= 30
@@ -61,6 +65,7 @@ class Context:
 
         self.state = STATE.WORKING
         self.task_info = task_info
+        self.network_required = not not network_required
         self.end_time = int(time.time()) + duration * 60
         return True
 

@@ -58,12 +58,15 @@ def put_start_tomato_break() -> bool:
     return False
 
 
-def put_start_work_session(task_info: str, duration: int) -> bool:
+def put_start_work_session(
+    task_info: str, duration: int, network_required: bool
+) -> bool:
     try:
         req_data = json.dumps(
             {
                 "task_info": task_info,
                 "duration": duration,
+                "network_required": network_required,
             }
         )
         headers = {"Content-type": "application/json"}

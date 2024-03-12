@@ -20,6 +20,7 @@ buildPythonApplication {
     pkgs.gtk3
     pkgs.vte
     pkgs.python310
+    pkgs.networkmanager
   ];
 
   propagatedBuildInputs = [

@@ -196,12 +196,13 @@
                                 <property name="xscale">0.009999999776482582</property>
                                 <property name="yscale">0.009999999776482582</property>
                                 <child>
-                                  <!-- n-columns=2 n-rows=3 -->
+                                  <!-- n-columns=2 n-rows=4 -->
                                   <object class="GtkGrid">
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
                                     <property name="row-spacing">10</property>
                                     <property name="column-spacing">10</property>
+                                    <property name="row-homogeneous">True</property>
                                     <child>
                                       <object class="GtkLabel">
                                         <property name="visible">True</property>
@@ -248,7 +249,7 @@
                                       </object>
                                       <packing>
                                         <property name="left-attach">1</property>
-                                        <property name="top-attach">2</property>
+                                        <property name="top-attach">3</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -271,6 +272,7 @@
                                               <item translatable="yes">20</item>
                                               <item translatable="yes">25</item>
                                               <item translatable="yes">30</item>
+                                              <item translatable="yes">50</item>
                                             </items>
                                           </object>
                                           <packing>
@@ -311,6 +313,30 @@
                                       <packing>
                                         <property name="left-attach">1</property>
                                         <property name="top-attach">1</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkLabel">
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">False</property>
+                                        <property name="halign">end</property>
+                                        <property name="label" translatable="yes">¿Necesita internet?</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left-attach">0</property>
+                                        <property name="top-attach">2</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkSwitch" id="swi-network">
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">True</property>
+                                        <property name="halign">start</property>
+                                        <property name="valign">center</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left-attach">1</property>
+                                        <property name="top-attach">2</property>
                                       </packing>
                                     </child>
                                     <child>
