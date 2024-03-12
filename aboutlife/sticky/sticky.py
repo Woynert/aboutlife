@@ -16,7 +16,7 @@ MARGIN = 60
 
 class StickyPlugin(Plugin):
     def __init__(self):
-        self.tick: int = -1
+        self.tick: int = 0
         self.end_time: int = int(time.time())
 
         self.pos_hori: int = 0
@@ -108,6 +108,9 @@ class StickyPlugin(Plugin):
             self.task_info = ctx.task_info
             GLib.idle_add(self.lbl_msg.set_text, "🌀️ Objetivo: " + ctx.task_info)
 
+        if self.tick % 120 == 0:  # each minute
+            self.shuffle_position()
+
     def cleanup(self):
         Gtk.main_quit()
 
@@ -116,7 +119,6 @@ def loop(plugin):
     while True:
         time.sleep(0.5)
         plugin.process()
-        print("D: tick (sticky)")
 
 
 def main():
