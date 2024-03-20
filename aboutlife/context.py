@@ -4,6 +4,8 @@ from enum import Enum
 
 TOMATO_BREAK_DURATION = 5 * 60
 OBLIGATORY_BREAK_DURATION = 30
+TASK_MAX_LENGHT = 60  # chars
+TASK_MAX_DURATION = 50  # minutes
 
 
 class STATE(Enum):
@@ -56,9 +58,9 @@ class Context:
     ) -> bool:
         if not (
             duration > 0
-            and duration <= 30
+            and duration <= TASK_MAX_DURATION
             and len(task_info) > 0
-            and len(task_info) <= 50
+            and len(task_info) <= TASK_MAX_LENGHT
             and self.state == STATE.IDLE
         ):
             return False

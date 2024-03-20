@@ -219,7 +219,7 @@
                                       <object class="GtkEntry" id="tbx-task">
                                         <property name="visible">True</property>
                                         <property name="can-focus">True</property>
-                                        <property name="max-length">50</property>
+                                        <property name="max-length">60</property>
                                         <property name="width-chars">25</property>
                                         <property name="text" translatable="yes">_</property>
                                       </object>

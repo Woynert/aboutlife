@@ -1,6 +1,5 @@
 import time
 import subprocess
-import sys
 from aboutlife.plugin import Plugin
 from aboutlife.context import Context, STATE
 
