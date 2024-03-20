@@ -11,13 +11,15 @@ gi.require_version("Gtk", "3.0")
 gi.require_version("Gdk", "3.0")
 from gi.repository import Gtk, Gdk, GLib
 
-MARGIN = 60
+SCREEN_MARGIN = 60
+SHUFFLE_TICK_DELAY = 120 * 1.5  # 1 + 1/2 minutes; 1 tick = 1/2 second
 
 
 class StickyPlugin(Plugin):
     def __init__(self):
         self.tick: int = 0
         self.end_time: int = int(time.time())
+        self.tick_last_shuffle: int = 0
 
         self.pos_hori: int = 0
         self.pos_vert: int = 0
@@ -68,13 +70,14 @@ class StickyPlugin(Plugin):
                 self.pos_vert = vert
                 break
 
+        self.tick_last_shuffle = self.tick
         screen = self.window.get_screen()
         sw = screen.get_width()
         sh = screen.get_height()
         ww = self.window.get_size()[0]
         wh = self.window.get_size()[1]
-        x = self.pos_hori * (sw / 2 - ww / 2 - MARGIN) + sw / 2 - ww / 2
-        y = self.pos_vert * (sh / 2 - wh / 2 - MARGIN) + sh / 2 - wh / 2
+        x = self.pos_hori * (sw / 2 - ww / 2 - SCREEN_MARGIN) + sw / 2 - ww / 2
+        y = self.pos_vert * (sh / 2 - wh / 2 - SCREEN_MARGIN) + sh / 2 - wh / 2
         GLib.idle_add(self.window.move, x, y)
 
     def process(self):
@@ -108,7 +111,7 @@ class StickyPlugin(Plugin):
             self.task_info = ctx.task_info
             GLib.idle_add(self.lbl_msg.set_text, "🌀️ Objetivo: " + ctx.task_info)
 
-        if self.tick % 120 == 0:  # each minute
+        if (self.tick - self.tick_last_shuffle) >= SHUFFLE_TICK_DELAY:
             self.shuffle_position()
 
     def cleanup(self):
