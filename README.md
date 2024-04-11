@@ -1,10 +1,24 @@
 # Aboutlife
 
-build nix derivation:
+Build nix derivation:
 
 ```sh
 nix-build default.nix
 ```
+
+Run from nix-shell:
+
+```sh
+nix-shell -p 'import (./default.nix) {}' --run aboutlife
+```
+
+Run from git:
+
+```sh
+nix-shell -p 'import (fetchFromGitHub { owner="woynert";repo="aboutlife";rev="master";sha256="sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"; }) {}' --run aboutlife
+```
+
+*Flake: coming soon*
 
 ## License
 
