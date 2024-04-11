@@ -3,7 +3,8 @@ import threading
 from enum import Enum
 
 TOMATO_BREAK_DURATION = 5 * 60
-OBLIGATORY_BREAK_DURATION = 30
+OBLIGATORY_BREAK_DURATION = 30 # seconds
+SHORT_OBLIGATORY_BREAK_DURATION = 8 # seconds
 TASK_MAX_LENGHT = 60  # chars
 TASK_MAX_DURATION = 50  # minutes
 
@@ -23,7 +24,8 @@ class Context:
     def __init__(self):
         self.state: STATE = STATE.IDLE
         self.close_tabs: bool = False
-        self.end_time: int = 0  # unix time from system
+        self.end_time: int = 0 # unix time from system
+        self.duration: int = 0 # minutes
         self.task_info: str = ""
         self.network_required: bool = True
         self.reset()
@@ -32,6 +34,7 @@ class Context:
         self.state = STATE.IDLE
         self.close_tabs = False
         self.end_time = 0
+        self.duration = 0
         self.task_info = "Sample Task Info"
         self.network_required: bool = True
 
@@ -69,6 +72,7 @@ class Context:
         self.task_info = task_info
         self.network_required = not not network_required
         self.end_time = int(time.time()) + duration * 60
+        self.duration = duration
         return True
 
     def setup_obligatory_break(self) -> bool:
@@ -76,5 +80,10 @@ class Context:
             return False
 
         self.state = STATE.OBLIGATORY_BREAK
-        self.end_time = int(time.time()) + OBLIGATORY_BREAK_DURATION
+        self.end_time = int(time.time())
+
+        if self.duration <= 10:
+            self.end_time += SHORT_OBLIGATORY_BREAK_DURATION
+        else:
+            self.end_time += OBLIGATORY_BREAK_DURATION
         return True
