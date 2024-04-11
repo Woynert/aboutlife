@@ -35,6 +35,7 @@ def keygrab_loop(arg_window: Gtk.Window):
     xid = arg_window.get_window().get_xid()
     window = disp.create_resource_object("window", xid)
     last_input_time: int = 0
+    event_n = None
 
     while True:
         # try grab it
@@ -80,6 +81,9 @@ def keygrab_loop(arg_window: Gtk.Window):
                         event_y=0,
                         detail=event.detail,
                     )
+                else: # skip undesired event
+                    continue
+                
                 disp.send_event(window, event_n, propagate=False)
                 disp.sync()
 
