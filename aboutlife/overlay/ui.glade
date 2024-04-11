@@ -418,7 +418,7 @@
                                           <object class="GtkImage">
                                             <property name="visible">True</property>
                                             <property name="can-focus">False</property>
-                                            <property name="pixbuf">freenaturestock-905-cropped.jpg</property>
+                                            <property name="pixbuf">freenaturestock-2124-cropped.jpg</property>
                                           </object>
                                         </child>
                                       </object>
