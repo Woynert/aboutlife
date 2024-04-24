@@ -22,6 +22,8 @@ class OverlayPlugin(Plugin):
         self.end_time: int = int(time.time())
 
         self.main_window = None
+        self.focus_window = None
+
         self.notebook = None
         self.terminal = None
         self.tbx_task = None
@@ -68,6 +70,14 @@ class OverlayPlugin(Plugin):
         button = builder.get_object("btn-duration-down")
         button.connect("clicked", lambda widget: self.on_spin_combobox(False))
 
+        # auxiliar regular focusable window to steal the focus
+        self.focus_window = Gtk.Window()
+        self.focus_window.set_title("aboutlife auxiliar window")
+        self.focus_window.connect("destroy", Gtk.main_quit)
+        self.focus_window.connect("delete-event", lambda x, y: True)
+        self.focus_window.set_type_hint(Gtk.WindowType.POPUP)
+        self.focus_window.stick()
+
         # set high priority
         screen = Gdk.Screen.get_default()
         self.main_window.set_default_size(screen.get_width(), screen.get_height())
@@ -91,6 +101,7 @@ class OverlayPlugin(Plugin):
 
         # start
         self.main_window.show_all()
+        self.focus_window.show_all()
         Gtk.main()
 
     def reset(self, widget):
@@ -129,7 +140,7 @@ class OverlayPlugin(Plugin):
             pass
         if self.tick % 4 == 0:  # each two seconds
             print("D: stealing focus...")
-            self.main_window.present()
+            self.focus_window.present()
 
             ctx = client.get_state()
             if not ctx:
