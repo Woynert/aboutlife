@@ -7,7 +7,11 @@ let
 in
 {
   options.services.aboutlife = {
-    enable = mkEnableOption (lib.mdDoc "Enable aboutlife service");
+    enable = mkEnableOption "Enable aboutlife service";
+    greeter = mkOption {
+      type = types.bool;
+      default = false;
+    };
   };
 
   config = mkIf cfg.enable {
