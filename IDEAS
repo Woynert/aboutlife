@@ -16,3 +16,8 @@
 * Make it so that for each minute without internet, you get a minute with internet. You start with 5 minutes each session.
     * Show the amout of internet time in the sticky module.
 * A secondary service which only purpose is to ensure the aboutlife service is alive. It checks it every 10 minutes, and if the service has stayed dead more than 1 hour then it revives it.
+* The ability to open the layout window in the middle of session through the tray icon.
+    * This would allow to access future modules like, music, task history, motivational media, etc.
+* The ability to skip the *Obligatory break* by writting text in a textbox, like: "systemctl stop aboutlife".
+* *task manager*: A section that shows a list of the opened apps with icons and thumbnails and a way to close them.
+* obligatory break time dependent on the amount of time it took to finish the task. So if a 30 minute task is finished in 5 minutes, you would calculate the break time using the 5 minutes, no the 30.

@@ -2,7 +2,6 @@ from enum import Enum
 
 
 class ENDPOINT(Enum):
-    GET_CLOSE_TABS_QUERY = "/close_tabs_query"
     PUT_CLOSE_TABS_RESET = "/close_tabs_reset"
     DELETE_CLOSE_TABS = "/close_tabs"
     GET_STATE = "/state"

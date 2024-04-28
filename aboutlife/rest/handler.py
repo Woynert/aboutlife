@@ -10,14 +10,7 @@ class Handler(BaseHTTPRequestHandler):
         super().__init__(request, client_address, server)
 
     def do_GET(self):
-        if self.path == ENDPOINT.GET_CLOSE_TABS_QUERY.value:
-            close_tabs = False
-            with Context.get_mutex():
-                close_tabs = Context.get_singleton().close_tabs
-            self.send_response(200) if close_tabs else self.send_response(403)
-            self.end_headers()
-
-        elif self.path == ENDPOINT.GET_STATE.value:
+        if self.path == ENDPOINT.GET_STATE.value:
             res = ""
             with Context.get_mutex():
                 ctx = Context.get_singleton()
@@ -26,6 +19,7 @@ class Handler(BaseHTTPRequestHandler):
                         "state": ctx.state.value,
                         "end_time": ctx.end_time,
                         "task_info": ctx.task_info,
+                        "close_tabs": ctx.close_tabs,
                     }
                 )
 
