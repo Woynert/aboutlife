@@ -7,7 +7,9 @@ TOMATO_BREAK_DURATION = 5 * 60
 OBLIGATORY_BREAK_DURATION = 30
 SHORT_OBLIGATORY_BREAK_DURATION = 8
 SHORT_OBLIGATORY_BREAK_THRESHOLD = 10 * 60
-TASK_MAX_LENGHT = 60  # chars
+# (chars)
+TASK_MIN_LENGTH = 14
+TASK_MAX_LENGTH = 70
 TASK_MAX_DURATION = 50  # minutes
 
 
@@ -64,8 +66,8 @@ class Context:
         if not (
             duration > 0
             and duration <= TASK_MAX_DURATION
-            and len(task_info) > 0
-            and len(task_info) <= TASK_MAX_LENGHT
+            and len(task_info) >= TASK_MIN_LENGTH
+            and len(task_info) <= TASK_MAX_LENGTH
             and self.state == STATE.IDLE
         ):
             return False

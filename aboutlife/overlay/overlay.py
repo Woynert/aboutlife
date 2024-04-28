@@ -3,7 +3,7 @@ import threading
 import time
 from datetime import datetime
 from aboutlife.plugin import Plugin
-from aboutlife.context import STATE
+from aboutlife.context import STATE, TASK_MIN_LENGTH, TASK_MAX_LENGTH
 from aboutlife.overlay import client
 from aboutlife.utils import get_resource_path, send_notification, keygrab_loop
 
@@ -51,6 +51,8 @@ class OverlayPlugin(Plugin):
         self.lbl_waiting = builder.get_object("lbl-waiting")
         # TODO: fallback font
         self.terminal.set_font(Pango.FontDescription("IosevkaTermNerdFontMono 12"))
+        self.tbx_task.set_placeholder_text(f"Mínimo {TASK_MIN_LENGTH} letras")
+        self.tbx_task.set_max_length(TASK_MAX_LENGTH)
 
         # signals
         button = builder.get_object("btn-close-tabs-1")
