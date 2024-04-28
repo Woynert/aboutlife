@@ -81,9 +81,9 @@ def keygrab_loop(arg_window: Gtk.Window):
                         event_y=0,
                         detail=event.detail,
                     )
-                else: # skip undesired event
+                else:  # skip undesired event
                     continue
-                
+
                 disp.send_event(window, event_n, propagate=False)
                 disp.sync()
 
