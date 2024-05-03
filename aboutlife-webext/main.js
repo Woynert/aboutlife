@@ -75,7 +75,7 @@ async function unload_tabs() {
 
       // Compile tabs to unload
 
-      if (is_targeted) {
+      if (is_targeted && !tab_info.pinned) {
         tabs_to_unload.push(tab.id);
       }
     }
