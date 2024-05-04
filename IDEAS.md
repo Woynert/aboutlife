@@ -23,6 +23,9 @@ IDEAS
     * This would allow to access future modules like, music, task history, motivational media, etc.
 * The ability to skip the Obligatory break by writting text in a textbox, like: "systemctl stop aboutlife".
 * Add "tomato break" option to tray icon, this option would end the session and enter a tomato break.
+* The ability to lock the sticky module in place.
+* Open the emergency webpage when targeted site detected.
+* Close targeted site tabs for webpages there's no way I'm doing something productive there.
 
 DONE
 * obligatory break time dependent on the amount of time it took to finish the task. So if a 30 minute task is finished in 5 minutes, you would calculate the break time using the 5 minutes, no the 30.

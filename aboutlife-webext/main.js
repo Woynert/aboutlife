@@ -6,13 +6,16 @@ var ENDPOINT_RESET = `http://localhost:${PORT}/close_tabs_reset`;
 var previus_state = 0;
 
 const WORKING_STATE_VALUE = 3; // see ../aboutlife/context.py
-const UNPRODUCTIVE_SITES = [
+const UNPRODUCTIVE_SITES = ["facebook.com", "twitter.com", "newgrounds.com"];
+const TARGET_SITES = [
+  "youtube.com",
+  "reddit.com",
   "imgur.com",
-  "facebook.com",
-  "twitter.com",
-  "newgrounds.com",
+  ...UNPRODUCTIVE_SITES,
 ];
-const TARGET_SITES = ["youtube.com", "reddit.com", ...UNPRODUCTIVE_SITES];
+const HELP_SITE = "https://emergency.nofap.com/";
+const LATE_HOUR_LOWER = 5;
+const LATE_HOUR_UPPER = 20;
 
 function sleep(ms) {
   return new Promise((resolve) => {
@@ -90,8 +93,16 @@ async function unload_tabs() {
     }
 
     // Switch to untargeted tab before unloading tabs
+    // Prefer to open the help site based on edge cases
 
-    if (is_active_tab_targeted) {
+    const hour = new Date().getHours();
+    if (
+      hour >= LATE_HOUR_UPPER ||
+      hour <= LATE_HOUR_LOWER ||
+      tabs_to_close.length
+    ) {
+      browser.tabs.create({ url: HELP_SITE });
+    } else if (is_active_tab_targeted) {
       if (candidate_tab > -1) {
         await browser.tabs.update(candidate_tab, {
           active: true,
