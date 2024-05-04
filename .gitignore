@@ -9,6 +9,5 @@ result
 venv
 # web extension
 node_modules
-package.json
 pnpm-lock.yaml
 extension-*.zip

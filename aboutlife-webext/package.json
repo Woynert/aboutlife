@@ -1,0 +1,8 @@
+{
+  "dependencies": {
+    "prettier": "^3.2.5"
+  },
+  "scripts": {
+    "format": "npx prettier . -w"
+  }
+}
