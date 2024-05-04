@@ -4,14 +4,15 @@ var ENDPOINT_QUERY = `http://localhost:${PORT}/state`;
 var ENDPOINT_RESET = `http://localhost:${PORT}/close_tabs_reset`;
 
 var previus_state = 0;
+
 const WORKING_STATE_VALUE = 3; // see ../aboutlife/context.py
-const TARGET_SITES = [
-  "youtube.com",
-  "reddit.com",
+const UNPRODUCTIVE_SITES = [
   "imgur.com",
   "facebook.com",
   "twitter.com",
+  "newgrounds.com",
 ];
+const TARGET_SITES = ["youtube.com", "reddit.com", ...UNPRODUCTIVE_SITES];
 
 function sleep(ms) {
   return new Promise((resolve) => {
@@ -42,6 +43,12 @@ function is_url_targeted(url) {
   });
 }
 
+function is_url_unproductive(url) {
+  return UNPRODUCTIVE_SITES.some((targeted_url) => {
+    return url.includes(targeted_url);
+  });
+}
+
 // Unloads all tabs that are considered "targeted"
 
 async function unload_tabs() {
@@ -51,6 +58,7 @@ async function unload_tabs() {
     const active_tab = (await browser.tabs.query({ active: true }))[0];
     const is_active_tab_targeted = is_url_targeted(active_tab.url);
     const tabs_to_unload = [];
+    const tabs_to_close = [];
 
     var perfect_candidate_tab_found = false;
     var candidate_tab = -1;
@@ -73,10 +81,11 @@ async function unload_tabs() {
         if (!tab_info.discarded) perfect_candidate_tab_found = true;
       }
 
-      // Compile tabs to unload
+      // Compile tabs to unload / close
 
-      if (is_targeted && !tab_info.pinned) {
-        tabs_to_unload.push(tab.id);
+      if (!tab_info.pinned) {
+        if (is_url_unproductive(tab_info.url)) tabs_to_close.push(tab.id);
+        else if (is_targeted) tabs_to_unload.push(tab.id);
       }
     }
 
@@ -92,6 +101,10 @@ async function unload_tabs() {
 
     tabs_to_unload.forEach((id) => {
       browser.tabs.discard(id);
+    });
+
+    tabs_to_close.forEach((id) => {
+      browser.tabs.remove(id);
     });
   } catch (error) {
     console.error(error);
