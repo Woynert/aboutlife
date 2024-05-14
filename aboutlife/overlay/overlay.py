@@ -20,6 +20,7 @@ class OverlayPlugin(Plugin):
         self.tick: int = 0
         self.state: STATE = STATE.IDLE
         self.end_time: int = int(time.time())
+        self.ready: bool = False
 
         self.main_window = None
         self.focus_window = None
@@ -104,6 +105,7 @@ class OverlayPlugin(Plugin):
         # start
         self.main_window.show_all()
         self.focus_window.show_all()
+        self.ready = True
         Gtk.main()
 
     def reset(self, widget):
@@ -119,7 +121,7 @@ class OverlayPlugin(Plugin):
 
     def process(self):
         self.tick += 1
-        if not self.main_window:
+        if not self.ready:
             return
 
         # each half a second
