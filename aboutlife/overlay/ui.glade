@@ -369,18 +369,6 @@
                                   <object class="GtkAlignment" id="term-container">
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
-                                    <child>
-                                      <object class="VteTerminal" id="terminal">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="hscroll_policy">natural</property>
-                                        <property name="vscroll_policy">natural</property>
-                                        <property name="encoding">UTF-8</property>
-                                        <property name="scroll_on_keystroke">True</property>
-                                        <property name="scroll_on_output">False</property>
-                                        <property name="font_scale">1.2</property>
-                                      </object>
-                                    </child>
                                   </object>
                                 </child>
                                 <child type="label_item">

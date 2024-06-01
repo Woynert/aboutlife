@@ -44,7 +44,9 @@ class OverlayPlugin(Plugin):
         self.main_window.connect("delete-event", lambda x, y: True)
 
         self.notebook = builder.get_object("main-notebook")
-        self.terminal = builder.get_object("terminal")
+        term_container = builder.get_object("term-container")
+        self.terminal = Vte.Terminal()
+        term_container.add(self.terminal)
         self.tbx_task = builder.get_object("tbx-task")
         self.cbx_duration = builder.get_object("cbx-duration")
         self.swi_network = builder.get_object("swi-network")
@@ -90,7 +92,6 @@ class OverlayPlugin(Plugin):
         self.main_window.set_skip_pager_hint(True)
         self.main_window.set_keep_above(True)
         self.main_window.set_decorated(False)
-        self.main_window.present()
         self.main_window.stick()
 
         # prefer dark theme
