@@ -8,7 +8,7 @@ gi.require_version("Gtk", "3.0")
 from gi.repository import Gtk
 
 ORIGIN_PATH = os.path.dirname(os.path.realpath(__file__))
-GRAB_TIMEOUT = 5
+GRAB_DURATION = 5
 IDLE_TIMEOUT = 0.2
 
 
@@ -27,13 +27,13 @@ def send_notification(title: str, message: str):
         subprocess.run(["notify-send", "-r", "108", "-t", "1000", title, message])
 
 
-# If there are no keyboard events in a while release it for a moment then grab
-# it again, so that the screensaver can take over
+# * If there are no keyboard events in a while release it for a moment then grab
+#   it again, so that the screensaver can take over
+# * It's assumed arg_window is ready (use 'show' signal)
 def keygrab_loop(arg_window: Gtk.Window):
     disp = display.Display()
     root = disp.screen().root
-    xid = arg_window.get_window().get_xid()
-    window = disp.create_resource_object("window", xid)
+    window = disp.create_resource_object("window", arg_window.get_window().get_xid())
     last_input_time: int = 0
     event_n = None
 
@@ -45,7 +45,7 @@ def keygrab_loop(arg_window: Gtk.Window):
             continue
 
         last_input_time = curr_time()
-        while (curr_time() - last_input_time) < GRAB_TIMEOUT:
+        while (curr_time() - last_input_time) < GRAB_DURATION:
             if disp.pending_events() > 0:
                 # handle events
                 last_input_time = curr_time()

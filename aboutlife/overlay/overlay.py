@@ -40,7 +40,7 @@ class OverlayPlugin(Plugin):
 
         self.main_window = builder.get_object("main-window")
         self.main_window.connect("destroy", Gtk.main_quit)
-        self.main_window.connect("show", self.reset)
+        self.main_window.connect("show", self.on_show)
         self.main_window.connect("delete-event", lambda x, y: True)
 
         self.notebook = builder.get_object("main-notebook")
@@ -97,18 +97,18 @@ class OverlayPlugin(Plugin):
         settings = Gtk.Settings.get_default()
         settings.set_property("gtk-application-prefer-dark-theme", True)
 
-        # grab keyboard
-        thread = threading.Thread(target=keygrab_loop, args=(self.main_window,))
-        thread.daemon = True
-        thread.start()
-
         # start
         self.main_window.show_all()
         self.focus_window.show_all()
         self.ready = True
         Gtk.main()
 
-    def reset(self, widget):
+    def on_show(self, widget):
+        # grab keyboard
+        thread = threading.Thread(target=keygrab_loop, args=(self.main_window,))
+        thread.daemon = True
+        thread.start()
+
         print("D: Starting setting up terminal")
         self.terminal.spawn_sync(
             Vte.PtyFlags.DEFAULT,
