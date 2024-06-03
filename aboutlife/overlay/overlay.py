@@ -140,22 +140,25 @@ class OverlayPlugin(Plugin):
 
         overlay_w = self.multiplexer.get_allocated_width()
         overlay_h = self.multiplexer.get_allocated_height()
+        gap = 4
 
         # main
         box = self.terms[0].get_parent()
         GLib.idle_add(box.set_margin_top, 0)
         GLib.idle_add(box.set_margin_bottom, 0)
         GLib.idle_add(box.set_margin_start, 0)
-        GLib.idle_add(box.set_margin_end, overlay_w / 2)
+        GLib.idle_add(box.set_margin_end, overlay_w/2 + gap/2)
 
         # slaves
         slave_h = overlay_h / (MAX_TERMS - 1)
         for i in range(1, MAX_TERMS):
             print(f"Configuring terminal {i}")
             box = self.terms[i].get_parent()
-            GLib.idle_add(box.set_margin_top, slave_h * (i - 1))
-            GLib.idle_add(box.set_margin_bottom, slave_h * (MAX_TERMS - 1 - i))
-            GLib.idle_add(box.set_margin_start, overlay_w / 2)
+            margin_top = slave_h * (i - 1) + (gap/2 if i != 1 else 0)
+            margin_bot = slave_h * (MAX_TERMS - 1 - i) + (gap/2 if i != MAX_TERMS-1 else 0)
+            GLib.idle_add(box.set_margin_top, margin_top)
+            GLib.idle_add(box.set_margin_bottom, margin_bot)
+            GLib.idle_add(box.set_margin_start, overlay_w / 2 + gap/2)
             GLib.idle_add(box.set_margin_end, 0)
 
     def process(self):
