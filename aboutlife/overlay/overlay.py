@@ -1,6 +1,7 @@
 import gi
 import threading
 import time
+import os
 from datetime import datetime
 from aboutlife.plugin import Plugin
 from aboutlife.context import STATE, TASK_MIN_LENGTH, TASK_MAX_LENGTH
@@ -14,6 +15,8 @@ from gi.repository import GObject, Gtk, Gdk, GLib, Vte, Pango
 
 GObject.type_register(Vte.Terminal)
 
+MAX_TERMS = 3
+
 
 class OverlayPlugin(Plugin):
     def __init__(self):
@@ -26,12 +29,13 @@ class OverlayPlugin(Plugin):
         self.focus_window = None
 
         self.notebook = None
-        self.terminal = None
         self.tbx_task = None
         self.cbx_duration = None
         self.swi_network = None
         self.lbl_time = None
         self.lbl_waiting = None
+        self.terms = [None] * MAX_TERMS
+        self.multiplexer = None
 
     def setup(self):
         builder = Gtk.Builder()
@@ -40,22 +44,29 @@ class OverlayPlugin(Plugin):
 
         self.main_window = builder.get_object("main-window")
         self.main_window.connect("destroy", Gtk.main_quit)
-        self.main_window.connect("show", self.on_show)
         self.main_window.connect("delete-event", lambda x, y: True)
+        self.main_window.connect("show", self.on_show)
+        self.main_window.connect("size-allocate", self.on_resize)
 
         self.notebook = builder.get_object("main-notebook")
-        term_container = builder.get_object("term-container")
-        self.terminal = Vte.Terminal()
-        term_container.add(self.terminal)
         self.tbx_task = builder.get_object("tbx-task")
         self.cbx_duration = builder.get_object("cbx-duration")
         self.swi_network = builder.get_object("swi-network")
         self.lbl_time = builder.get_object("lbl-time")
         self.lbl_waiting = builder.get_object("lbl-waiting")
-        # TODO: fallback font
-        self.terminal.set_font(Pango.FontDescription("IosevkaTermNerdFontMono 12"))
+        self.multiplexer = builder.get_object("multiplexer")
+
         self.tbx_task.set_placeholder_text(f"Mínimo {TASK_MIN_LENGTH} letras")
         self.tbx_task.set_max_length(TASK_MAX_LENGTH)
+
+        # create terminals
+        for i in range(MAX_TERMS):
+            term_container = builder.get_object(f"term-{i}")
+            term = Vte.Terminal()
+            term_container.add(term)
+            # TODO: fallback font
+            term.set_font(Pango.FontDescription("IosevkaTermNerdFontMono 12"))
+            self.terms[i] = term
 
         # signals
         button = builder.get_object("btn-close-tabs-1")
@@ -75,7 +86,7 @@ class OverlayPlugin(Plugin):
         button = builder.get_object("btn-duration-down")
         button.connect("clicked", lambda widget: self.on_spin_combobox(False))
 
-        # auxiliar regular focusable window to steal the focus
+        # auxiliar regular focusable window to steal focus
         self.focus_window = Gtk.Window()
         self.focus_window.set_title("aboutlife auxiliar window")
         self.focus_window.connect("destroy", Gtk.main_quit)
@@ -111,14 +122,41 @@ class OverlayPlugin(Plugin):
         thread.start()
 
         print("D: Starting setting up terminal")
-        self.terminal.spawn_sync(
-            Vte.PtyFlags.DEFAULT,
-            None,
-            ["/usr/bin/env", "vim", "/plan/1-wiki/syncthing/horario.md"],
-            None,
-            GLib.SpawnFlags.DEFAULT,
-        )
+        for i in range(MAX_TERMS):
+            term = self.terms[i]
+            term.spawn_sync(
+                Vte.PtyFlags.DEFAULT,
+                os.environ["HOME"],
+                ["/usr/bin/env", "bash"],
+                ["TMUX="],
+                GLib.SpawnFlags.DEFAULT,
+            )
         print("D: Done setting up terminal")
+
+    def on_resize(self, a, b):
+        print("D: resize event now")
+        if MAX_TERMS <= 1:
+            return
+
+        overlay_w = self.multiplexer.get_allocated_width()
+        overlay_h = self.multiplexer.get_allocated_height()
+
+        # main
+        box = self.terms[0].get_parent()
+        GLib.idle_add(box.set_margin_top, 0)
+        GLib.idle_add(box.set_margin_bottom, 0)
+        GLib.idle_add(box.set_margin_start, 0)
+        GLib.idle_add(box.set_margin_end, overlay_w / 2)
+
+        # slaves
+        slave_h = overlay_h / (MAX_TERMS - 1)
+        for i in range(1, MAX_TERMS):
+            print(f"Configuring terminal {i}")
+            box = self.terms[i].get_parent()
+            GLib.idle_add(box.set_margin_top, slave_h * (i - 1))
+            GLib.idle_add(box.set_margin_bottom, slave_h * (MAX_TERMS - 1 - i))
+            GLib.idle_add(box.set_margin_start, overlay_w / 2)
+            GLib.idle_add(box.set_margin_end, 0)
 
     def process(self):
         self.tick += 1
@@ -165,10 +203,10 @@ class OverlayPlugin(Plugin):
             text = datetime.now().strftime("%I:%M %p, %d of %B %Y")
             GLib.idle_add(self.lbl_time.set_text, text)
 
-            if self.state == STATE.TOMATO_BREAK or self.state == STATE.OBLIGATORY_BREAK:
-                GLib.idle_add(self.notebook.set_current_page, 2)
-            else:
-                GLib.idle_add(self.notebook.set_current_page, 1)
+            # if self.state == STATE.TOMATO_BREAK or self.state == STATE.OBLIGATORY_BREAK:
+            # GLib.idle_add(self.notebook.set_current_page, 2)
+            # else:
+            # GLib.idle_add(self.notebook.set_current_page, 1)
 
     def cleanup(self):
         Gtk.main_quit()

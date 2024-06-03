@@ -6,6 +6,7 @@ IDEAS
 * Support multiple screens
 * At night hours make the "close tabs" function automatic
 * Show last activity info near input for comparison
+    * Additionaly it could suggest you to take a tomato break, after it detects that you have been having working nonstop.
 * Make it so you have to press a button to exit the tomato break screen. Locate this button alongside the other buttons (such as close tabs, and shutdown). The order of these buttons will be shuffled every time so the user has to make the concious desicion to press it instead of the others.
 * Allow internet usage in intervals of 5 minutes (ON/OFF).
 * Make it so that for each minute without internet, you get a minute (or two) with internet. You start with 5 minutes each session.
@@ -14,12 +15,17 @@ IDEAS
 * Add "tomato break" option to tray icon, this option would end the session and enter a tomato break.
 * The ability to lock the sticky module in place.
 * After setting a task to take more than 30 minutes, the next immediate task must be less than 30 minutes. This would discourage chaining long lasting tasks together (very common when procrastinating), and encourage to pick better scoped tasks.
+* A "need youtube" setting. This would require integrating the "Youtube puzzle" web extension.
+* When the work session is about to end. Use visual cues in sticky, like Hyperfocus does.
 
 OVERLAY IDEAS
 
     * Alongside the "need internet" button, add a "shutdown on finish" button.
     * Put something visually attractive in the tomato break screen, so that you don't look away and ignore the action buttons.
+        * I was thinking about a picture a thinking roman statue.
     * Terminal on it's own tab, so that the user has a big area to work with. It's always and ideal scenario if the task can be done on the terminal.
+        * The user could continue their work session inside and outside aboutlife's overlay, using terminal multiplexer tools like tmux, screen, tywm.
+        * For users that prefer grafical tiling window managers instead of terminal multiplexers a special application/compatibility/translator/state tool could be developed for that use case.
     * A module to visualize your pomodoro sessions and breaks.
     * task manager: A section that shows a list of the opened apps with icons and thumbnails and a way to close them.
     * Alternatively from being able to specify a custom "task". Allow the creation of "goals", goals are displayed in a list, so, the user can choose to work on a specific goal.
@@ -31,6 +37,7 @@ OVERLAY IDEAS
     * Once in a while, after you obligatory break screen ends, you will get to a different screen with a 1 minute countdown, a message: "We're closing your webpages.. Take a break.", a button: "Acelerate closing", and another button: "Keep my pages this time". This last button you have to click very quickly to fill a bar, if you stop clicking the bar slowly returns back to zero.
         * The idea is, to keep your pages you have to make an extra effort. But to automatically remove them just relax and do nothing.
         * Maybe some motivational images could show during the event. I'm thinking on making a reusable image viewer widget that could be embedded in other relevant screens.
+    * Increase the obligatory break time at late hours (like do nothing for 2 minutes webpage)
 
 DONE
 
