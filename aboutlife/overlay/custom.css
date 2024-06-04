@@ -1,0 +1,12 @@
+* {
+  -gtk-icon-effect: none;
+  box-shadow: none;
+}
+
+.term {
+  padding-left: 3px;
+}
+
+.term-selected {
+  background: #D7B745;
+}

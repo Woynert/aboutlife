@@ -17,6 +17,7 @@ from gi.repository import GObject, Gtk, Gdk, GLib, Vte, Pango
 GObject.type_register(Vte.Terminal)
 
 MAX_TERMS = 3
+TERM_GAP = 6
 
 
 class NOTEBOOK(Enum):
@@ -50,6 +51,14 @@ class OverlayPlugin(Plugin):
         builder.add_from_file(get_resource_path("/overlay/ui.glade"))
         builder.connect_signals(self)
 
+        css_provider = Gtk.CssProvider()
+        css_provider.load_from_path(get_resource_path("/overlay/custom.css"))
+        Gtk.StyleContext.add_provider_for_screen(
+            Gdk.Screen.get_default(),
+            css_provider,
+            Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION,
+        )
+
         self.main_window = builder.get_object("main-window")
         self.main_window.connect("destroy", Gtk.main_quit)
         self.main_window.connect("delete-event", lambda x, y: True)
@@ -74,6 +83,8 @@ class OverlayPlugin(Plugin):
             term_container = builder.get_object(f"term-{i}")
             term = Vte.Terminal()
             term_container.add(term)
+            term.connect("button-press-event", self.on_terminal_focus, i)
+
             # TODO: fallback font
             term.set_font(Pango.FontDescription("IosevkaTermNerdFontMono 12"))
             self.terms[i] = term
@@ -150,7 +161,7 @@ class OverlayPlugin(Plugin):
 
         overlay_w = self.multiplexer.get_allocated_width()
         overlay_h = self.multiplexer.get_allocated_height()
-        gap = 4
+        gap = TERM_GAP
 
         # main
         box = self.terms[0].get_parent()
@@ -201,19 +212,27 @@ class OverlayPlugin(Plugin):
             return True
         return False
 
-    def cycle_terminal_focus(self, step: int):
+    def on_terminal_focus(self, widget, event, term_i):
+        self.cycle_terminal_focus(0, term_i)
+
+    def cycle_terminal_focus(self, step: int, selected_term: int = -1):
         # get which term is focused
-        selected_term = -1
         for i in range(MAX_TERMS):
-            if self.terms[i] == self.main_window.get_focus():
+            term = self.terms[i]
+            term.get_parent().get_style_context().remove_class("term-selected")
+
+            if selected_term == -1 and term == self.main_window.get_focus():
                 selected_term = i
-                break
 
         # select next term or prior
         next_term = (selected_term + step) % MAX_TERMS
         if selected_term == -1:
             next_term = 0
+
         self.terms[next_term].grab_focus()
+        self.terms[next_term].get_parent().get_style_context().add_class(
+            "term-selected"
+        )
 
     def process(self):
         self.tick += 1
