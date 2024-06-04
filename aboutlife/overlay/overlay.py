@@ -191,8 +191,29 @@ class OverlayPlugin(Plugin):
         elif event.keyval == Gdk.KEY_2:
             if current != NOTEBOOK.TERMINALS.value:
                 GLib.idle_add(self.notebook.set_current_page, NOTEBOOK.TERMINALS.value)
+                self.cycle_terminal_focus(0)
+            return True
+        elif event.keyval == Gdk.KEY_j:
+            self.cycle_terminal_focus(1)
+            return True
+        elif event.keyval == Gdk.KEY_k:
+            self.cycle_terminal_focus(-1)
             return True
         return False
+
+    def cycle_terminal_focus(self, step: int):
+        # get which term is focused
+        selected_term = -1
+        for i in range(MAX_TERMS):
+            if self.terms[i] == self.main_window.get_focus():
+                selected_term = i
+                break
+
+        # select next term or prior
+        next_term = (selected_term + step) % MAX_TERMS
+        if selected_term == -1:
+            next_term = 0
+        self.terms[next_term].grab_focus()
 
     def process(self):
         self.tick += 1
