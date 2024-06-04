@@ -2,6 +2,7 @@ import gi
 import threading
 import time
 import os
+from enum import Enum
 from datetime import datetime
 from aboutlife.plugin import Plugin
 from aboutlife.context import STATE, TASK_MIN_LENGTH, TASK_MAX_LENGTH
@@ -18,10 +19,17 @@ GObject.type_register(Vte.Terminal)
 MAX_TERMS = 3
 
 
+class NOTEBOOK(Enum):
+    HOME = 0
+    SETUP = 1
+    BREAK = 2
+    TERMINALS = 3
+
+
 class OverlayPlugin(Plugin):
     def __init__(self):
         self.tick: int = 0
-        self.state: STATE = STATE.IDLE
+        self.state: STATE = None
         self.end_time: int = int(time.time())
         self.ready: bool = False
 
@@ -47,6 +55,7 @@ class OverlayPlugin(Plugin):
         self.main_window.connect("delete-event", lambda x, y: True)
         self.main_window.connect("show", self.on_show)
         self.main_window.connect("size-allocate", self.on_resize)
+        self.main_window.connect("key-press-event", self.on_key_press)
 
         self.notebook = builder.get_object("main-notebook")
         self.tbx_task = builder.get_object("tbx-task")
@@ -58,6 +67,7 @@ class OverlayPlugin(Plugin):
 
         self.tbx_task.set_placeholder_text(f"Mínimo {TASK_MIN_LENGTH} letras")
         self.tbx_task.set_max_length(TASK_MAX_LENGTH)
+        self.notebook.set_current_page(NOTEBOOK.SETUP.value)
 
         # create terminals
         for i in range(MAX_TERMS):
@@ -147,19 +157,42 @@ class OverlayPlugin(Plugin):
         GLib.idle_add(box.set_margin_top, 0)
         GLib.idle_add(box.set_margin_bottom, 0)
         GLib.idle_add(box.set_margin_start, 0)
-        GLib.idle_add(box.set_margin_end, overlay_w/2 + gap/2)
+        GLib.idle_add(box.set_margin_end, overlay_w / 2 + gap / 2)
 
         # slaves
         slave_h = overlay_h / (MAX_TERMS - 1)
         for i in range(1, MAX_TERMS):
             print(f"Configuring terminal {i}")
             box = self.terms[i].get_parent()
-            margin_top = slave_h * (i - 1) + (gap/2 if i != 1 else 0)
-            margin_bot = slave_h * (MAX_TERMS - 1 - i) + (gap/2 if i != MAX_TERMS-1 else 0)
+            margin_top = slave_h * (i - 1) + (gap / 2 if i != 1 else 0)
+            margin_bot = slave_h * (MAX_TERMS - 1 - i) + (
+                gap / 2 if i != MAX_TERMS - 1 else 0
+            )
             GLib.idle_add(box.set_margin_top, margin_top)
             GLib.idle_add(box.set_margin_bottom, margin_bot)
-            GLib.idle_add(box.set_margin_start, overlay_w / 2 + gap/2)
+            GLib.idle_add(box.set_margin_start, overlay_w / 2 + gap / 2)
             GLib.idle_add(box.set_margin_end, 0)
+
+    # switch notebook pages (workplaces)
+    # TODO: use just pressed
+    def on_key_press(self, widget, event) -> bool:
+        if not (event.state & Gdk.ModifierType.SUPER_MASK):
+            return False
+
+        current = self.notebook.get_current_page()
+        if event.keyval == Gdk.KEY_1:
+            if self.state == STATE.IDLE:
+                if current != NOTEBOOK.HOME.value:
+                    GLib.idle_add(self.notebook.set_current_page, NOTEBOOK.HOME.value)
+            else:
+                if current != NOTEBOOK.BREAK.value:
+                    GLib.idle_add(self.notebook.set_current_page, NOTEBOOK.BREAK.value)
+            return True
+        elif event.keyval == Gdk.KEY_2:
+            if current != NOTEBOOK.TERMINALS.value:
+                GLib.idle_add(self.notebook.set_current_page, NOTEBOOK.TERMINALS.value)
+            return True
+        return False
 
     def process(self):
         self.tick += 1
@@ -194,6 +227,8 @@ class OverlayPlugin(Plugin):
                 Gtk.main_quit()
                 exit(1)
                 return
+
+            prevstate = self.state
             self.state = STATE(ctx.state)
             self.end_time = ctx.end_time
 
@@ -206,10 +241,14 @@ class OverlayPlugin(Plugin):
             text = datetime.now().strftime("%I:%M %p, %d of %B %Y")
             GLib.idle_add(self.lbl_time.set_text, text)
 
-            # if self.state == STATE.TOMATO_BREAK or self.state == STATE.OBLIGATORY_BREAK:
-            # GLib.idle_add(self.notebook.set_current_page, 2)
-            # else:
-            # GLib.idle_add(self.notebook.set_current_page, 1)
+            if prevstate != self.state:
+                if (
+                    self.state == STATE.TOMATO_BREAK
+                    or self.state == STATE.OBLIGATORY_BREAK
+                ):
+                    GLib.idle_add(self.notebook.set_current_page, NOTEBOOK.BREAK.value)
+                else:
+                    GLib.idle_add(self.notebook.set_current_page, NOTEBOOK.HOME.value)
 
     def cleanup(self):
         Gtk.main_quit()
