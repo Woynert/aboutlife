@@ -2,12 +2,14 @@ import os
 import subprocess
 import gi
 import time
+import select
 from Xlib import X, display, protocol
 
 gi.require_version("Gtk", "3.0")
 from gi.repository import Gtk
 
 ORIGIN_PATH = os.path.dirname(os.path.realpath(__file__))
+GRAB_ATTEMPT_TIMEOUT = 1
 GRAB_DURATION = 5
 IDLE_TIMEOUT = 0.2
 
@@ -33,22 +35,29 @@ def send_notification(title: str, message: str):
 def keygrab_loop(arg_window: Gtk.Window):
     disp = display.Display()
     root = disp.screen().root
+    fd = disp.fileno()  # display file descriptor
     window = disp.create_resource_object("window", arg_window.get_window().get_xid())
-    last_input_time: int = 0
     event_n = None
 
     while True:
-        # try grab it
+        # try grab keyboard
         grab = root.grab_keyboard(True, X.GrabModeAsync, X.GrabModeAsync, X.CurrentTime)
         if grab != X.GrabSuccess:
-            time.sleep(IDLE_TIMEOUT)
+            time.sleep(GRAB_ATTEMPT_TIMEOUT)
             continue
 
-        last_input_time = curr_time()
-        while (curr_time() - last_input_time) < GRAB_DURATION:
-            if disp.pending_events() > 0:
-                # handle events
-                last_input_time = curr_time()
+        while True:
+            # wait for events or timeout
+            rlist, _, _ = select.select([fd], [], [], GRAB_DURATION)
+
+            if not rlist:
+                # release
+                disp.ungrab_keyboard(X.CurrentTime)
+                disp.sync()
+                time.sleep(IDLE_TIMEOUT)
+                break
+
+            while disp.pending_events() > 0:
                 event = disp.next_event()
 
                 if event.type == X.KeyPress:
@@ -86,8 +95,3 @@ def keygrab_loop(arg_window: Gtk.Window):
 
                 disp.send_event(window, event_n, propagate=False)
                 disp.sync()
-
-        # release
-        disp.ungrab_keyboard(X.CurrentTime)
-        disp.sync()
-        time.sleep(IDLE_TIMEOUT)
