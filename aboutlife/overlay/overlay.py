@@ -18,6 +18,25 @@ GObject.type_register(Vte.Terminal)
 
 MAX_TERMS = 3
 TERM_GAP = 6
+PALETTE_PRIMARY = ["#222324", "#BABABA"]
+PALETTE = [
+    "#000000",
+    "#E8341C",
+    "#68C256",
+    "#F2D42C",
+    "#1C98E8",
+    "#8E69C9",
+    "#1C98E8",
+    "#BABABA",
+    "#666666",
+    "#E05A4F",
+    "#77B869",
+    "#EFD64B",
+    "#387CD3",
+    "#957BBE",
+    "#3D97E2",
+    "#BABABA",
+]
 
 
 class NOTEBOOK(Enum):
@@ -82,16 +101,28 @@ class OverlayPlugin(Plugin):
         self.lbl_time.set_text("")
         self.lbl_waiting.set_text("")
 
+        # terminal colors: hex to Gdk.RGBA
+        def hex_to_rgba(hex):
+            color = Gdk.RGBA()
+            color.parse(hex)
+            return color
+
+        colors = [hex_to_rgba(color) for color in PALETTE]
+        colors_primary = [hex_to_rgba(color) for color in PALETTE_PRIMARY]
+
         # create terminals
         for i in range(MAX_TERMS):
             term_container = builder.get_object(f"term-{i}")
             term = Vte.Terminal()
             term_container.add(term)
             term.connect("button-press-event", self.on_terminal_focus, i)
+            self.terms[i] = term
 
             # TODO: fallback font
             term.set_font(Pango.FontDescription("IosevkaTermNerdFontMono 12"))
-            self.terms[i] = term
+            # TODO: unmangle
+            # apply palette
+            term.set_colors(colors_primary[1], colors_primary[0], colors)
 
         # signals
         button = builder.get_object("btn-close-tabs-1")
