@@ -47,6 +47,7 @@ class OverlayPlugin(Plugin):
         self.multiplexer = None
 
     def setup(self):
+        # build
         builder = Gtk.Builder()
         builder.add_from_file(get_resource_path("/overlay/ui.glade"))
         builder.connect_signals(self)
@@ -74,9 +75,12 @@ class OverlayPlugin(Plugin):
         self.lbl_waiting = builder.get_object("lbl-waiting")
         self.multiplexer = builder.get_object("multiplexer")
 
+        # initial configuration
         self.tbx_task.set_placeholder_text(f"Mínimo {TASK_MIN_LENGTH} letras")
         self.tbx_task.set_max_length(TASK_MAX_LENGTH)
         self.notebook.set_current_page(NOTEBOOK.SETUP.value)
+        self.lbl_time.set_text("")
+        self.lbl_waiting.set_text("")
 
         # create terminals
         for i in range(MAX_TERMS):
