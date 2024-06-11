@@ -190,13 +190,17 @@ class OverlayPlugin(Plugin):
         self.terminals_spawn()
         print("D: Done setting up terminals")
 
-    def terminals_spawn(self, command=[]):
-        if not len(command):
-            command = ["/usr/bin/env", "bash"]
+    def terminals_spawn(self, command_template: str = ""):
+        # TODO: Make it configurable
+        command = ["/usr/bin/env", "bash"]
 
-        for term in self.terms:
-            # previous sessions are forcefully killed
-            ok, result = term.spawn_sync(
+        for i in range(MAX_TERMS):
+            # optional command formatting for each terminal
+            if len(command_template):
+                command = command_template.format(i).split()
+
+            # previous process will be killed
+            ok, result = self.terms[i].spawn_sync(
                 Vte.PtyFlags.DEFAULT,
                 os.environ["HOME"],
                 command,
@@ -338,9 +342,16 @@ class OverlayPlugin(Plugin):
         if not selected_row:
             return
         session = selected_row.get_child().get_label()
+
         if len(session):
             print(f'I: Applying tmux session "{session}"')
-            self.terminals_spawn(["/usr/bin/env", "tmux", "new-session", "-t", session])
+
+            # terminal index dependent template
+            # use ; instead of \; for there's no need to escape it, we're not in bash
+            command = (
+                f"/usr/bin/env tmux new-session -t {session} ; select-window -t {{}}"
+            )
+            self.terminals_spawn(command)
 
     def on_terminal_focus(self, widget, event, term_i):
         self.cycle_terminal_focus(0, term_i)
