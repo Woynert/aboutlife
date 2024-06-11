@@ -338,13 +338,13 @@ class OverlayPlugin(Plugin):
             GLib.idle_add(self.tmux_dialog_list.add, row)
 
         # select and focus first row
-        def focus_row():
-            first_row = self.tmux_dialog_list.get_row_at_index(0)
-            self.tmux_dialog_list.select_row(first_row)
-            first_row.grab_focus()
+        def focus_row(index: int):
+            row = self.tmux_dialog_list.get_row_at_index(index)
+            self.tmux_dialog_list.select_row(row)
+            row.grab_focus()
 
         GLib.idle_add(self.tmux_dialog_list.show_all)
-        GLib.idle_add(focus_row)
+        GLib.idle_add(focus_row, len(sessions) - 1)
 
     def reset_tmux_dialog(self):
         self.is_tmux_dialog_active = False
