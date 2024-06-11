@@ -445,7 +445,7 @@ class OverlayPlugin(Plugin):
                     or self.state == STATE.OBLIGATORY_BREAK
                 ):
                     GLib.idle_add(self.notebook.set_current_page, NOTEBOOK.BREAK.value)
-                else:
+                elif self.notebook.get_current_page() != NOTEBOOK.TERMINALS.value:
                     GLib.idle_add(self.notebook.set_current_page, NOTEBOOK.HOME.value)
 
     def cleanup(self):
