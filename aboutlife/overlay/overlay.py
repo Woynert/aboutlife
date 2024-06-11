@@ -252,6 +252,17 @@ class OverlayPlugin(Plugin):
                 self.cycle_terminal_focus(0)
                 return True
 
+        # C-S-v terminal paste
+        if (
+            event.state & Gdk.ModifierType.CONTROL_MASK
+            and event.state & Gdk.ModifierType.SHIFT_MASK
+            and event.keyval == Gdk.KEY_V
+        ):
+            focused_term = Gtk.Window.get_focus(self.main_window)
+            if isinstance(focused_term, Vte.Terminal):
+                focused_term.paste_clipboard()
+                return True
+
         # all following events require SUPER key
         if not (event.state & Gdk.ModifierType.SUPER_MASK):
             return False
