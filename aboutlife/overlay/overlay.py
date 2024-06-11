@@ -333,7 +333,13 @@ class OverlayPlugin(Plugin):
         GLib.idle_add(self.tmux_dialog.set_visible, False)
 
     def apply_tmux_session(self):
-        return
+        selected_row = self.tmux_dialog_list.get_selected_row()
+        if not selected_row:
+            return
+        session = selected_row.get_child().get_label()
+        if len(session):
+            print(f'I: Applying tmux session "{session}"')
+            self.terminals_spawn(["/usr/bin/env", "tmux", "new-session", "-t", session])
 
     def on_terminal_focus(self, widget, event, term_i):
         self.cycle_terminal_focus(0, term_i)
