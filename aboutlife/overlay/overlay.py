@@ -2,6 +2,7 @@ import gi
 import threading
 import time
 import os
+import subprocess
 from enum import Enum
 from datetime import datetime
 from aboutlife.plugin import Plugin
@@ -65,6 +66,10 @@ class OverlayPlugin(Plugin):
         self.terms = [None] * MAX_TERMS
         self.multiplexer = None
 
+        self.is_tmux_dialog_active = False
+        self.tmux_dialog = None
+        self.tmux_dialog_list = None
+
     def setup(self):
         # build
         builder = Gtk.Builder()
@@ -93,6 +98,8 @@ class OverlayPlugin(Plugin):
         self.lbl_time = builder.get_object("lbl-time")
         self.lbl_waiting = builder.get_object("lbl-waiting")
         self.multiplexer = builder.get_object("multiplexer")
+        self.tmux_dialog = builder.get_object("tmux-dialog")
+        self.tmux_dialog_list = builder.get_object("tmux-dialog-list")
 
         # initial configuration
         self.tbx_task.set_placeholder_text(f"Mínimo {TASK_MIN_LENGTH} letras")
@@ -168,6 +175,8 @@ class OverlayPlugin(Plugin):
         # start
         self.main_window.show_all()
         self.focus_window.show_all()
+        self.reset_tmux_dialog()
+
         self.ready = True
         Gtk.main()
 
@@ -229,10 +238,35 @@ class OverlayPlugin(Plugin):
     # switch notebook pages (workplaces)
     # TODO: use just pressed
     def on_key_press(self, widget, event) -> bool:
+        if self.is_tmux_dialog_active:
+            if event.keyval == Gdk.KEY_Escape:
+                self.reset_tmux_dialog()
+            elif event.keyval == Gdk.KEY_Return:
+                self.reset_tmux_dialog()
+                self.apply_tmux_session()
+
+        # all following events require SUPER key
         if not (event.state & Gdk.ModifierType.SUPER_MASK):
             return False
-
         current = self.notebook.get_current_page()
+
+        # open tmux dialog
+        if event.keyval == Gdk.KEY_3:
+            if self.is_tmux_dialog_active:  # toggle
+                self.reset_tmux_dialog()
+                self.cycle_terminal_focus(0)
+                return True
+            if current != NOTEBOOK.TERMINALS.value:
+                GLib.idle_add(self.notebook.set_current_page, NOTEBOOK.TERMINALS.value)
+            self.unfocus_terminals()
+            self.show_tmux_dialog()
+            return True
+
+        # close on any other action
+        if self.is_tmux_dialog_active:
+            self.reset_tmux_dialog()
+
+        # go home
         if event.keyval == Gdk.KEY_1:
             if self.state == STATE.IDLE:
                 if current != NOTEBOOK.HOME.value:
@@ -241,21 +275,72 @@ class OverlayPlugin(Plugin):
                 if current != NOTEBOOK.BREAK.value:
                     GLib.idle_add(self.notebook.set_current_page, NOTEBOOK.BREAK.value)
             return True
+
+        # go to terminals
         elif event.keyval == Gdk.KEY_2:
             if current != NOTEBOOK.TERMINALS.value:
                 GLib.idle_add(self.notebook.set_current_page, NOTEBOOK.TERMINALS.value)
-                self.cycle_terminal_focus(0)
+            self.cycle_terminal_focus(0)
             return True
+
         elif event.keyval == Gdk.KEY_j:
             self.cycle_terminal_focus(1)
             return True
+
         elif event.keyval == Gdk.KEY_k:
             self.cycle_terminal_focus(-1)
             return True
+
         return False
+
+    def show_tmux_dialog(self):
+        self.is_tmux_dialog_active = True
+        GLib.idle_add(self.tmux_dialog.set_visible, True)
+
+        # clear list
+        self.tmux_dialog_list.foreach(
+            lambda row: GLib.idle_add(self.tmux_dialog_list.remove, row)
+        )
+
+        # get tmux session list
+        sessions = []
+        tmux_cmd = ["/usr/bin/env", "tmux", "list-sessions", "-F", "#{session_group}"]
+        try:
+            result = subprocess.check_output(tmux_cmd, shell=False, text=True)
+            sessions = list(set(result.splitlines()))
+        except subprocess.CalledProcessError as e:
+            print("E:", e)
+            self.reset_tmux_dialog()
+            return
+
+        # fill
+        row = None
+        for item in sessions:
+            row = Gtk.Label(label=item)
+            GLib.idle_add(self.tmux_dialog_list.add, row)
+
+        # select and focus first row
+        def focus_row():
+            first_row = self.tmux_dialog_list.get_row_at_index(0)
+            self.tmux_dialog_list.select_row(first_row)
+            first_row.grab_focus()
+
+        GLib.idle_add(self.tmux_dialog_list.show_all)
+        GLib.idle_add(focus_row)
+
+    def reset_tmux_dialog(self):
+        self.is_tmux_dialog_active = False
+        GLib.idle_add(self.tmux_dialog.set_visible, False)
+
+    def apply_tmux_session(self):
+        return
 
     def on_terminal_focus(self, widget, event, term_i):
         self.cycle_terminal_focus(0, term_i)
+
+    def unfocus_terminals(self):
+        for term in self.terms:
+            term.get_parent().get_style_context().remove_class("term-selected")
 
     def cycle_terminal_focus(self, step: int, selected_term: int = -1):
         # get which term is focused
