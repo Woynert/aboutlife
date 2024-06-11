@@ -35,6 +35,9 @@ IDEAS
 * (overlay) A plugin in where you see a list of the last 7 days, and the upcoming 7 days, and you can specify a goal for each day, this way you can always have in mind, what "plan" do you have.
 * (overlay) Alternatively from being able to specify a custom "task". Allow the creation of "goals", goals are displayed in a list, so, the user can choose to work on a specific goal.
 * (overlay) (terminals) Dialog to specify a tmux session and instantly switch all terminals to that session, each terminal should show a different tmux's window.
+* (overlay) on break screen show an anti eye strain activity, like safeeyes does.
+* (overlay) A section where you are shown a series of screens/text one by one, and you have to click next to see the next one. You have to go through all. This screens could be: Email (webview), Birthdays (text file), Calendar, or other reminders. You could open it by yourself or it could pop up randomly sometimes.
+* (overlay) Daily planner. A section that emulates the planning I do with my notebook. You can only specify, hour and goal; you could see it hovering the trayicon. And you can select a goal from there instead of writting one for starting a session.
 
 
 * (tray) Add "tomato break" option to tray icon, this option would end the session and enter a tomato break.
