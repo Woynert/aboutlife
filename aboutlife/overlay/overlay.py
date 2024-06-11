@@ -177,20 +177,27 @@ class OverlayPlugin(Plugin):
         thread.daemon = True
         thread.start()
 
-        print("D: Starting setting up terminal")
-        for i in range(MAX_TERMS):
-            term = self.terms[i]
-            term.spawn_sync(
+        print("D: Starting setting up terminals")
+        self.terminals_spawn()
+        print("D: Done setting up terminals")
+
+    def terminals_spawn(self, command=[]):
+        if not len(command):
+            command = ["/usr/bin/env", "bash"]
+
+        for term in self.terms:
+            # previous sessions are forcefully killed
+            ok, result = term.spawn_sync(
                 Vte.PtyFlags.DEFAULT,
                 os.environ["HOME"],
-                ["/usr/bin/env", "bash"],
+                command,
                 ["TMUX="],
                 GLib.SpawnFlags.DEFAULT,
             )
-        print("D: Done setting up terminal")
+            if not ok:
+                print("E(terminal): couldn't spawn shell")
 
     def on_resize(self, a, b):
-        print("D: resize event now")
         if MAX_TERMS <= 1:
             return
 
