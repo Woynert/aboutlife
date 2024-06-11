@@ -244,6 +244,7 @@ class OverlayPlugin(Plugin):
             elif event.keyval == Gdk.KEY_Return:
                 self.reset_tmux_dialog()
                 self.apply_tmux_session()
+                self.cycle_terminal_focus(0)
 
         # all following events require SUPER key
         if not (event.state & Gdk.ModifierType.SUPER_MASK):
