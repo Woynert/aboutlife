@@ -245,10 +245,12 @@ class OverlayPlugin(Plugin):
         if self.is_tmux_dialog_active:
             if event.keyval == Gdk.KEY_Escape:
                 self.reset_tmux_dialog()
+                return True
             elif event.keyval == Gdk.KEY_Return:
                 self.reset_tmux_dialog()
                 self.apply_tmux_session()
                 self.cycle_terminal_focus(0)
+                return True
 
         # all following events require SUPER key
         if not (event.state & Gdk.ModifierType.SUPER_MASK):
@@ -267,7 +269,7 @@ class OverlayPlugin(Plugin):
             self.show_tmux_dialog()
             return True
 
-        # close on any other action
+        # close tmux dialog on any other action
         if self.is_tmux_dialog_active:
             self.reset_tmux_dialog()
 
