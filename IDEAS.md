@@ -10,6 +10,7 @@ IDEAS
 * (core) After setting a task to take more than 30 minutes, the next immediate task must be less than 30 minutes. This would discourage chaining long lasting tasks together (very common when procrastinating), and encourage to pick better scoped tasks.
 * (core) A "need youtube" setting. This would require integrating the "Youtube puzzle" web extension.
 * (core) Increase the obligatory break time at late hours (like do nothing for 2 minutes webpage)
+* (core) An option to start a task inside the overlay plugin. So the task can be completed with it opened.
 
 
 * (overlay) (terminals) Button to reset terminal
@@ -28,6 +29,7 @@ IDEAS
     * This would allow to access future modules like, music, task history, motivational media, etc.
 * (overlay) A section to watch motivational media, including: images, videos, music, and pdfs. This could use regulation.
 * (overlay) A simple seccion that shows a motivational image/quote each day or every 12/8 hours.
+    * A section specifically made to encourage action, to address the fear to start, to take the first step. Like a quote with a pretty background maybe.
 * (overlay) Once in a while, after you obligatory break screen ends, you will get to a different screen with a 1 minute countdown, a message: "We're closing your webpages.. Take a break.", a button: "Acelerate closing", and another button: "Keep my pages this time". This last button you have to click very quickly to fill a bar, if you stop clicking the bar slowly returns back to zero.
     * The idea is, to keep your pages you have to make an extra effort. But to automatically remove them just relax and do nothing.
     * Maybe some motivational images could show during the event. I'm thinking on making a reusable image viewer widget that could be embedded in other relevant screens.
@@ -43,6 +45,7 @@ IDEAS
 * (tray) Add "tomato break" option to tray icon, this option would end the session and enter a tomato break.
 * (sticky) The ability to lock the sticky module in place.
 * (sticky) When the work session is about to end. Use visual cues in sticky, like Hyperfocus does. Maybe play a sound too. Use GtkDrawingArea.
+* (sticky) Make it less intrusive by having a transparent background.
 * (webext) At night hours make the "close tabs" function automatic
 
 

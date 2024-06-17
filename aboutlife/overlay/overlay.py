@@ -17,7 +17,7 @@ from gi.repository import GObject, Gtk, Gdk, GLib, Vte, Pango
 
 GObject.type_register(Vte.Terminal)
 
-MAX_TERMS = 3
+MAX_TERMS = 2
 TERM_GAP = 6
 PALETTE_PRIMARY = ["#222324", "#BABABA"]
 PALETTE = [
