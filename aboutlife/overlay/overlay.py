@@ -76,6 +76,7 @@ class OverlayPlugin(Plugin):
 
         self.TERM_FONT_SIZE = 12
         self.MASTER_PANE_SIZE = 55  # percent
+        self.maximized_terminal = -1
 
     def setup(self):
         # build
@@ -305,6 +306,8 @@ class OverlayPlugin(Plugin):
         # close tmux dialog on any other action
         if self.is_tmux_dialog_active:
             self.reset_tmux_dialog()
+            if current == NOTEBOOK.TERMINALS.value:
+                self.cycle_terminal_focus(0)
 
         # go home
         if event.keyval == Gdk.KEY_1:
@@ -325,19 +328,27 @@ class OverlayPlugin(Plugin):
 
         if current == NOTEBOOK.TERMINALS.value:
             if event.keyval == Gdk.KEY_j:
-                self.cycle_terminal_focus(1)
+                if not self.is_terminal_maximized():
+                    self.cycle_terminal_focus(1)
                 return True
 
             elif event.keyval == Gdk.KEY_k:
-                self.cycle_terminal_focus(-1)
+                if not self.is_terminal_maximized():
+                    self.cycle_terminal_focus(-1)
                 return True
 
             elif event.keyval == Gdk.KEY_h:
-                self.update_master_pane_size(False)
+                if not self.is_terminal_maximized():
+                    self.update_master_pane_size(False)
                 return True
 
             elif event.keyval == Gdk.KEY_l:
-                self.update_master_pane_size(True)
+                if not self.is_terminal_maximized():
+                    self.update_master_pane_size(True)
+                return True
+
+            elif event.keyval == Gdk.KEY_f:
+                self.terminal_toggle_maximize()
                 return True
 
         return False
@@ -438,6 +449,37 @@ class OverlayPlugin(Plugin):
             term.set_font(
                 Pango.FontDescription(f"{TERM_FONT_FAMILY} {self.TERM_FONT_SIZE}")
             )
+
+    def is_terminal_maximized(self) -> bool:
+        return self.maximized_terminal >= 0
+
+    def terminal_toggle_maximize(self):
+        # a terminal is already maximized
+        if self.is_terminal_maximized():
+            for i in range(MAX_TERMS):
+                GLib.idle_add(self.term_containers[i].show)
+                GLib.idle_add(self.terms[i].show)
+            self.cycle_terminal_focus(0)
+            self.on_resize(None, None)
+            self.maximized_terminal = -1
+            return
+
+        # no terminal is maximized
+        focused_term = Gtk.Window.get_focus(self.main_window)
+        if not isinstance(focused_term, Vte.Terminal):
+            return
+        for i in range(MAX_TERMS):
+            term = self.terms[i]
+            if term == focused_term:
+                self.maximized_terminal = i
+                continue
+            GLib.idle_add(self.term_containers[i].hide)
+            GLib.idle_add(term.hide)
+
+        GLib.idle_add(focused_term.set_margin_top, 0)
+        GLib.idle_add(focused_term.set_margin_bottom, 0)
+        GLib.idle_add(focused_term.set_margin_start, 0)
+        GLib.idle_add(focused_term.set_margin_end, 0)
 
     def process(self):
         self.tick += 1
