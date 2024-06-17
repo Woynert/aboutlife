@@ -599,7 +599,6 @@ def loop(plugin):
     while True:
         time.sleep(0.5)
         plugin.process()
-        print("D: tick (overlay)")
 
 
 def main():
