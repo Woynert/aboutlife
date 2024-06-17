@@ -186,6 +186,7 @@ class OverlayPlugin(Plugin):
         self.main_window.show_all()
         self.focus_window.show_all()
         self.reset_tmux_dialog()
+        self.update_state_from_remote()
 
         self.ready = True
         Gtk.main()
@@ -507,35 +508,34 @@ class OverlayPlugin(Plugin):
         if self.tick % 4 == 0:  # each two seconds
             print("D: stealing focus...")
             self.focus_window.present()
+            self.update_state_from_remote()
 
-            ctx = client.get_state()
-            if not ctx:
-                print("E: overlay process. couldn't connect to server")
-                Gtk.main_quit()
-                exit(1)
-                return
+    def update_state_from_remote(self):
+        ctx = client.get_state()
+        if not ctx:
+            print("E: overlay process. couldn't connect to server")
+            Gtk.main_quit()
+            exit(1)
+            return
 
-            prevstate = self.state
-            self.state = STATE(ctx.state)
-            self.end_time = ctx.end_time
+        prevstate = self.state
+        self.state = STATE(ctx.state)
+        self.end_time = ctx.end_time
 
-            if self.state == STATE.WORKING:
-                print("I: overlay process. state changed to WORKING")
-                Gtk.main_quit()
-                exit(0)
-                return
+        if self.state == STATE.WORKING:
+            print("I: overlay process. state changed to WORKING")
+            Gtk.main_quit()
+            exit(0)
+            return
 
-            text = datetime.now().strftime("%I:%M %p, %d of %B %Y")
-            GLib.idle_add(self.lbl_time.set_text, text)
+        text = datetime.now().strftime("%I:%M %p, %d of %B %Y")
+        GLib.idle_add(self.lbl_time.set_text, text)
 
-            if prevstate != self.state:
-                if (
-                    self.state == STATE.TOMATO_BREAK
-                    or self.state == STATE.OBLIGATORY_BREAK
-                ):
-                    GLib.idle_add(self.notebook.set_current_page, NOTEBOOK.BREAK.value)
-                elif self.notebook.get_current_page() != NOTEBOOK.TERMINALS.value:
-                    GLib.idle_add(self.notebook.set_current_page, NOTEBOOK.HOME.value)
+        if prevstate != self.state:
+            if self.state == STATE.TOMATO_BREAK or self.state == STATE.OBLIGATORY_BREAK:
+                GLib.idle_add(self.notebook.set_current_page, NOTEBOOK.BREAK.value)
+            elif self.notebook.get_current_page() != NOTEBOOK.TERMINALS.value:
+                GLib.idle_add(self.notebook.set_current_page, NOTEBOOK.HOME.value)
 
     def cleanup(self):
         Gtk.main_quit()
@@ -556,6 +556,8 @@ class OverlayPlugin(Plugin):
             "Tomato break",
             "Sent successfully" if success else "Can't do that right now",
         )
+        if success:
+            self.update_state_from_remote()
 
     def on_shutdown(self, widget):
         print("D: triggered 'shutdown'")
@@ -589,6 +591,8 @@ class OverlayPlugin(Plugin):
             "Start Session",
             "Sent successfully" if success else "Can't do that right now",
         )
+        if success:
+            self.update_state_from_remote()
 
 
 def loop(plugin):
