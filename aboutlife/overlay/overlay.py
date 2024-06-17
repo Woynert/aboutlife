@@ -19,6 +19,8 @@ GObject.type_register(Vte.Terminal)
 
 MAX_TERMS = 2
 TERM_GAP = 6
+# TODO: Define in config file
+TERM_FONT_FAMILY = "IosevkaTermNerdFontMono"
 PALETTE_PRIMARY = ["#222324", "#BABABA"]
 PALETTE = [
     "#000000",
@@ -69,6 +71,8 @@ class OverlayPlugin(Plugin):
         self.is_tmux_dialog_active = False
         self.tmux_dialog = None
         self.tmux_dialog_list = None
+
+        self.TERM_FONT_SIZE = 12
 
     def setup(self):
         # build
@@ -125,11 +129,10 @@ class OverlayPlugin(Plugin):
             term.connect("button-press-event", self.on_terminal_focus, i)
             self.terms[i] = term
 
-            # TODO: fallback font
-            term.set_font(Pango.FontDescription("IosevkaTermNerdFontMono 12"))
             # TODO: unmangle
             # apply palette
             term.set_colors(colors_primary[1], colors_primary[0], colors)
+        self.update_terminals_font_size()
 
         # signals
         button = builder.get_object("btn-close-tabs-1")
@@ -252,16 +255,26 @@ class OverlayPlugin(Plugin):
                 self.cycle_terminal_focus(0)
                 return True
 
-        # C-S-v terminal paste
         if (
             event.state & Gdk.ModifierType.CONTROL_MASK
             and event.state & Gdk.ModifierType.SHIFT_MASK
-            and event.keyval == Gdk.KEY_V
         ):
-            focused_term = Gtk.Window.get_focus(self.main_window)
-            if isinstance(focused_term, Vte.Terminal):
-                focused_term.paste_clipboard()
-                return True
+            # C-S-v terminal paste
+            if event.keyval == Gdk.KEY_V:
+                focused_term = Gtk.Window.get_focus(self.main_window)
+                if isinstance(focused_term, Vte.Terminal):
+                    focused_term.paste_clipboard()
+                    return True
+            elif event.keyval == Gdk.KEY_underscore:
+                focused_term = Gtk.Window.get_focus(self.main_window)
+                if isinstance(focused_term, Vte.Terminal):
+                    self.update_terminals_font_size(-1, focused_term)
+                    return True
+            elif event.keyval == Gdk.KEY_plus:
+                focused_term = Gtk.Window.get_focus(self.main_window)
+                if isinstance(focused_term, Vte.Terminal):
+                    self.update_terminals_font_size(1, focused_term)
+                    return True
 
         # all following events require SUPER key
         if not (event.state & Gdk.ModifierType.SUPER_MASK):
@@ -391,6 +404,19 @@ class OverlayPlugin(Plugin):
         self.terms[next_term].get_parent().get_style_context().add_class(
             "term-selected"
         )
+
+    def update_terminals_font_size(self, delta: int = 0, widget: Vte.Terminal = None):
+        self.TERM_FONT_SIZE += delta
+        if widget != None:
+            widget.set_font(
+                Pango.FontDescription(f"{TERM_FONT_FAMILY} {self.TERM_FONT_SIZE}")
+            )
+            return
+        for term in self.terms:
+            # TODO: fallback font
+            term.set_font(
+                Pango.FontDescription(f"{TERM_FONT_FAMILY} {self.TERM_FONT_SIZE}")
+            )
 
     def process(self):
         self.tick += 1
