@@ -574,9 +574,6 @@
                                     <child type="label_item">
                                       <placeholder/>
                                     </child>
-                                    <style>
-                                      <class name="term"/>
-                                    </style>
                                   </object>
                                 </child>
                                 <child type="overlay">
@@ -592,9 +589,6 @@
                                     <child type="label_item">
                                       <placeholder/>
                                     </child>
-                                    <style>
-                                      <class name="term"/>
-                                    </style>
                                   </object>
                                   <packing>
                                     <property name="index">1</property>
@@ -613,9 +607,6 @@
                                     <child type="label_item">
                                       <placeholder/>
                                     </child>
-                                    <style>
-                                      <class name="term"/>
-                                    </style>
                                   </object>
                                   <packing>
                                     <property name="index">2</property>
@@ -634,9 +625,6 @@
                                     <child type="label_item">
                                       <placeholder/>
                                     </child>
-                                    <style>
-                                      <class name="term"/>
-                                    </style>
                                   </object>
                                   <packing>
                                     <property name="index">3</property>
@@ -655,9 +643,6 @@
                                     <child type="label_item">
                                       <placeholder/>
                                     </child>
-                                    <style>
-                                      <class name="term"/>
-                                    </style>
                                   </object>
                                   <packing>
                                     <property name="index">4</property>

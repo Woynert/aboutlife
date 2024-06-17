@@ -19,6 +19,7 @@ GObject.type_register(Vte.Terminal)
 
 MAX_TERMS = 2
 TERM_GAP = 6
+TERM_BORDER = 3
 # TODO: Define in config file
 TERM_FONT_FAMILY = "IosevkaTermNerdFontMono"
 PALETTE_PRIMARY = ["#222324", "#BABABA"]
@@ -229,6 +230,8 @@ class OverlayPlugin(Plugin):
 
         # main
         for k, box in enumerate([self.terms[0], self.term_containers[0]]):
+            if k == 0:
+                GLib.idle_add(box.set_margin_start, TERM_BORDER)
             GLib.idle_add(box.set_margin_end, overlay_w * (1 - master_size) + gap / 2)
 
         # slaves
@@ -242,9 +245,10 @@ class OverlayPlugin(Plugin):
                 GLib.idle_add(box.set_margin_top, margin_top)
                 GLib.idle_add(box.set_margin_bottom, margin_bot)
 
+                border_offset = TERM_BORDER if k == 0 else 0
                 GLib.idle_add(
                     box.set_margin_start,
-                    overlay_w * master_size + gap / 2,
+                    overlay_w * master_size + gap / 2 + border_offset,
                 )
 
     # switch notebook pages (workplaces)
