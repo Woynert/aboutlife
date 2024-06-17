@@ -320,24 +320,25 @@ class OverlayPlugin(Plugin):
         elif event.keyval == Gdk.KEY_2:
             if current != NOTEBOOK.TERMINALS.value:
                 GLib.idle_add(self.notebook.set_current_page, NOTEBOOK.TERMINALS.value)
-            self.cycle_terminal_focus(0)
+            GLib.idle_add(self.cycle_terminal_focus, 0)
             return True
 
-        elif event.keyval == Gdk.KEY_j:
-            self.cycle_terminal_focus(1)
-            return True
+        if current == NOTEBOOK.TERMINALS.value:
+            if event.keyval == Gdk.KEY_j:
+                self.cycle_terminal_focus(1)
+                return True
 
-        elif event.keyval == Gdk.KEY_k:
-            self.cycle_terminal_focus(-1)
-            return True
+            elif event.keyval == Gdk.KEY_k:
+                self.cycle_terminal_focus(-1)
+                return True
 
-        elif event.keyval == Gdk.KEY_h:
-            self.update_master_pane_size(False)
-            return True
+            elif event.keyval == Gdk.KEY_h:
+                self.update_master_pane_size(False)
+                return True
 
-        elif event.keyval == Gdk.KEY_l:
-            self.update_master_pane_size(True)
-            return True
+            elif event.keyval == Gdk.KEY_l:
+                self.update_master_pane_size(True)
+                return True
 
         return False
 
@@ -401,7 +402,7 @@ class OverlayPlugin(Plugin):
 
     def unfocus_terminals(self):
         for container in self.term_containers:
-            container.get_parent().get_style_context().remove_class("term-selected")
+            container.get_style_context().remove_class("term-selected")
 
     def cycle_terminal_focus(self, step: int, selected_term: int = -1):
         # get which term is focused
