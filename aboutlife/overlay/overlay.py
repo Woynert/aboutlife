@@ -19,6 +19,7 @@ GObject.type_register(Vte.Terminal)
 
 MAX_TERMS = 2
 TERM_GAP = 6
+TERM_BORDER = 3
 # TODO: Define in config file
 TERM_FONT_FAMILY = "IosevkaTermNerdFontMono"
 PALETTE_PRIMARY = ["#222324", "#BABABA"]
@@ -66,6 +67,7 @@ class OverlayPlugin(Plugin):
         self.lbl_time = None
         self.lbl_waiting = None
         self.terms = [None] * MAX_TERMS
+        self.term_containers = [None] * MAX_TERMS
         self.multiplexer = None
 
         self.is_tmux_dialog_active = False
@@ -73,6 +75,7 @@ class OverlayPlugin(Plugin):
         self.tmux_dialog_list = None
 
         self.TERM_FONT_SIZE = 12
+        self.MASTER_PANE_SIZE = 55  # percent
 
     def setup(self):
         # build
@@ -125,9 +128,12 @@ class OverlayPlugin(Plugin):
         for i in range(MAX_TERMS):
             term_container = builder.get_object(f"term-{i}")
             term = Vte.Terminal()
-            term_container.add(term)
-            term.connect("button-press-event", self.on_terminal_focus, i)
+
             self.terms[i] = term
+            self.term_containers[i] = term_container
+
+            self.multiplexer.add_overlay(term)
+            term.connect("button-press-event", self.on_terminal_focus, i)
 
             # TODO: unmangle
             # apply palette
@@ -220,27 +226,30 @@ class OverlayPlugin(Plugin):
         overlay_w = self.multiplexer.get_allocated_width()
         overlay_h = self.multiplexer.get_allocated_height()
         gap = TERM_GAP
+        master_size = self.MASTER_PANE_SIZE / 100
 
         # main
-        box = self.terms[0].get_parent()
-        GLib.idle_add(box.set_margin_top, 0)
-        GLib.idle_add(box.set_margin_bottom, 0)
-        GLib.idle_add(box.set_margin_start, 0)
-        GLib.idle_add(box.set_margin_end, overlay_w / 2 + gap / 2)
+        for k, box in enumerate([self.terms[0], self.term_containers[0]]):
+            if k == 0:
+                GLib.idle_add(box.set_margin_start, TERM_BORDER)
+            GLib.idle_add(box.set_margin_end, overlay_w * (1 - master_size) + gap / 2)
 
         # slaves
         slave_h = overlay_h / (MAX_TERMS - 1)
         for i in range(1, MAX_TERMS):
-            print(f"Configuring terminal {i}")
-            box = self.terms[i].get_parent()
             margin_top = slave_h * (i - 1) + (gap / 2 if i != 1 else 0)
             margin_bot = slave_h * (MAX_TERMS - 1 - i) + (
                 gap / 2 if i != MAX_TERMS - 1 else 0
             )
-            GLib.idle_add(box.set_margin_top, margin_top)
-            GLib.idle_add(box.set_margin_bottom, margin_bot)
-            GLib.idle_add(box.set_margin_start, overlay_w / 2 + gap / 2)
-            GLib.idle_add(box.set_margin_end, 0)
+            for k, box in enumerate([self.terms[i], self.term_containers[i]]):
+                GLib.idle_add(box.set_margin_top, margin_top)
+                GLib.idle_add(box.set_margin_bottom, margin_bot)
+
+                border_offset = TERM_BORDER if k == 0 else 0
+                GLib.idle_add(
+                    box.set_margin_start,
+                    overlay_w * master_size + gap / 2 + border_offset,
+                )
 
     # switch notebook pages (workplaces)
     # TODO: use just pressed
@@ -311,16 +320,25 @@ class OverlayPlugin(Plugin):
         elif event.keyval == Gdk.KEY_2:
             if current != NOTEBOOK.TERMINALS.value:
                 GLib.idle_add(self.notebook.set_current_page, NOTEBOOK.TERMINALS.value)
-            self.cycle_terminal_focus(0)
+            GLib.idle_add(self.cycle_terminal_focus, 0)
             return True
 
-        elif event.keyval == Gdk.KEY_j:
-            self.cycle_terminal_focus(1)
-            return True
+        if current == NOTEBOOK.TERMINALS.value:
+            if event.keyval == Gdk.KEY_j:
+                self.cycle_terminal_focus(1)
+                return True
 
-        elif event.keyval == Gdk.KEY_k:
-            self.cycle_terminal_focus(-1)
-            return True
+            elif event.keyval == Gdk.KEY_k:
+                self.cycle_terminal_focus(-1)
+                return True
+
+            elif event.keyval == Gdk.KEY_h:
+                self.update_master_pane_size(False)
+                return True
+
+            elif event.keyval == Gdk.KEY_l:
+                self.update_master_pane_size(True)
+                return True
 
         return False
 
@@ -383,14 +401,14 @@ class OverlayPlugin(Plugin):
         self.cycle_terminal_focus(0, term_i)
 
     def unfocus_terminals(self):
-        for term in self.terms:
-            term.get_parent().get_style_context().remove_class("term-selected")
+        for container in self.term_containers:
+            container.get_style_context().remove_class("term-selected")
 
     def cycle_terminal_focus(self, step: int, selected_term: int = -1):
         # get which term is focused
         for i in range(MAX_TERMS):
             term = self.terms[i]
-            term.get_parent().get_style_context().remove_class("term-selected")
+            self.term_containers[i].get_style_context().remove_class("term-selected")
 
             if selected_term == -1 and term == self.main_window.get_focus():
                 selected_term = i
@@ -401,9 +419,12 @@ class OverlayPlugin(Plugin):
             next_term = 0
 
         self.terms[next_term].grab_focus()
-        self.terms[next_term].get_parent().get_style_context().add_class(
-            "term-selected"
-        )
+        self.term_containers[next_term].get_style_context().add_class("term-selected")
+
+    def update_master_pane_size(self, delta: bool):
+        self.MASTER_PANE_SIZE += 5 if delta else -5
+        self.MASTER_PANE_SIZE = max(10, min(90, self.MASTER_PANE_SIZE))
+        self.on_resize(0, 0)
 
     def update_terminals_font_size(self, delta: int = 0, widget: Vte.Terminal = None):
         self.TERM_FONT_SIZE += delta
