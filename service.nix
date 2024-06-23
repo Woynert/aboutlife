@@ -30,5 +30,14 @@ in
         RestartSec = 3;
       };
     };
+
+    systemd.user.timers.aboutlife = {
+      description = "Ensure aboutlife is running";
+      wantedBy = [ "timers.target" ];
+      timerConfig = {
+        OnCalendar = "*-*-* *:0:00"; # every hour
+        Persistent = true;
+      };
+    };
   };
 }
