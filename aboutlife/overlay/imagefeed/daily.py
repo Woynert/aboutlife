@@ -53,7 +53,6 @@ Picks a random URL from a text file
 
 def _pick_random_image() -> Optional[str]:
     image_list_path = Path(get_resource_path()) / IMAGE_LIST_PATH
-    print(image_list_path)
     if not os.path.exists(image_list_path):
         return None
 
