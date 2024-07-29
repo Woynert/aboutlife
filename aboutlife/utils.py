@@ -3,6 +3,7 @@ import subprocess
 import gi
 import time
 import select
+from pathlib import Path
 from Xlib import X, display, protocol
 
 gi.require_version("Gtk", "3.0")
@@ -18,7 +19,7 @@ def curr_time() -> int:
     return int(time.time())
 
 
-def get_resource_path(path: str) -> str:
+def get_resource_path(path: str = "") -> str:
     return ORIGIN_PATH + path
 
 
@@ -27,6 +28,29 @@ def send_notification(title: str, message: str):
         subprocess.run(["notify-send", "-r", "108", "-t", "1000", message])
     else:
         subprocess.run(["notify-send", "-r", "108", "-t", "1000", title, message])
+
+
+def get_data_path() -> str:
+    xdg_path = Path.home() / ".local" / "share"
+
+    # try to get data path from env
+    xdg_path_env: str = os.getenv("XDG_DATA_HOME") or ""
+    exists: bool = xdg_path_env != "" and os.path.exists(xdg_path_env)
+    if exists:
+        xdg_path = Path(xdg_path_env)
+
+    # create if not present
+    data_path = xdg_path / "aboutlife"
+    if not os.path.exists(data_path):
+        os.makedirs(data_path)
+    return str(data_path)
+
+
+def get_config_path() -> str:
+    path = os.path.expanduser("~/.config/aboutlife")
+    if not os.path.exists(path):
+        os.makedirs(path)
+    return str(path)
 
 
 # * If there are no keyboard events in a while release it for a moment then grab
