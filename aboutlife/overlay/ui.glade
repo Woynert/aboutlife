@@ -361,7 +361,7 @@
                                     <property name="label-xalign">0</property>
                                     <property name="shadow-type">out</property>
                                     <child>
-                                      <object class="GtkAlignment" id="term-container">
+                                      <object class="GtkAlignment" id="image-container">
                                         <property name="visible">True</property>
                                         <property name="can-focus">False</property>
                                       </object>
@@ -374,49 +374,6 @@
                                     <property name="expand">True</property>
                                     <property name="fill">True</property>
                                     <property name="position">0</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkBox">
-                                    <property name="visible">True</property>
-                                    <property name="can-focus">False</property>
-                                    <child>
-                                      <object class="GtkScrolledWindow">
-                                        <property name="visible">True</property>
-                                        <property name="can-focus">False</property>
-                                        <property name="hscrollbar-policy">external</property>
-                                        <property name="vscrollbar-policy">external</property>
-                                        <property name="window-placement">bottom-right</property>
-                                        <property name="shadow-type">in</property>
-                                        <property name="min-content-height">80</property>
-                                        <property name="kinetic-scrolling">False</property>
-                                        <property name="overlay-scrolling">False</property>
-                                        <property name="propagate-natural-width">True</property>
-                                        <child>
-                                          <object class="GtkViewport">
-                                            <property name="visible">True</property>
-                                            <property name="can-focus">False</property>
-                                            <child>
-                                              <object class="GtkImage">
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">False</property>
-                                                <property name="pixbuf">freenaturestock-2124-cropped.jpg</property>
-                                              </object>
-                                            </child>
-                                          </object>
-                                        </child>
-                                      </object>
-                                      <packing>
-                                        <property name="expand">True</property>
-                                        <property name="fill">True</property>
-                                        <property name="position">0</property>
-                                      </packing>
-                                    </child>
-                                  </object>
-                                  <packing>
-                                    <property name="expand">False</property>
-                                    <property name="fill">True</property>
-                                    <property name="position">1</property>
                                   </packing>
                                 </child>
                               </object>

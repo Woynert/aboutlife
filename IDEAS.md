@@ -46,6 +46,8 @@ IDEAS
 * (sticky) The ability to lock the sticky module in place.
 * (sticky) When the work session is about to end. Use visual cues in sticky, like Hyperfocus does. Maybe play a sound too. Use GtkDrawingArea.
 * (sticky) Make it less intrusive by having a transparent background.
+* (sticky) "Discrete" option, in this option the sticky it's only show 3 seconds every minute. So to not disable it entirely.
+* (sticky) Each time a minute passes an animation plays, una animación de barrido de izq a der.
 * (webext) At night hours make the "close tabs" function automatic
 
 

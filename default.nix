@@ -26,6 +26,7 @@ buildPythonApplication {
   propagatedBuildInputs = [
     pkgs.python310Packages.pygobject3
     pkgs.python310Packages.xlib
+    pkgs.python310Packages.requests
   ];
 
   doCheck = false;

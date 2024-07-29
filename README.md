@@ -20,9 +20,18 @@ nix-shell -p 'import (fetchFromGitHub { owner="woynert";repo="aboutlife";rev="ma
 
 *Flake: coming soon*
 
+## Develope
+
+Run standalone script that requires the *aboutlife* module.
+
+```sh
+PYTHONPATH=/path/to/aboutlife:$PYTHONPATH python script.py
+```
+
 ## License
 
-Nature images: https://freenaturestock.com/license/
+* Nature images: https://freenaturestock.com/license
+* Unsplash images: https://unsplash.com/license
 
 ## Philosophy
 
