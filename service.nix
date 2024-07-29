@@ -1,4 +1,4 @@
-{ config, lib, ... }:
+{ config, lib, pkgs, ... }:
 with lib;
 let
   cfg = config.services.aboutlife;
@@ -20,12 +20,11 @@ in
       wantedBy = [ "graphical-session.target" ];
       partOf = [ "graphical-session.target" ];
 
-      path = config.environment.systemPackages;
-
       startLimitIntervalSec = 350;
       startLimitBurst = 10;
       serviceConfig = {
-        ExecStart = "${aboutlife}/bin/aboutlife";
+        # use user environment and packages
+        ExecStart = "${pkgs.bash}/bin/bash -c 'source ${config.system.build.setEnvironment}; exec ${aboutlife}/bin/aboutlife'";
         Restart = "always";
         RestartSec = 3;
       };
