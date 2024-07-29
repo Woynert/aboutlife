@@ -3,8 +3,9 @@ pkgs.mkShell {
   name = "dev-environment";
   buildInputs = [
     pkgs.git
-    pkgs.ruff
     pkgs.zip
+    pkgs.ruff # formatter
+    pkgs.pyright # lsp
 
     pkgs.gtk3
     pkgs.vte
@@ -13,6 +14,7 @@ pkgs.mkShell {
     pkgs.python310Packages.pygobject3
     pkgs.python310Packages.xlib
     pkgs.python310Packages.hatchling
+    pkgs.python310Packages.requests
 
     pkgs.corepack
     pkgs.nodejs-slim
