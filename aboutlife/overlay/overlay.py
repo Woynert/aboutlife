@@ -9,6 +9,8 @@ from aboutlife.plugin import Plugin
 from aboutlife.context import STATE, TASK_MIN_LENGTH, TASK_MAX_LENGTH
 from aboutlife.overlay import client
 from aboutlife.utils import get_resource_path, send_notification, keygrab_loop
+from aboutlife.overlay.imagefeed import get_image_of_the_day
+from aboutlife.common.scaled_image import ScaledImageWidget
 
 gi.require_version("Gtk", "3.0")
 gi.require_version("Gdk", "3.0")
@@ -116,6 +118,14 @@ class OverlayPlugin(Plugin):
         self.lbl_time.set_text("")
         self.lbl_waiting.set_text("")
 
+        # set image
+        image_container = builder.get_object("image-container")
+        image_widget = ScaledImageWidget(ScaledImageWidget.STYLE.ZOOMED)
+        image_container.add(image_widget)
+        thread = threading.Thread(target=self.setup_image, args=(image_widget,))
+        thread.daemon = True
+        thread.start()
+
         # terminal colors: hex to Gdk.RGBA
         def hex_to_rgba(hex):
             color = Gdk.RGBA()
@@ -200,6 +210,12 @@ class OverlayPlugin(Plugin):
         print("D: Starting setting up terminals")
         self.terminals_spawn()
         print("D: Done setting up terminals")
+
+    def setup_image(self, image_widget: ScaledImageWidget):
+        image_file = get_image_of_the_day()
+        if image_file:
+            print(f"I: setting image {image_file}")
+            GLib.idle_add(image_widget.set_image, image_file)
 
     def terminals_spawn(self, command_template: str = ""):
         # TODO: Make it configurable
