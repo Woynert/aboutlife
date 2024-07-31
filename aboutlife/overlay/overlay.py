@@ -3,6 +3,7 @@ import threading
 import time
 import os
 import subprocess
+from typing import List
 from enum import Enum
 from datetime import datetime
 from aboutlife.plugin import Plugin
@@ -119,10 +120,16 @@ class OverlayPlugin(Plugin):
         self.lbl_waiting.set_text("")
 
         # set image
-        image_container = builder.get_object("image-container")
+        image_widgets_list: List = []
+        image_container = builder.get_object("image-container-1")
         image_widget = ScaledImageWidget(ScaledImageWidget.STYLE.ZOOMED)
         image_container.add(image_widget)
-        thread = threading.Thread(target=self.setup_image, args=(image_widget,))
+        image_widgets_list.append(image_widget)
+        image_container = builder.get_object("image-container-2")
+        image_widget = ScaledImageWidget(ScaledImageWidget.STYLE.ZOOMED)
+        image_container.add(image_widget)
+        image_widgets_list.append(image_widget)
+        thread = threading.Thread(target=self.setup_image, args=(image_widgets_list,))
         thread.daemon = True
         thread.start()
 
@@ -211,11 +218,12 @@ class OverlayPlugin(Plugin):
         self.terminals_spawn()
         print("D: Done setting up terminals")
 
-    def setup_image(self, image_widget: ScaledImageWidget):
+    def setup_image(self, image_widget: List[ScaledImageWidget]):
         image_file = get_image_of_the_day()
         if image_file:
-            print(f"I: setting image {image_file}")
-            GLib.idle_add(image_widget.set_image, image_file)
+            for widget in image_widget:
+                print(f"I: setting image {image_file}")
+                GLib.idle_add(widget.set_image, image_file)
 
     def terminals_spawn(self, command_template: str = ""):
         # TODO: Make it configurable

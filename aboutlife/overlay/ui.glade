@@ -361,7 +361,7 @@
                                     <property name="label-xalign">0</property>
                                     <property name="shadow-type">out</property>
                                     <child>
-                                      <object class="GtkAlignment" id="image-container">
+                                      <object class="GtkAlignment" id="image-container-1">
                                         <property name="visible">True</property>
                                         <property name="can-focus">False</property>
                                       </object>
@@ -417,29 +417,142 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkFrame">
+                          <!-- n-columns=3 n-rows=3 -->
+                          <object class="GtkGrid">
                             <property name="visible">True</property>
                             <property name="can-focus">False</property>
-                            <property name="label-xalign">0</property>
-                            <property name="shadow-type">out</property>
+                            <property name="hexpand">True</property>
+                            <property name="vexpand">True</property>
+                            <property name="row-spacing">10</property>
+                            <property name="column-spacing">10</property>
+                            <property name="column-homogeneous">True</property>
                             <child>
-                              <object class="GtkAlignment">
+                              <object class="GtkFrame">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
-                                <property name="xscale">0.009999999776482582</property>
-                                <property name="yscale">0.009999999776482582</property>
+                                <property name="label-xalign">0</property>
+                                <property name="shadow-type">out</property>
+                                <child>
+                                  <object class="GtkAlignment">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <property name="xscale">0.009999999776482582</property>
+                                    <property name="yscale">0.009999999776482582</property>
+                                    <property name="top-padding">10</property>
+                                    <property name="bottom-padding">10</property>
+                                    <child>
+                                      <object class="GtkBox">
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">False</property>
+                                        <property name="orientation">vertical</property>
+                                        <property name="spacing">10</property>
+                                        <child>
+                                          <object class="GtkLabel">
+                                            <property name="visible">True</property>
+                                            <property name="can-focus">False</property>
+                                            <property name="label" translatable="yes">Opciones</property>
+                                          </object>
+                                          <packing>
+                                            <property name="expand">False</property>
+                                            <property name="fill">True</property>
+                                            <property name="position">0</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkBox">
+                                            <property name="visible">True</property>
+                                            <property name="can-focus">False</property>
+                                            <property name="spacing">10</property>
+                                            <property name="homogeneous">True</property>
+                                            <child>
+                                              <object class="GtkButton" id="btn-close-tabs-2">
+                                                <property name="label" translatable="yes">Cerrar pestañas</property>
+                                                <property name="visible">True</property>
+                                                <property name="can-focus">True</property>
+                                                <property name="receives-default">True</property>
+                                              </object>
+                                              <packing>
+                                                <property name="expand">False</property>
+                                                <property name="fill">True</property>
+                                                <property name="position">0</property>
+                                              </packing>
+                                            </child>
+                                            <child>
+                                              <object class="GtkButton" id="btn-shutdown-2">
+                                                <property name="label" translatable="yes">Apagar computadora</property>
+                                                <property name="visible">True</property>
+                                                <property name="can-focus">True</property>
+                                                <property name="receives-default">True</property>
+                                              </object>
+                                              <packing>
+                                                <property name="expand">False</property>
+                                                <property name="fill">True</property>
+                                                <property name="position">1</property>
+                                              </packing>
+                                            </child>
+                                          </object>
+                                          <packing>
+                                            <property name="expand">False</property>
+                                            <property name="fill">True</property>
+                                            <property name="position">1</property>
+                                          </packing>
+                                        </child>
+                                      </object>
+                                    </child>
+                                  </object>
+                                </child>
+                                <child type="label_item">
+                                  <placeholder/>
+                                </child>
+                              </object>
+                              <packing>
+                                <property name="left-attach">0</property>
+                                <property name="top-attach">2</property>
+                                <property name="width">3</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkFrame">
+                                <property name="visible">True</property>
+                                <property name="can-focus">False</property>
+                                <property name="vexpand">True</property>
+                                <property name="label-xalign">0</property>
+                                <property name="shadow-type">out</property>
+                                <child>
+                                  <object class="GtkAlignment" id="image-container-2">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                  </object>
+                                </child>
+                                <child type="label_item">
+                                  <placeholder/>
+                                </child>
+                              </object>
+                              <packing>
+                                <property name="left-attach">1</property>
+                                <property name="top-attach">0</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkFrame">
+                                <property name="visible">True</property>
+                                <property name="can-focus">False</property>
+                                <property name="vexpand">True</property>
+                                <property name="label-xalign">0</property>
+                                <property name="shadow-type">out</property>
                                 <child>
                                   <object class="GtkBox">
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
+                                    <property name="halign">center</property>
+                                    <property name="valign">center</property>
                                     <property name="orientation">vertical</property>
                                     <property name="spacing">10</property>
-                                    <property name="homogeneous">True</property>
                                     <child>
                                       <object class="GtkLabel">
                                         <property name="visible">True</property>
                                         <property name="can-focus">False</property>
-                                        <property name="label" translatable="yes">I am injury</property>
+                                        <property name="label" translatable="yes">Consejo</property>
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>
@@ -448,11 +561,15 @@
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkButton" id="btn-close-tabs-2">
-                                        <property name="label" translatable="yes">Cerrar pestañas</property>
+                                      <object class="GtkLabel" id="lbl-break-text-2">
                                         <property name="visible">True</property>
-                                        <property name="can-focus">True</property>
-                                        <property name="receives-default">True</property>
+                                        <property name="can-focus">False</property>
+                                        <property name="xpad">50</property>
+                                        <property name="label" translatable="yes">1. Mantenga su libreta en el escritorio
+2. Revise su estrategia
+3. Planee el siguiente paso a seguir
+4. Tomese su tiempo</property>
+                                        <property name="wrap">True</property>
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>
@@ -460,24 +577,76 @@
                                         <property name="position">1</property>
                                       </packing>
                                     </child>
+                                  </object>
+                                </child>
+                                <child type="label_item">
+                                  <placeholder/>
+                                </child>
+                              </object>
+                              <packing>
+                                <property name="left-attach">2</property>
+                                <property name="top-attach">0</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkFrame">
+                                <property name="visible">True</property>
+                                <property name="can-focus">False</property>
+                                <property name="vexpand">True</property>
+                                <property name="label-xalign">0</property>
+                                <property name="shadow-type">out</property>
+                                <child>
+                                  <object class="GtkBox">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <property name="halign">center</property>
+                                    <property name="valign">center</property>
+                                    <property name="orientation">vertical</property>
+                                    <property name="spacing">10</property>
                                     <child>
-                                      <object class="GtkButton" id="btn-shutdown-2">
-                                        <property name="label" translatable="yes">Apagar computadora</property>
+                                      <object class="GtkLabel">
                                         <property name="visible">True</property>
-                                        <property name="can-focus">True</property>
-                                        <property name="receives-default">True</property>
+                                        <property name="can-focus">False</property>
+                                        <property name="label" translatable="yes">Frase</property>
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>
                                         <property name="fill">True</property>
-                                        <property name="position">2</property>
+                                        <property name="position">0</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkLabel" id="lbl-break-text-3">
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">False</property>
+                                        <property name="xpad">50</property>
+                                        <property name="label" translatable="yes">Dost thou love life? The do not squander Time; for that's the Stuff Life is made of.</property>
+                                        <property name="wrap">True</property>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">True</property>
+                                        <property name="position">1</property>
                                       </packing>
                                     </child>
                                   </object>
                                 </child>
+                                <child type="label_item">
+                                  <placeholder/>
+                                </child>
                               </object>
+                              <packing>
+                                <property name="left-attach">0</property>
+                                <property name="top-attach">0</property>
+                              </packing>
                             </child>
-                            <child type="label_item">
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
                               <placeholder/>
                             </child>
                           </object>
