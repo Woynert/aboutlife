@@ -10,7 +10,7 @@ from aboutlife.plugin import Plugin
 from aboutlife.context import STATE, TASK_MIN_LENGTH, TASK_MAX_LENGTH
 from aboutlife.overlay import client
 from aboutlife.utils import get_resource_path, send_notification, keygrab_loop
-from aboutlife.overlay.imagefeed import get_image_of_the_day
+from aboutlife.overlay.feed import get_image_of_the_day
 from aboutlife.common.scaled_image import ScaledImageWidget
 
 gi.require_version("Gtk", "3.0")

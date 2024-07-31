@@ -5,6 +5,7 @@ from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Optional
 from aboutlife.utils import get_resource_path, get_data_path
+from .common import get_file_line_count, read_file_line
 
 IMAGE_LIST_PATH = "overlay/imagefeed/images.txt"
 
@@ -26,26 +27,6 @@ def _download_image(url: str, save_path: str) -> bool:
     return False
 
 
-def _get_file_line_count(file_path) -> Optional[int]:
-    try:
-        with open(file_path, "rb") as f:
-            return sum(1 for _ in f)
-    except Exception:
-        pass
-    return None
-
-
-def _read_file_line(file_path, line_number) -> Optional[str]:
-    try:
-        with open(file_path, "r") as file:
-            for current_line_number, line in enumerate(file, start=1):
-                if current_line_number == line_number:
-                    return line.strip()
-    except Exception:
-        pass
-    return None
-
-
 """
 Picks a random URL from a text file
 """
@@ -56,12 +37,12 @@ def _pick_random_image() -> Optional[str]:
     if not os.path.exists(image_list_path):
         return None
 
-    list_length = _get_file_line_count(image_list_path)
+    list_length = get_file_line_count(image_list_path)
     if not list_length:
         return None
 
     line_number = random.randint(0, list_length)
-    return _read_file_line(image_list_path, line_number)
+    return read_file_line(image_list_path, line_number)
 
 
 def get_image_of_the_day() -> Optional[str]:
