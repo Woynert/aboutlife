@@ -15,6 +15,7 @@ from aboutlife import daemon
 
 def main():
     parser = argparse.ArgumentParser(description="Aboutlife")
+    parser.add_argument("--daemon", action="store_true", help="Run server only")
     parser.add_argument("--overlay", action="store_true", help="Launch overlay plugin")
     parser.add_argument("--sticky", action="store_true", help="Launch sticky plugin")
     args = parser.parse_args()
@@ -27,8 +28,12 @@ def main():
         print("I: Launching sticky")
         sticky.main()
 
+    elif args.daemon:
+        print("I: Launching daemon server only")
+        daemon.main(False)
+
     else:
-        print("I: Launching daemon")
+        print("I: Launching aboutlife")
         daemon.main()
 
 

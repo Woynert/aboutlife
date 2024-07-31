@@ -33,21 +33,22 @@ def process_loop():
             plugin.process()
 
 
-def main():
+def main(start_plugins: bool = True):
     Context().get_singleton().reset()
 
     # setup plugins
-    plugins.append(TrayPlugin())
-    plugins_args.append([])
+    if start_plugins:
+        plugins.append(TrayPlugin())
+        plugins_args.append([])
 
-    plugins.append(OverlayWatcherPlugin())
-    plugins_args.append([])
+        plugins.append(OverlayWatcherPlugin())
+        plugins_args.append([])
 
-    plugins.append(StickyWatcherPlugin())
-    plugins_args.append([])
+        plugins.append(StickyWatcherPlugin())
+        plugins_args.append([])
 
-    plugins.append(NetworkManagerPlugin())
-    plugins_args.append([])
+        plugins.append(NetworkManagerPlugin())
+        plugins_args.append([])
 
     for i in range(len(plugins)):
         plugin = plugins[i]
