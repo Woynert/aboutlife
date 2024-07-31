@@ -12,6 +12,7 @@ class RespContext:
     state: STATE
     end_time: int
     task_info: str
+    sticky_discrete: bool
 
 
 def get_state() -> RespContext:
@@ -24,7 +25,10 @@ def get_state() -> RespContext:
         if resp_raw.status == 200:
             resp_json = json.loads(resp_raw.read().decode("utf-8"))
             resp_obj = RespContext(
-                resp_json["state"], resp_json["end_time"], resp_json["task_info"]
+                resp_json["state"],
+                resp_json["end_time"],
+                resp_json["task_info"],
+                resp_json["sticky_discrete"],
             )
             return resp_obj
     except Exception as e:
@@ -59,7 +63,7 @@ def put_start_tomato_break() -> bool:
 
 
 def put_start_work_session(
-    task_info: str, duration: int, network_required: bool
+    task_info: str, duration: int, network_required: bool, sticky_discrete: bool
 ) -> bool:
     try:
         req_data = json.dumps(
@@ -67,6 +71,7 @@ def put_start_work_session(
                 "task_info": task_info,
                 "duration": duration,
                 "network_required": network_required,
+                "sticky_discrete": sticky_discrete,
             }
         )
         headers = {"Content-type": "application/json"}

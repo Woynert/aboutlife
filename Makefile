@@ -1,6 +1,9 @@
 run:
 	python -m aboutlife
 
+run-daemon:
+	python -m aboutlife --daemon
+
 run-overlay:
 	python -m aboutlife --overlay
 

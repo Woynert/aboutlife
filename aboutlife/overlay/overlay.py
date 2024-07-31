@@ -72,6 +72,7 @@ class OverlayPlugin(Plugin):
         self.tbx_task = None
         self.cbx_duration = None
         self.swi_network = None
+        self.swi_sticky_discrete = None
         self.lbl_time = None
         self.lbl_waiting = None
         self.btn_return_home = None
@@ -111,6 +112,7 @@ class OverlayPlugin(Plugin):
         self.tbx_task = builder.get_object("tbx-task")
         self.cbx_duration = builder.get_object("cbx-duration")
         self.swi_network = builder.get_object("swi-network")
+        self.swi_sticky_discrete = builder.get_object("swi-sticky-discrete")
         self.lbl_time = builder.get_object("lbl-time")
         self.lbl_waiting = builder.get_object("lbl-waiting")
         self.multiplexer = builder.get_object("multiplexer")
@@ -652,9 +654,10 @@ class OverlayPlugin(Plugin):
             task_info = self.tbx_task.get_text()
             duration = int(self.cbx_duration.get_active_text())
             network_required = self.swi_network.get_active()
+            sticky_discrete = self.swi_sticky_discrete.get_active()
 
             success = client.put_start_work_session(
-                task_info, duration, network_required
+                task_info, duration, network_required, sticky_discrete
             )
         except Exception as e:
             success = False
