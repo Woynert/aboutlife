@@ -5,9 +5,9 @@ from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Optional
 from aboutlife.utils import get_resource_path, get_data_path
-from .common import get_file_line_count, read_file_line
+from aboutlife.overlay.feed.common import get_file_line_count, read_file_line
 
-IMAGE_LIST_PATH = "overlay/imagefeed/images.txt"
+IMAGE_LIST_PATH = "overlay/feed/images.txt"
 
 
 def _download_image(url: str, save_path: str) -> bool:

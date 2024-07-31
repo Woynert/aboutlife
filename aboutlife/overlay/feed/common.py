@@ -1,7 +1,5 @@
 from typing import Optional
 
-QUOTE_LIST_PATH = "overlay/imagefeed/quotes.json"
-
 
 def get_file_line_count(file_path) -> Optional[int]:
     try:
