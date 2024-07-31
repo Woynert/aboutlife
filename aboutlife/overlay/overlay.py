@@ -60,8 +60,12 @@ class OverlayPlugin(Plugin):
         self.end_time: int = int(time.time())
         self.ready: bool = False
 
-        self.main_window = None
-        self.focus_window = None
+        self.TERM_FONT_SIZE = 12
+        self.MASTER_PANE_SIZE = 55  # percent
+        self.maximized_terminal = -1
+        self.trapped_on_break: bool = False
+
+        # widgets
 
         self.notebook = None
         self.tbx_task = None
@@ -69,17 +73,17 @@ class OverlayPlugin(Plugin):
         self.swi_network = None
         self.lbl_time = None
         self.lbl_waiting = None
+        self.btn_return_home = None
         self.terms = [None] * MAX_TERMS
         self.term_containers = [None] * MAX_TERMS
         self.multiplexer = None
 
+        self.main_window = None
+        self.focus_window = None
+
         self.is_tmux_dialog_active = False
         self.tmux_dialog = None
         self.tmux_dialog_list = None
-
-        self.TERM_FONT_SIZE = 12
-        self.MASTER_PANE_SIZE = 55  # percent
-        self.maximized_terminal = -1
 
     def setup(self):
         # build
@@ -111,6 +115,7 @@ class OverlayPlugin(Plugin):
         self.multiplexer = builder.get_object("multiplexer")
         self.tmux_dialog = builder.get_object("tmux-dialog")
         self.tmux_dialog_list = builder.get_object("tmux-dialog-list")
+        self.btn_return_home = builder.get_object("btn-return-home")
 
         # initial configuration
         self.tbx_task.set_placeholder_text(f"Mínimo {TASK_MIN_LENGTH} letras")
@@ -178,9 +183,10 @@ class OverlayPlugin(Plugin):
         button = builder.get_object("btn-start-session")
         button.connect("clicked", self.on_start_session)
         button = builder.get_object("btn-duration-up")
-        button.connect("clicked", lambda widget: self.on_spin_combobox(True))
+        button.connect("clicked", lambda _: self.on_spin_combobox(True))
         button = builder.get_object("btn-duration-down")
-        button.connect("clicked", lambda widget: self.on_spin_combobox(False))
+        button.connect("clicked", lambda _: self.on_spin_combobox(False))
+        self.btn_return_home.connect("clicked", self.on_btn_return_home_pressed)
 
         # auxiliar regular focusable window to steal focus
         self.focus_window = Gtk.Window()
@@ -349,7 +355,7 @@ class OverlayPlugin(Plugin):
 
         # go home
         if event.keyval == Gdk.KEY_1:
-            if self.state == STATE.IDLE:
+            if self.state == STATE.IDLE and not self.trapped_on_break:
                 if current != NOTEBOOK.HOME.value:
                     GLib.idle_add(self.notebook.set_current_page, NOTEBOOK.HOME.value)
             else:
@@ -537,6 +543,8 @@ class OverlayPlugin(Plugin):
                     else f"Obligatory break {text}"
                 )
                 GLib.idle_add(self.lbl_waiting.set_text, text)
+        elif self.notebook.get_current_page() == NOTEBOOK.BREAK.value:
+            GLib.idle_add(self.lbl_waiting.set_text, "Break Over")
         else:
             GLib.idle_add(self.lbl_waiting.set_text, "")
 
@@ -571,11 +579,25 @@ class OverlayPlugin(Plugin):
         if prevstate != self.state:
             if self.state == STATE.TOMATO_BREAK or self.state == STATE.OBLIGATORY_BREAK:
                 GLib.idle_add(self.notebook.set_current_page, NOTEBOOK.BREAK.value)
-            elif self.notebook.get_current_page() != NOTEBOOK.TERMINALS.value:
+                self.btn_return_home.set_sensitive(False)
+                self.trapped_on_break = True
+            elif prevstate == STATE.TOMATO_BREAK or prevstate == STATE.OBLIGATORY_BREAK:
+                self.btn_return_home.set_sensitive(True)
+
+            # go home on first sync
+            if (
+                prevstate == None
+                and self.state == STATE.IDLE
+                and self.notebook.get_current_page() != NOTEBOOK.TERMINALS.value
+            ):
                 GLib.idle_add(self.notebook.set_current_page, NOTEBOOK.HOME.value)
 
     def cleanup(self):
         Gtk.main_quit()
+
+    def on_btn_return_home_pressed(self, _):
+        self.trapped_on_break = False
+        GLib.idle_add(self.notebook.set_current_page, NOTEBOOK.HOME.value)
 
     def on_spin_combobox(self, up: bool):
         current = self.cbx_duration.get_active()
