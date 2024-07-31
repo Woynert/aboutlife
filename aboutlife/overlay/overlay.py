@@ -3,13 +3,15 @@ import threading
 import time
 import os
 import subprocess
+import random
+from typing import List, Optional
 from enum import Enum
 from datetime import datetime
 from aboutlife.plugin import Plugin
 from aboutlife.context import STATE, TASK_MIN_LENGTH, TASK_MAX_LENGTH
 from aboutlife.overlay import client
 from aboutlife.utils import get_resource_path, send_notification, keygrab_loop
-from aboutlife.overlay.imagefeed import get_image_of_the_day
+from aboutlife.overlay.feed import get_image_of_the_day, get_random_quote
 from aboutlife.common.scaled_image import ScaledImageWidget
 
 gi.require_version("Gtk", "3.0")
@@ -59,8 +61,12 @@ class OverlayPlugin(Plugin):
         self.end_time: int = int(time.time())
         self.ready: bool = False
 
-        self.main_window = None
-        self.focus_window = None
+        self.TERM_FONT_SIZE = 12
+        self.MASTER_PANE_SIZE = 55  # percent
+        self.maximized_terminal = -1
+        self.trapped_on_break: bool = False
+
+        # widgets
 
         self.notebook = None
         self.tbx_task = None
@@ -68,17 +74,17 @@ class OverlayPlugin(Plugin):
         self.swi_network = None
         self.lbl_time = None
         self.lbl_waiting = None
+        self.btn_return_home = None
         self.terms = [None] * MAX_TERMS
         self.term_containers = [None] * MAX_TERMS
         self.multiplexer = None
 
+        self.main_window = None
+        self.focus_window = None
+
         self.is_tmux_dialog_active = False
         self.tmux_dialog = None
         self.tmux_dialog_list = None
-
-        self.TERM_FONT_SIZE = 12
-        self.MASTER_PANE_SIZE = 55  # percent
-        self.maximized_terminal = -1
 
     def setup(self):
         # build
@@ -110,6 +116,7 @@ class OverlayPlugin(Plugin):
         self.multiplexer = builder.get_object("multiplexer")
         self.tmux_dialog = builder.get_object("tmux-dialog")
         self.tmux_dialog_list = builder.get_object("tmux-dialog-list")
+        self.btn_return_home = builder.get_object("btn-return-home")
 
         # initial configuration
         self.tbx_task.set_placeholder_text(f"Mínimo {TASK_MIN_LENGTH} letras")
@@ -118,11 +125,23 @@ class OverlayPlugin(Plugin):
         self.lbl_time.set_text("")
         self.lbl_waiting.set_text("")
 
+        # set phrase
+        lbl_phrase = builder.get_object("lbl-break-advice")
+        thread = threading.Thread(target=self.setup_phrase, args=([lbl_phrase],))
+        thread.daemon = True
+        thread.start()
+
         # set image
-        image_container = builder.get_object("image-container")
+        image_widgets_list: List = []
+        image_container = builder.get_object("image-container-1")
         image_widget = ScaledImageWidget(ScaledImageWidget.STYLE.ZOOMED)
         image_container.add(image_widget)
-        thread = threading.Thread(target=self.setup_image, args=(image_widget,))
+        image_widgets_list.append(image_widget)
+        image_container = builder.get_object("image-container-2")
+        image_widget = ScaledImageWidget(ScaledImageWidget.STYLE.ZOOMED)
+        image_container.add(image_widget)
+        image_widgets_list.append(image_widget)
+        thread = threading.Thread(target=self.setup_image, args=(image_widgets_list,))
         thread.daemon = True
         thread.start()
 
@@ -165,9 +184,10 @@ class OverlayPlugin(Plugin):
         button = builder.get_object("btn-start-session")
         button.connect("clicked", self.on_start_session)
         button = builder.get_object("btn-duration-up")
-        button.connect("clicked", lambda widget: self.on_spin_combobox(True))
+        button.connect("clicked", lambda _: self.on_spin_combobox(True))
         button = builder.get_object("btn-duration-down")
-        button.connect("clicked", lambda widget: self.on_spin_combobox(False))
+        button.connect("clicked", lambda _: self.on_spin_combobox(False))
+        self.btn_return_home.connect("clicked", self.on_btn_return_home_pressed)
 
         # auxiliar regular focusable window to steal focus
         self.focus_window = Gtk.Window()
@@ -211,11 +231,19 @@ class OverlayPlugin(Plugin):
         self.terminals_spawn()
         print("D: Done setting up terminals")
 
-    def setup_image(self, image_widget: ScaledImageWidget):
-        image_file = get_image_of_the_day()
+    def setup_image(self, image_widget: List[ScaledImageWidget]):
+        image_file: Optional[str] = get_image_of_the_day()
         if image_file:
-            print(f"I: setting image {image_file}")
-            GLib.idle_add(image_widget.set_image, image_file)
+            for widget in image_widget:
+                print(f"I: setting image {image_file}")
+                GLib.idle_add(widget.set_image, image_file)
+
+    def setup_phrase(self, label_widget: List[Gtk.Label]):
+        quote: Optional[str] = get_random_quote()
+        if quote:
+            for widget in label_widget:
+                print(f"I: setting phrase [{quote}]")
+                GLib.idle_add(widget.set_text, quote)
 
     def terminals_spawn(self, command_template: str = ""):
         # TODO: Make it configurable
@@ -328,7 +356,7 @@ class OverlayPlugin(Plugin):
 
         # go home
         if event.keyval == Gdk.KEY_1:
-            if self.state == STATE.IDLE:
+            if self.state == STATE.IDLE and not self.trapped_on_break:
                 if current != NOTEBOOK.HOME.value:
                     GLib.idle_add(self.notebook.set_current_page, NOTEBOOK.HOME.value)
             else:
@@ -516,6 +544,8 @@ class OverlayPlugin(Plugin):
                     else f"Obligatory break {text}"
                 )
                 GLib.idle_add(self.lbl_waiting.set_text, text)
+        elif self.notebook.get_current_page() == NOTEBOOK.BREAK.value:
+            GLib.idle_add(self.lbl_waiting.set_text, "Break Over")
         else:
             GLib.idle_add(self.lbl_waiting.set_text, "")
 
@@ -549,12 +579,38 @@ class OverlayPlugin(Plugin):
 
         if prevstate != self.state:
             if self.state == STATE.TOMATO_BREAK or self.state == STATE.OBLIGATORY_BREAK:
+                self.trapped_on_break = True
+                GLib.idle_add(self.btn_return_home.set_visible, False)
+                GLib.idle_add(self.btn_return_home.set_sensitive, False)
                 GLib.idle_add(self.notebook.set_current_page, NOTEBOOK.BREAK.value)
-            elif self.notebook.get_current_page() != NOTEBOOK.TERMINALS.value:
+            elif prevstate == STATE.TOMATO_BREAK or prevstate == STATE.OBLIGATORY_BREAK:
+                self.reveal_btn_return_home()
+
+            # go home on first sync
+            if (
+                prevstate == None
+                and self.state == STATE.IDLE
+                and self.notebook.get_current_page() != NOTEBOOK.TERMINALS.value
+            ):
                 GLib.idle_add(self.notebook.set_current_page, NOTEBOOK.HOME.value)
+
+    def reveal_btn_return_home(self):
+        GLib.idle_add(self.btn_return_home.set_visible, True)
+        GLib.idle_add(self.btn_return_home.set_sensitive, True)
+        # shuffle
+        button = self.btn_return_home
+        parent = button.get_parent()
+        new_position: int = random.randint(0, len(parent.get_children()) - 1)
+        print(f"new_position {new_position}")
+        GLib.idle_add(parent.reorder_child, button, new_position)
+        GLib.idle_add(parent.queue_resize)
 
     def cleanup(self):
         Gtk.main_quit()
+
+    def on_btn_return_home_pressed(self, _):
+        self.trapped_on_break = False
+        GLib.idle_add(self.notebook.set_current_page, NOTEBOOK.HOME.value)
 
     def on_spin_combobox(self, up: bool):
         current = self.cbx_duration.get_active()

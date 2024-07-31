@@ -22,6 +22,8 @@ nix-shell -p 'import (fetchFromGitHub { owner="woynert";repo="aboutlife";rev="ma
 
 ## Develope
 
+[Gtk+3 Python API](https://athenajc.gitbooks.io/python-gtk-3-api)
+
 Run standalone script that requires the *aboutlife* module.
 
 ```sh
