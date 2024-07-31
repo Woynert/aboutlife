@@ -19,8 +19,6 @@ IDEAS
     * Additionaly it could suggest you to take a tomato break, after it detects that you have been having working nonstop.
 * (overlay) Make it so you have to press a button to exit the tomato break screen. Locate this button alongside the other buttons (such as close tabs, and shutdown). The order of these buttons will be shuffled every time so the user has to make the concious desicion to press it instead of the others.
 * (overlay) Alongside the "need internet" button, add a "shutdown on finish" button.
-* (overlay) Put something visually attractive in the tomato break screen, so that you don't look away and ignore the action buttons.
-    * I was thinking about a picture a thinking roman statue.
 * (overlay) A module to visualize your pomodoro sessions and breaks.
 * (overlay) task manager: A section that shows a list of the opened apps with icons and thumbnails and a way to close them. Similar to what GNOME does.
 * (overlay) Before starting a task show a countdown screen for gettin ready and hyped up. Like Mario Kart's intro: 3, 2, 1, GO!
@@ -36,7 +34,6 @@ IDEAS
 * (overlay) Custom workplace with the ability to wrap X11 windows, useful for developing graphical applications. This might be a little bit too much for this project since at this point it could be confused with a virtual/pseudo window manager, which it isn't and shouldn't be.
 * (overlay) A plugin in where you see a list of the last 7 days, and the upcoming 7 days, and you can specify a goal for each day, this way you can always have in mind, what "plan" do you have.
 * (overlay) Alternatively from being able to specify a custom "task". Allow the creation of "goals", goals are displayed in a list, so, the user can choose to work on a specific goal.
-* (overlay) (terminals) Dialog to specify a tmux session and instantly switch all terminals to that session, each terminal should show a different tmux's window.
 * (overlay) on break screen show an anti eye strain activity, like safeeyes does.
 * (overlay) A section where you are shown a series of screens/text one by one, and you have to click next to see the next one. You have to go through all. This screens could be: Email (webview), Birthdays (text file), Calendar, or other reminders. You could open it by yourself or it could pop up randomly sometimes.
 * (overlay) Daily planner. A section that emulates the planning I do with my notebook. You can only specify, hour and goal; you could see it hovering the trayicon. And you can select a goal from there instead of writting one for starting a session.
@@ -46,7 +43,6 @@ IDEAS
 * (sticky) The ability to lock the sticky module in place.
 * (sticky) When the work session is about to end. Use visual cues in sticky, like Hyperfocus does. Maybe play a sound too. Use GtkDrawingArea.
 * (sticky) Make it less intrusive by having a transparent background.
-* (sticky) "Discrete" option, in this option the sticky it's only show 3 seconds every minute. So to not disable it entirely.
 * (sticky) Each time a minute passes an animation plays, una animación de barrido de izq a der.
 * (webext) At night hours make the "close tabs" function automatic
 
@@ -63,3 +59,9 @@ ARCHIVED
 * (overlay) Terminal on it's own tab, so that the user has a big area to work with. It's always and ideal scenario if the task can be done on the terminal.
     * The user could continue their work session inside and outside aboutlife's overlay, using terminal multiplexer tools like tmux, screen, tywm.
     * For users that prefer grafical tiling window managers instead of terminal multiplexers a special application/compatibility/translator/state tool could be developed for that use case.
+* (overlay) (terminals) Dialog to specify a tmux session and instantly switch all terminals to that session, each terminal should show a different tmux's window.
+* (overlay) Put something visually attractive in the tomato break screen, so that you don't look away and ignore the action buttons.
+    * I was thinking about a picture a thinking roman statue.
+
+
+* (sticky) "Discrete" option, in this option the sticky it's only show 3 seconds every minute. So to not disable it entirely.
