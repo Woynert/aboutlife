@@ -616,7 +616,7 @@
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkLabel" id="lbl-break-text-3">
+                                      <object class="GtkLabel" id="lbl-break-advice">
                                         <property name="visible">True</property>
                                         <property name="can-focus">False</property>
                                         <property name="xpad">50</property>

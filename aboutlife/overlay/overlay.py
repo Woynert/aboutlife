@@ -3,14 +3,14 @@ import threading
 import time
 import os
 import subprocess
-from typing import List
+from typing import List, Optional
 from enum import Enum
 from datetime import datetime
 from aboutlife.plugin import Plugin
 from aboutlife.context import STATE, TASK_MIN_LENGTH, TASK_MAX_LENGTH
 from aboutlife.overlay import client
 from aboutlife.utils import get_resource_path, send_notification, keygrab_loop
-from aboutlife.overlay.feed import get_image_of_the_day
+from aboutlife.overlay.feed import get_image_of_the_day, get_random_quote
 from aboutlife.common.scaled_image import ScaledImageWidget
 
 gi.require_version("Gtk", "3.0")
@@ -119,6 +119,12 @@ class OverlayPlugin(Plugin):
         self.lbl_time.set_text("")
         self.lbl_waiting.set_text("")
 
+        # set phrase
+        lbl_phrase = builder.get_object("lbl-break-advice")
+        thread = threading.Thread(target=self.setup_phrase, args=([lbl_phrase],))
+        thread.daemon = True
+        thread.start()
+
         # set image
         image_widgets_list: List = []
         image_container = builder.get_object("image-container-1")
@@ -219,11 +225,18 @@ class OverlayPlugin(Plugin):
         print("D: Done setting up terminals")
 
     def setup_image(self, image_widget: List[ScaledImageWidget]):
-        image_file = get_image_of_the_day()
+        image_file: Optional[str] = get_image_of_the_day()
         if image_file:
             for widget in image_widget:
                 print(f"I: setting image {image_file}")
                 GLib.idle_add(widget.set_image, image_file)
+
+    def setup_phrase(self, label_widget: List[Gtk.Label]):
+        quote: Optional[str] = get_random_quote()
+        if quote:
+            for widget in label_widget:
+                print(f"I: setting phrase [{quote}]")
+                GLib.idle_add(widget.set_text, quote)
 
     def terminals_spawn(self, command_template: str = ""):
         # TODO: Make it configurable
