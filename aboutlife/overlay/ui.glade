@@ -578,10 +578,10 @@
                                         <property name="visible">True</property>
                                         <property name="can-focus">False</property>
                                         <property name="xpad">50</property>
-                                        <property name="label" translatable="yes">1. Mantenga su libreta en el escritorio
-2. Revise su estrategia
-3. Planee el siguiente paso a seguir
-4. Tomese su tiempo</property>
+                                        <property name="label" translatable="yes">1. Párese a pensar
+2. Lea su libreta
+3. Planee el siguiente paso
+4. Tómese su tiempo</property>
                                         <property name="wrap">True</property>
                                       </object>
                                       <packing>

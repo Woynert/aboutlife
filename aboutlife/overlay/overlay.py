@@ -3,6 +3,7 @@ import threading
 import time
 import os
 import subprocess
+import random
 from typing import List, Optional
 from enum import Enum
 from datetime import datetime
@@ -578,11 +579,12 @@ class OverlayPlugin(Plugin):
 
         if prevstate != self.state:
             if self.state == STATE.TOMATO_BREAK or self.state == STATE.OBLIGATORY_BREAK:
-                GLib.idle_add(self.notebook.set_current_page, NOTEBOOK.BREAK.value)
-                self.btn_return_home.set_sensitive(False)
                 self.trapped_on_break = True
+                GLib.idle_add(self.btn_return_home.set_visible, False)
+                GLib.idle_add(self.btn_return_home.set_sensitive, False)
+                GLib.idle_add(self.notebook.set_current_page, NOTEBOOK.BREAK.value)
             elif prevstate == STATE.TOMATO_BREAK or prevstate == STATE.OBLIGATORY_BREAK:
-                self.btn_return_home.set_sensitive(True)
+                self.reveal_btn_return_home()
 
             # go home on first sync
             if (
@@ -591,6 +593,17 @@ class OverlayPlugin(Plugin):
                 and self.notebook.get_current_page() != NOTEBOOK.TERMINALS.value
             ):
                 GLib.idle_add(self.notebook.set_current_page, NOTEBOOK.HOME.value)
+
+    def reveal_btn_return_home(self):
+        GLib.idle_add(self.btn_return_home.set_visible, True)
+        GLib.idle_add(self.btn_return_home.set_sensitive, True)
+        # shuffle
+        button = self.btn_return_home
+        parent = button.get_parent()
+        new_position: int = random.randint(0, len(parent.get_children()) - 1)
+        print(f"new_position {new_position}")
+        GLib.idle_add(parent.reorder_child, button, new_position)
+        GLib.idle_add(parent.queue_resize)
 
     def cleanup(self):
         Gtk.main_quit()
