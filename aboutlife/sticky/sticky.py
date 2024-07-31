@@ -109,6 +109,24 @@ class StickyPlugin(Plugin):
         sh = screen.get_height()
         GLib.idle_add(self.window.move, sw, sh)
 
+    def sync_state(self):
+        ctx = client.get_state()
+        if not ctx:
+            print("E: sticky process. couldn't connect to server")
+            Gtk.main_quit()
+            exit(1)
+            return
+
+        if ctx.state != STATE.WORKING.value:
+            print("I: sticky process. session over")
+            Gtk.main_quit()
+            exit(0)
+            return
+
+        self.discrete = ctx.sticky_discrete
+        self.end_time = ctx.end_time
+        self.task_info = ctx.task_info
+
     def process(self):
         self.tick += 1
 
@@ -122,23 +140,9 @@ class StickyPlugin(Plugin):
                 GLib.idle_add(self.lbl_time.set_text, text)
 
         if self.tick % 4 == 0:  # each two seconds
-            ctx = client.get_state()
-            if not ctx:
-                print("E: sticky process. couldn't connect to server")
-                Gtk.main_quit()
-                exit(1)
-                return
-
-            if ctx.state != STATE.WORKING.value:
-                print("I: sticky process. session over")
-                Gtk.main_quit()
-                exit(0)
-                return
-
-            self.end_time = ctx.end_time
-            self.task_info = ctx.task_info
+            self.sync_state()
             if self.lbl_msg:
-                GLib.idle_add(self.lbl_msg.set_text, "🌀️ Objetivo: " + ctx.task_info)
+                GLib.idle_add(self.lbl_msg.set_text, "🌀️ Objetivo: " + self.task_info)
 
         if (self.tick - self.tick_last_shuffle) >= SHUFFLE_DELAY:
             self.shuffle_position()
@@ -167,6 +171,7 @@ def main():
     thread = threading.Thread(target=loop, args=(plugin,))
     thread.daemon = True
     thread.start()
+    plugin.sync_state()
     plugin.setup()
 
 

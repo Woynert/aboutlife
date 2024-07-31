@@ -20,6 +20,7 @@ class Handler(BaseHTTPRequestHandler):
                         "end_time": ctx.end_time,
                         "task_info": ctx.task_info,
                         "close_tabs": ctx.close_tabs,
+                        "sticky_discrete": ctx.sticky_discrete,
                     }
                 )
 
@@ -49,15 +50,12 @@ class Handler(BaseHTTPRequestHandler):
             task_info = data["task_info"]
             duration = int(data["duration"])
             network_required = bool(data["network_required"])
-
-            print(task_info)
-            print(duration)
-            print(network_required)
+            sticky_discrete = bool(data["sticky_discrete"])
 
             success = False
             with Context.get_mutex():
                 success = Context.get_singleton().setup_work_session(
-                    task_info, duration, network_required
+                    task_info, duration, network_required, sticky_discrete
                 )
 
             self.send_response(200) if success else self.send_response(400)

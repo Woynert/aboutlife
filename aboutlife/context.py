@@ -26,21 +26,16 @@ class Context:
     _singleton = None
 
     def __init__(self):
+        self.reset()
+
+    def reset(self):
         self.state: STATE = STATE.IDLE
         self.close_tabs: bool = False
         self.start_time: int = 0  # unix time from system
         self.end_time: int = 0  # unix time from system
         self.task_info: str = ""
         self.network_required: bool = True
-        self.reset()
-
-    def reset(self):
-        self.state = STATE.IDLE
-        self.close_tabs = False
-        self.start_time = 0
-        self.end_time = 0
-        self.task_info = "Sample Task Info"
-        self.network_required: bool = True
+        self.sticky_discrete: bool = False
 
     @classmethod
     def get_singleton(cls) -> "Context":
@@ -61,7 +56,11 @@ class Context:
         return True
 
     def setup_work_session(
-        self, task_info: str, duration: int, network_required: bool
+        self,
+        task_info: str,
+        duration: int,
+        network_required: bool,
+        sticky_discrete: bool,
     ) -> bool:
         if not (
             duration > 0
@@ -75,6 +74,7 @@ class Context:
         self.state = STATE.WORKING
         self.task_info = task_info
         self.network_required = not not network_required
+        self.sticky_discrete = not not sticky_discrete
         self.start_time = int(time.time())
         self.end_time = int(time.time()) + duration * 60
         return True
