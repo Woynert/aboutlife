@@ -660,12 +660,12 @@ class OverlayPlugin(Plugin):
     def on_start_session(self, widget):
         print("D: triggered 'start session'")
         success = False
-        try:
-            task_info = self.tbx_task.get_text()
-            duration = int(self.cbx_duration.get_active_text())
-            network_required = self.swi_network.get_active()
-            sticky_discrete = self.swi_sticky_discrete.get_active()
+        task_info = self.tbx_task.get_text()
+        duration = int(self.cbx_duration.get_active_text())
+        network_required = self.swi_network.get_active()
+        sticky_discrete = self.swi_sticky_discrete.get_active()
 
+        try:
             success = client.put_start_work_session(
                 task_info, duration, network_required, sticky_discrete
             )
@@ -677,6 +677,12 @@ class OverlayPlugin(Plugin):
             "Sent successfully" if success else "Can't do that right now",
         )
         if success:
+            # notify plugins
+            for plugin in self.plugins:
+                if hasattr(plugin, "on_start_session"):
+                    plugin.on_start_session(task_info, duration)
+
+            # trigger update
             self.update_state_from_remote()
 
 

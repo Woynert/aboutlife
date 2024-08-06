@@ -1,3 +1,4 @@
+from datetime import datetime
 import gi
 import threading
 from typing import List
@@ -23,6 +24,13 @@ class TaskLog:
     def update(self):
         self._clear_grid()
         self._fill_grid()
+
+    def on_start_session(self, task: str, duration: int):
+        # append new log
+        hour = datetime.now().strftime("%I:%M %p")
+        self.logs.append(Log(hour, duration, task))
+        # write (blocking)
+        write_log(self.logs)
 
     def _read_logs(self):
         logs = read_log()
