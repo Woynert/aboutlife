@@ -35,6 +35,24 @@ class TaskLog:
             GLib.idle_add(self.grid.remove, child)
 
     def _fill_grid(self):
-        for log in self.logs:
-            print(log)
-            print(log.task)
+        if not self.grid:
+            return
+
+        for i in range(len(self.logs)):
+            log: Log = self.logs[i]
+            lbl_hour = Gtk.Label(log.hour)
+            lbl_hour.set_xalign(0)
+            lbl_hour.set_yalign(0)
+            lbl_duration = Gtk.Label(f"({log.duration} mins)")
+            lbl_duration.set_xalign(0)
+            lbl_duration.set_yalign(0)
+            lbl_task = Gtk.Label(log.task)
+            lbl_task.set_line_wrap(True)
+            lbl_task.set_xalign(0)
+            lbl_task.set_yalign(0)
+            GLib.idle_add(self.grid.attach, lbl_hour, 0, i, 1, 1)
+            GLib.idle_add(self.grid.attach, lbl_duration, 1, i, 1, 1)
+            GLib.idle_add(self.grid.attach, lbl_task, 2, i, 1, 1)
+
+        # queue reshow
+        GLib.idle_add(self.grid.show_all)

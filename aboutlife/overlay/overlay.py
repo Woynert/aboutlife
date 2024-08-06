@@ -4,12 +4,13 @@ import time
 import os
 import subprocess
 import random
-from typing import List, Optional
+from typing import Any, List, Optional
 from enum import Enum
 from datetime import datetime
 from aboutlife.plugin import Plugin
 from aboutlife.context import STATE, TASK_MIN_LENGTH, TASK_MAX_LENGTH
 from aboutlife.overlay import client
+from aboutlife.overlay.tasklog import TaskLog
 from aboutlife.utils import get_resource_path, send_notification, keygrab_loop
 from aboutlife.overlay.feed import get_image_of_the_day, get_random_quote
 from aboutlife.common.scaled_image import ScaledImageWidget
@@ -86,6 +87,10 @@ class OverlayPlugin(Plugin):
         self.is_tmux_dialog_active = False
         self.tmux_dialog = None
         self.tmux_dialog_list = None
+
+        # TODO: Define plugin interface
+
+        self.plugins: List[Any] = []
 
     def setup(self):
         # build
@@ -219,6 +224,11 @@ class OverlayPlugin(Plugin):
         self.focus_window.show_all()
         self.reset_tmux_dialog()
         self.update_state_from_remote()
+
+        # plugins
+        self.plugins.append(TaskLog())
+        for plugin in self.plugins:
+            plugin.setup(builder)
 
         self.ready = True
         Gtk.main()
