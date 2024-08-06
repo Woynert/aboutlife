@@ -1,90 +1,40 @@
-from dataclasses import asdict, dataclass
-from datetime import datetime
-import json
-import os
-from pathlib import Path
-from typing import List, Optional
+import gi
+import threading
+from typing import List
+from aboutlife.overlay.tasklog.fileio import Log, read_log, write_log
 
-from aboutlife.utils import printerr, get_data_path
-
-LOG_FILE_NAME = "tasklog.json"
-
-# log data structure
+gi.require_version("Gtk", "3.0")
+from gi.repository import Gtk, GLib
 
 
-@dataclass
-class Log:
-    hour: str
-    duration: int
-    task: str
+class TaskLog:
+    def __init__(self):
+        self.grid: Gtk.Grid = None
+        self.logs: List[Log] = []
 
+    def setup(self, builder: Gtk.Builder):
+        self.grid = builder.get_object("tasklog-grid")
 
-@dataclass
-class LogCollection:
-    date: str
-    logs: List[Log]
+        # read logs
+        thread = threading.Thread(target=self._read_logs)
+        thread.daemon = True
+        thread.start()
 
+    def update(self):
+        self._clear_grid()
+        self._fill_grid()
 
-def _get_log_file_path() -> Path:
-    return Path(get_data_path()) / LOG_FILE_NAME
+    def _read_logs(self):
+        logs = read_log()
+        if logs:
+            self.logs = logs
+        self.update()
 
+    def _clear_grid(self):
+        for child in self.grid.get_children():
+            GLib.idle_add(self.grid.remove, child)
 
-# blocking
-def write_log(logs: List[Log]) -> bool:
-    date = datetime.now().strftime("%Y-%m-%d")
-    logs_col = LogCollection(date, logs)
-
-    try:
-        data = json.dumps(asdict(logs_col), indent=4)
-        file_path = str(_get_log_file_path())
-        printerr(f"I: writting log to {file_path}")
-
-        # overwrite
-        with open(file_path, "w") as file:
-            file.write(data)
-    except Exception as e:
-        printerr(e)
-    return False
-
-
-def read_log() -> Optional[List[Log]]:
-    date_current = datetime.now().strftime("%Y-%m-%d")
-    file_path = str(_get_log_file_path())
-    if not os.path.exists(file_path):
-        return None
-
-    try:
-        # read and parse
-        with open(file_path, "r") as file:
-            json_data = json.load(file)
-        logs_col = LogCollection(**json_data)
-
-        # it's current
-        if date_current != logs_col.date:
-            return None
-
-        # extract logs
-        return logs_col.logs
-
-    except Exception as e:
-        printerr(e)
-
-    return None
-
-
-if __name__ == "__main__":
-    date = datetime.now().strftime("%Y-%m-%d")
-    hour = datetime.now().strftime("%I:%M %p")
-
-    logs_col = LogCollection(date, [])
-    for i in range(5):
-        log = Log(hour, 10, "This is my tags")
-        logs_col.logs.append(log)
-    p_json_pretty = json.dumps(asdict(logs_col), indent=4)
-
-    # print(date, " : ", hour)
-    # print(asdict(logs_col))
-    # print(p_json_pretty)
-
-    # write_log(logs_col.logs)
-    print(read_log())
+    def _fill_grid(self):
+        for log in self.logs:
+            print(log)
+            print(log.task)
