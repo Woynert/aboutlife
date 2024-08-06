@@ -37,6 +37,7 @@ IDEAS
 * (overlay) on break screen show an anti eye strain activity, like safeeyes does.
 * (overlay) A section where you are shown a series of screens/text one by one, and you have to click next to see the next one. You have to go through all. This screens could be: Email (webview), Birthdays (text file), Calendar, or other reminders. You could open it by yourself or it could pop up randomly sometimes.
 * (overlay) Daily planner. A section that emulates the planning I do with my notebook. You can only specify, hour and goal; you could see it hovering the trayicon. And you can select a goal from there instead of writting one for starting a session.
+* (overlay) Dedicate a entire section of the screen to permanently show a section of the overlay. This could be done with X11 virtual screens. And would persist even when running fullscreen apps.
 
 
 * (tray) Add "tomato break" option to tray icon, this option would end the session and enter a tomato break.

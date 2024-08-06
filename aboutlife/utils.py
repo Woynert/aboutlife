@@ -1,5 +1,6 @@
 import os
 import subprocess
+import sys
 import gi
 import time
 import select
@@ -13,6 +14,10 @@ ORIGIN_PATH = os.path.dirname(os.path.realpath(__file__))
 GRAB_ATTEMPT_TIMEOUT = 1
 GRAB_DURATION = 5
 IDLE_TIMEOUT = 0.2
+
+
+def printerr(message):
+    print(message, file=sys.stderr)
 
 
 def curr_time() -> int:
