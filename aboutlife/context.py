@@ -2,11 +2,15 @@ import time
 import threading
 from enum import Enum
 
+# hour range to be considered 'late'
+LATE_HOUR_LOWER = 20
+LATE_HOUR_UPPER = 6
 # (seconds)
 TOMATO_BREAK_DURATION = 5 * 60
 OBLIGATORY_BREAK_DURATION = 30
-SHORT_OBLIGATORY_BREAK_DURATION = 8
-SHORT_OBLIGATORY_BREAK_THRESHOLD = 11 * 60
+OBLIGATORY_BREAK_DURATION_SHORT = 8
+OBLIGATORY_BREAK_DURATION_LATE = 5 * 60
+OBLIGATORY_BREAK_THRESHOLD_SHORT = 11 * 60
 # (chars)
 TASK_MIN_LENGTH = 14
 TASK_MAX_LENGTH = 70
@@ -87,8 +91,14 @@ class Context:
         self.end_time = int(time.time())
         elapsed = int(time.time()) - self.start_time  # seconds from task start to now
 
-        if elapsed <= SHORT_OBLIGATORY_BREAK_THRESHOLD:
-            self.end_time += SHORT_OBLIGATORY_BREAK_DURATION
+        if elapsed <= OBLIGATORY_BREAK_THRESHOLD_SHORT:
+            self.end_time += OBLIGATORY_BREAK_DURATION_SHORT
+        elif self._is_late_hour():
+            self.end_time += OBLIGATORY_BREAK_DURATION_LATE
         else:
             self.end_time += OBLIGATORY_BREAK_DURATION
         return True
+
+    def _is_late_hour(self) -> bool:
+        curr = time.localtime().tm_hour
+        return curr >= LATE_HOUR_LOWER or curr <= LATE_HOUR_UPPER
