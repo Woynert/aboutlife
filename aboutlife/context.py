@@ -15,6 +15,7 @@ OBLIGATORY_BREAK_THRESHOLD_SHORT = 11 * 60
 TASK_MIN_LENGTH = 14
 TASK_MAX_LENGTH = 70
 TASK_MAX_DURATION = 50  # minutes
+TASK_MAX_DURATION_LATE = 25  # minutes
 
 
 class STATE(Enum):
@@ -69,6 +70,7 @@ class Context:
         if not (
             duration > 0
             and duration <= TASK_MAX_DURATION
+            and (not Context.is_late_hour() or duration <= TASK_MAX_DURATION_LATE)
             and len(task_info) >= TASK_MIN_LENGTH
             and len(task_info) <= TASK_MAX_LENGTH
             and self.state == STATE.IDLE
@@ -93,12 +95,13 @@ class Context:
 
         if elapsed <= OBLIGATORY_BREAK_THRESHOLD_SHORT:
             self.end_time += OBLIGATORY_BREAK_DURATION_SHORT
-        elif self._is_late_hour():
+        elif Context.is_late_hour():
             self.end_time += OBLIGATORY_BREAK_DURATION_LATE
         else:
             self.end_time += OBLIGATORY_BREAK_DURATION
         return True
 
-    def _is_late_hour(self) -> bool:
+    @staticmethod
+    def is_late_hour() -> bool:
         curr = time.localtime().tm_hour
         return curr >= LATE_HOUR_LOWER or curr <= LATE_HOUR_UPPER
