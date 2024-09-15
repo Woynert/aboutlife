@@ -14,8 +14,8 @@ const TARGET_SITES = [
   ...UNPRODUCTIVE_SITES,
 ];
 const HELP_SITE = "https://emergency.nofap.com/";
-const LATE_HOUR_LOWER = 5;
-const LATE_HOUR_UPPER = 20;
+const LATE_HOUR_LOWER = 20;
+const LATE_HOUR_UPPER = 5;
 
 function sleep(ms) {
   return new Promise((resolve) => {
@@ -97,8 +97,8 @@ async function unload_tabs() {
 
     const hour = new Date().getHours();
     if (
-      hour >= LATE_HOUR_UPPER ||
-      hour <= LATE_HOUR_LOWER ||
+      hour >= LATE_HOUR_LOWER ||
+      hour <= LATE_HOUR_UPPER ||
       tabs_to_close.length
     ) {
       browser.tabs.create({ url: HELP_SITE });
