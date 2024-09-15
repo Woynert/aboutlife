@@ -11,6 +11,7 @@ OBLIGATORY_BREAK_DURATION = 30
 OBLIGATORY_BREAK_DURATION_SHORT = 8
 OBLIGATORY_BREAK_DURATION_LATE = 5 * 60
 OBLIGATORY_BREAK_THRESHOLD_SHORT = 11 * 60
+OBLIGATORY_BREAK_THRESHOLD_LATE = 24 * 60
 # (chars)
 TASK_MIN_LENGTH = 14
 TASK_MAX_LENGTH = 70
@@ -95,10 +96,15 @@ class Context:
 
         if elapsed <= OBLIGATORY_BREAK_THRESHOLD_SHORT:
             self.end_time += OBLIGATORY_BREAK_DURATION_SHORT
-        elif Context.is_late_hour():
-            self.end_time += OBLIGATORY_BREAK_DURATION_LATE
-        else:
+        elif not Context.is_late_hour():
             self.end_time += OBLIGATORY_BREAK_DURATION
+
+        # late hour conditions
+        else:
+            if elapsed < OBLIGATORY_BREAK_THRESHOLD_LATE:
+                self.end_time += OBLIGATORY_BREAK_DURATION
+            else:
+                self.end_time += OBLIGATORY_BREAK_DURATION_LATE
         return True
 
     @staticmethod
