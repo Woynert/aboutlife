@@ -13,7 +13,8 @@ LOG_FILE_NAME = "tasklog.json"
 
 @dataclass
 class Log:
-    hour: str
+    hour: int
+    minute: int
     duration: int
     task: str
 
@@ -80,12 +81,12 @@ def read_log() -> Optional[List[Log]]:
 # simple demo
 
 if __name__ == "__main__":
-    date = datetime.now().strftime("%Y-%m-%d")
-    hour = datetime.now().strftime("%I:%M %p")
+    date_curr = datetime.now()
+    date_string = date_curr.strftime("%Y-%m-%d")
 
     logs_col = LogCollection(date, [])
     for i in range(5):
-        log = Log(hour, 10, "This is my tags")
+        log = Log(date_curr.hour, date_curr.minute, 10, "This is my tags")
         logs_col.logs.append(log)
     json_data = json.dumps(asdict(logs_col), indent=4)
 

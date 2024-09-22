@@ -4,6 +4,7 @@ import threading
 import time
 from typing import List
 from aboutlife.overlay.tasklog.fileio import Log, read_log, write_log
+from aboutlife.utils import printerr
 
 gi.require_version("Gtk", "3.0")
 from gi.repository import Gtk, GLib
@@ -21,8 +22,8 @@ class TaskLog:
 
     def on_start_session(self, task: str, duration: int):
         # append new log
-        hour = datetime.now().strftime("%I:%M %p")
-        self.logs.append(Log(hour, duration, task))
+        curr_date = datetime.now()
+        self.logs.append(Log(curr_date.hour, curr_date.minute, duration, task))
 
         # write (blocking)
         write_log(self.logs)
@@ -32,6 +33,8 @@ class TaskLog:
         if logs:
             self.logs = logs
             self._fill_grid()
+        else:
+            printerr("E: Couldn't load logs")
 
     def _fill_grid(self):
         if not self.grid:
@@ -43,17 +46,14 @@ class TaskLog:
         for i in range(len(self.logs) - 1, -1, -1):
             j += 1
             log: Log = self.logs[i]
-            lbl_hour = Gtk.Label(log.hour)
+            lbl_hour = Gtk.Label(f"{str(log.hour).zfill(2)}:{str(log.minute).zfill(2)}")
             lbl_hour.set_xalign(0)
             lbl_hour.set_yalign(0)
-            lbl_duration = Gtk.Label(f"({log.duration} mins)")
-            lbl_duration.set_xalign(0)
-            lbl_duration.set_yalign(0)
-            lbl_task = Gtk.Label(log.task)
+            lbl_task = Gtk.Label()
+            lbl_task.set_markup(f"{log.task}\n<i>({log.duration}m)</i>")
             lbl_task.set_line_wrap(True)
             lbl_task.set_xalign(0)
             lbl_task.set_yalign(0)
 
             self.grid.attach(lbl_hour, 0, j, 1, 1)
-            self.grid.attach(lbl_duration, 1, j, 1, 1)
-            self.grid.attach(lbl_task, 2, j, 1, 1)
+            self.grid.attach(lbl_task, 1, j, 1, 1)

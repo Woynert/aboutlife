@@ -358,7 +358,7 @@
                                             <property name="visible">True</property>
                                             <property name="can-focus">False</property>
                                             <child>
-                                              <!-- n-columns=3 n-rows=3 -->
+                                              <!-- n-columns=2 n-rows=3 -->
                                               <object class="GtkGrid" id="tasklog-grid">
                                                 <property name="visible">True</property>
                                                 <property name="can-focus">False</property>
@@ -366,16 +366,8 @@
                                                 <property name="margin-end">10</property>
                                                 <property name="margin-top">10</property>
                                                 <property name="margin-bottom">10</property>
+                                                <property name="row-spacing">10</property>
                                                 <property name="column-spacing">10</property>
-                                                <child>
-                                                  <placeholder/>
-                                                </child>
-                                                <child>
-                                                  <placeholder/>
-                                                </child>
-                                                <child>
-                                                  <placeholder/>
-                                                </child>
                                                 <child>
                                                   <placeholder/>
                                                 </child>
