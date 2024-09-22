@@ -3,6 +3,8 @@ __pycache__
 .ruff_cache
 *.bk.py
 *.glade~
+# glade temp file
+\#*\# 
 # nixos build
 result
 # python venv

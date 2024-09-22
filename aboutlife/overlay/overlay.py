@@ -219,16 +219,16 @@ class OverlayPlugin(Plugin):
         settings = Gtk.Settings.get_default()
         settings.set_property("gtk-application-prefer-dark-theme", True)
 
+        # setup overlay plugins
+        self.plugins.append(TaskLog())
+        for plugin in self.plugins:
+            plugin.setup(builder)
+
         # start
         self.main_window.show_all()
         self.focus_window.show_all()
         self.reset_tmux_dialog()
         self.update_state_from_remote()
-
-        # plugins
-        self.plugins.append(TaskLog())
-        for plugin in self.plugins:
-            plugin.setup(builder)
 
         self.ready = True
         Gtk.main()
