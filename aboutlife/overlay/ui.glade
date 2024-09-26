@@ -566,7 +566,7 @@
                                 </child>
                               </object>
                               <packing>
-                                <property name="left-attach">1</property>
+                                <property name="left-attach">0</property>
                                 <property name="top-attach">0</property>
                               </packing>
                             </child>
@@ -602,10 +602,10 @@
                                         <property name="visible">True</property>
                                         <property name="can-focus">False</property>
                                         <property name="xpad">50</property>
-                                        <property name="label" translatable="yes">1. Párese a pensar
-2. Lea su libreta
-3. Planee el siguiente paso
-4. Tómese su tiempo</property>
+                                        <property name="label" translatable="yes">* Mire el mundo afuera
+* Levantese
+* Descanse
+* Tómese su tiempo</property>
                                         <property name="wrap">True</property>
                                       </object>
                                       <packing>
@@ -673,7 +673,7 @@
                                 </child>
                               </object>
                               <packing>
-                                <property name="left-attach">0</property>
+                                <property name="left-attach">1</property>
                                 <property name="top-attach">0</property>
                               </packing>
                             </child>

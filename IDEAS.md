@@ -1,6 +1,7 @@
 IDEAS
 
 
+* (core) Rename to "aboutpeople"
 * (core) Port to Go, Rust, or Zig
 * (core) Play sounds on common events, checking for these binaries: aplay, paplay pw-play, ffplay
 * (core) Allow internet usage in intervals of 5 minutes (ON/OFF).
@@ -11,6 +12,7 @@ IDEAS
 * (core) A "need youtube" setting. This would require integrating the "Youtube puzzle" web extension.
 * (core) Increase the obligatory break time at late hours (like do nothing for 2 minutes webpage)
 * (core) An option to start a task inside the overlay plugin. So the task can be completed with it opened.
+* (core) A **meta** task that exists along the usual task, it would allow to define time for a big task your working towards, and parallely use the little tasks for small well defined activities that work towards that goal.
 
 
 * (overlay) (terminals) Button to reset terminal
@@ -37,6 +39,8 @@ IDEAS
 * (overlay) on break screen show an anti eye strain activity, like safeeyes does.
 * (overlay) A section where you are shown a series of screens/text one by one, and you have to click next to see the next one. You have to go through all. This screens could be: Email (webview), Birthdays (text file), Calendar, or other reminders. You could open it by yourself or it could pop up randomly sometimes.
 * (overlay) Daily planner. A section that emulates the planning I do with my notebook. You can only specify, hour and goal; you could see it hovering the trayicon. And you can select a goal from there instead of writting one for starting a session.
+* (overlay) Dedicate a entire section of the screen to permanently show a section of the overlay. This could be done with X11 virtual screens. And would persist even when running fullscreen apps.
+* (overlay) When indicating which action to execute before starting the session, ask, what, how, and why. So that one must fill these fields before continuing.
 
 
 * (tray) Add "tomato break" option to tray icon, this option would end the session and enter a tomato break.
@@ -44,6 +48,7 @@ IDEAS
 * (sticky) When the work session is about to end. Use visual cues in sticky, like Hyperfocus does. Maybe play a sound too. Use GtkDrawingArea.
 * (sticky) Make it less intrusive by having a transparent background.
 * (sticky) Each time a minute passes an animation plays, una animación de barrido de izq a der.
+* (sticky) (toggable option idea) When there is just a minute left, hide the sticky so the user doesn't stress over the countdown.
 * (webext) At night hours make the "close tabs" function automatic
 
 

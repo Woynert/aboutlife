@@ -2,15 +2,21 @@ import time
 import threading
 from enum import Enum
 
+# hour range to be considered 'late'
+LATE_HOUR_LOWER = 20
+LATE_HOUR_UPPER = 6
 # (seconds)
 TOMATO_BREAK_DURATION = 5 * 60
 OBLIGATORY_BREAK_DURATION = 30
-SHORT_OBLIGATORY_BREAK_DURATION = 8
-SHORT_OBLIGATORY_BREAK_THRESHOLD = 11 * 60
+OBLIGATORY_BREAK_DURATION_SHORT = 8
+OBLIGATORY_BREAK_DURATION_LATE = 5 * 60
+OBLIGATORY_BREAK_THRESHOLD_SHORT = 11 * 60
+OBLIGATORY_BREAK_THRESHOLD_LATE = 24 * 60
 # (chars)
 TASK_MIN_LENGTH = 14
 TASK_MAX_LENGTH = 70
 TASK_MAX_DURATION = 50  # minutes
+TASK_MAX_DURATION_LATE = 25  # minutes
 
 
 class STATE(Enum):
@@ -65,6 +71,7 @@ class Context:
         if not (
             duration > 0
             and duration <= TASK_MAX_DURATION
+            and (not Context.is_late_hour() or duration <= TASK_MAX_DURATION_LATE)
             and len(task_info) >= TASK_MIN_LENGTH
             and len(task_info) <= TASK_MAX_LENGTH
             and self.state == STATE.IDLE
@@ -87,8 +94,20 @@ class Context:
         self.end_time = int(time.time())
         elapsed = int(time.time()) - self.start_time  # seconds from task start to now
 
-        if elapsed <= SHORT_OBLIGATORY_BREAK_THRESHOLD:
-            self.end_time += SHORT_OBLIGATORY_BREAK_DURATION
-        else:
+        if elapsed <= OBLIGATORY_BREAK_THRESHOLD_SHORT:
+            self.end_time += OBLIGATORY_BREAK_DURATION_SHORT
+        elif not Context.is_late_hour():
             self.end_time += OBLIGATORY_BREAK_DURATION
+
+        # late hour conditions
+        else:
+            if elapsed < OBLIGATORY_BREAK_THRESHOLD_LATE:
+                self.end_time += OBLIGATORY_BREAK_DURATION
+            else:
+                self.end_time += OBLIGATORY_BREAK_DURATION_LATE
         return True
+
+    @staticmethod
+    def is_late_hour() -> bool:
+        curr = time.localtime().tm_hour
+        return curr >= LATE_HOUR_LOWER or curr <= LATE_HOUR_UPPER
