@@ -4,12 +4,13 @@ import time
 import os
 import subprocess
 import random
-from typing import List, Optional
+from typing import Any, List, Optional
 from enum import Enum
 from datetime import datetime
 from aboutlife.plugin import Plugin
 from aboutlife.context import STATE, TASK_MIN_LENGTH, TASK_MAX_LENGTH
 from aboutlife.overlay import client
+from aboutlife.overlay.tasklog import TaskLog
 from aboutlife.utils import get_resource_path, send_notification, keygrab_loop
 from aboutlife.overlay.feed import get_image_of_the_day, get_random_quote
 from aboutlife.common.scaled_image import ScaledImageWidget
@@ -86,6 +87,10 @@ class OverlayPlugin(Plugin):
         self.is_tmux_dialog_active = False
         self.tmux_dialog = None
         self.tmux_dialog_list = None
+
+        # TODO: Define plugin interface
+
+        self.plugins: List[Any] = []
 
     def setup(self):
         # build
@@ -213,6 +218,11 @@ class OverlayPlugin(Plugin):
         # prefer dark theme
         settings = Gtk.Settings.get_default()
         settings.set_property("gtk-application-prefer-dark-theme", True)
+
+        # setup overlay plugins
+        self.plugins.append(TaskLog())
+        for plugin in self.plugins:
+            plugin.setup(builder)
 
         # start
         self.main_window.show_all()
@@ -650,12 +660,12 @@ class OverlayPlugin(Plugin):
     def on_start_session(self, widget):
         print("D: triggered 'start session'")
         success = False
-        try:
-            task_info = self.tbx_task.get_text()
-            duration = int(self.cbx_duration.get_active_text())
-            network_required = self.swi_network.get_active()
-            sticky_discrete = self.swi_sticky_discrete.get_active()
+        task_info = self.tbx_task.get_text()
+        duration = int(self.cbx_duration.get_active_text())
+        network_required = self.swi_network.get_active()
+        sticky_discrete = self.swi_sticky_discrete.get_active()
 
+        try:
             success = client.put_start_work_session(
                 task_info, duration, network_required, sticky_discrete
             )
@@ -667,6 +677,12 @@ class OverlayPlugin(Plugin):
             "Sent successfully" if success else "Can't do that right now",
         )
         if success:
+            # notify plugins
+            for plugin in self.plugins:
+                if hasattr(plugin, "on_start_session"):
+                    plugin.on_start_session(task_info, duration)
+
+            # trigger update
             self.update_state_from_remote()
 
 
