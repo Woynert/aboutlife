@@ -6,12 +6,20 @@ var ENDPOINT_RESET = `http://localhost:${PORT}/close_tabs_reset`;
 var previus_state = 0;
 
 const WORKING_STATE_VALUE = 3; // see ../aboutlife/context.py
-const UNPRODUCTIVE_SITES = ["facebook.com", "twitter.com", "newgrounds.com"];
-const TARGET_SITES = [
+const SITES_TO_CLOSE = [
+  "facebook.com",
+  "twitter.com",
+  "x.com",
+  "newgrounds.com",
+  "steampowered.com",
+  "itch.io",
+];
+const SITES_TO_UNLOAD = [
   "youtube.com",
   "reddit.com",
   "imgur.com",
-  ...UNPRODUCTIVE_SITES,
+  "github.com",
+  ...SITES_TO_CLOSE,
 ];
 const HELP_SITE = "https://emergency.nofap.com/";
 const LATE_HOUR_LOWER = 20;
@@ -41,13 +49,13 @@ async function close_tabs() {
 }
 
 function is_url_targeted(url) {
-  return TARGET_SITES.some((targeted_url) => {
+  return SITES_TO_UNLOAD.some((targeted_url) => {
     return url.includes(targeted_url);
   });
 }
 
 function is_url_unproductive(url) {
-  return UNPRODUCTIVE_SITES.some((targeted_url) => {
+  return SITES_TO_CLOSE.some((targeted_url) => {
     return url.includes(targeted_url);
   });
 }
