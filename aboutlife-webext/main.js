@@ -1,11 +1,15 @@
-const TIMEOUT_MS = 4000;
+// config vars
 var PORT = "8080";
+var HELP_SITE = "";
 var ENDPOINT_QUERY = `http://localhost:${PORT}/state`;
 var ENDPOINT_RESET = `http://localhost:${PORT}/close_tabs_reset`;
 
+const LATE_HOUR_LOWER = 20;
+const LATE_HOUR_UPPER = 5;
+const TIMEOUT_MS = 4000;
+const WORKING_STATE_VALUE = 3; // see ../aboutlife/context.py
 var previus_state = 0;
 
-const WORKING_STATE_VALUE = 3; // see ../aboutlife/context.py
 const SITES_TO_CLOSE = [
   "facebook.com",
   "twitter.com",
@@ -21,9 +25,6 @@ const SITES_TO_UNLOAD = [
   "github.com",
   ...SITES_TO_CLOSE,
 ];
-const HELP_SITE = "https://emergency.nofap.com/";
-const LATE_HOUR_LOWER = 20;
-const LATE_HOUR_UPPER = 5;
 
 function sleep(ms) {
   return new Promise((resolve) => {
@@ -109,7 +110,11 @@ async function unload_tabs() {
       hour <= LATE_HOUR_UPPER ||
       tabs_to_close.length
     ) {
-      browser.tabs.create({ url: HELP_SITE });
+      if (HELP_SITE != "") {
+        browser.tabs.create({ url: HELP_SITE });
+      } else {
+        browser.tabs.create();
+      }
     } else if (is_active_tab_targeted) {
       if (candidate_tab > -1) {
         await browser.tabs.update(candidate_tab, {
@@ -168,13 +173,17 @@ async function loop() {
   try {
     result = await browser.storage.local.get({
       port: "8080",
-      homepage: "",
+      help_page_url: "",
     });
     if (result.port != "") {
       PORT = result.port;
       ENDPOINT_QUERY = `http://localhost:${PORT}/state`;
       ENDPOINT_RESET = `http://localhost:${PORT}/close_tabs_reset`;
     }
+    HELP_SITE = result.help_page_url;
+    console.log(
+      `Loaded config.\nport: ${result.port}, help_page_url: ${result.help_page_url}`,
+    );
   } catch (error) {}
   loop();
 })();

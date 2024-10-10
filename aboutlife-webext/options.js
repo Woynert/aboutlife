@@ -5,20 +5,20 @@ document.addEventListener("DOMContentLoaded", function () {
   browser.storage.local
     .get({
       port: "8080",
-      homepage: "",
+      help_page_url: "",
     })
     .then((result) => {
       document.getElementById("tbx_port").value = result.port;
-      document.getElementById("tbx_homepage").value = result.homepage;
+      document.getElementById("tbx_help_page_url").value = result.help_page_url;
     });
 
   // save
   document.getElementById("btn_save").addEventListener("click", function () {
     PORT = document.getElementById("tbx_port").value;
-    const homepage = document.getElementById("tbx_homepage").value;
+    const help_page_url = document.getElementById("tbx_help_page_url").value;
     browser.storage.local.set({
       port: PORT,
-      homepage: homepage,
+      help_page_url: help_page_url,
     });
   });
 

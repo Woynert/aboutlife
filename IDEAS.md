@@ -41,6 +41,7 @@ IDEAS
 * (overlay) Daily planner. A section that emulates the planning I do with my notebook. You can only specify, hour and goal; you could see it hovering the trayicon. And you can select a goal from there instead of writting one for starting a session.
 * (overlay) Dedicate a entire section of the screen to permanently show a section of the overlay. This could be done with X11 virtual screens. And would persist even when running fullscreen apps.
 * (overlay) When indicating which action to execute before starting the session, ask, what, how, and why. So that one must fill these fields before continuing.
+* (overlay) Allow to set a virtual screen resolution, i.e. Using big black borders around the main window to artificially make it smaller and therefore help in focusing.
 
 
 * (tray) Add "tomato break" option to tray icon, this option would end the session and enter a tomato break.
