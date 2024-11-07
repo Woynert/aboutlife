@@ -18,10 +18,23 @@ class NetworkManagerPlugin(Plugin):
                 if ctx.state != STATE.WORKING:
                     active = True
 
-            if active:
-                process = subprocess.Popen(["nmcli", "n", "on"])
-            else:
-                process = subprocess.Popen(["nmcli", "n", "off"])
+            command = [
+                "bash",
+                "-c",
+                "( (nmcli n on &) ) &",
+            ]
+
+            if not active:
+                command = [
+                    "bash",
+                    "-c",
+                    "( (nmcli n off &) ) &",
+                ]
+
+            # TODO: Reduce spawn frequency
+
+            process = subprocess.Popen(command)
+            process.wait()
 
     def process(self):
         pass

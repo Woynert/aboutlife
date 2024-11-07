@@ -1,8 +1,9 @@
 import time
-import subprocess
 import sys
 from aboutlife.plugin import Plugin
 from aboutlife.context import Context, STATE
+
+PID_PATH = "/tmp/aboutlife_overlay.pid"
 
 
 class OverlayWatcherPlugin(Plugin):
@@ -17,8 +18,7 @@ class OverlayWatcherPlugin(Plugin):
                 active = ctx.state != STATE.WORKING
 
             if active:
-                process = subprocess.Popen([bin_path, "--overlay"])
-                process.wait()
+                self.spawn_if_pid_is_dead(PID_PATH, f"{bin_path} --overlay")
 
     def process(self):
         pass
