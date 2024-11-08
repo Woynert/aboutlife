@@ -27,6 +27,8 @@ buildPythonApplication {
     pkgs.python310Packages.pygobject3
     pkgs.python310Packages.xlib
     pkgs.python310Packages.requests
+    pkgs.python310Packages.setproctitle
+    pkgs.python310Packages.psutil
   ];
 
   doCheck = false;
