@@ -13,7 +13,7 @@ class RestPlugin(Plugin):
 
     def setup(self, port: int):
         self.port = port
-        self.server = HTTPServer(("0.0.0.0", port), Handler)
+        self.server = HTTPServer(("127.0.0.1", port), Handler)
         self.server.running = True
         print("D: serving rest")
 
