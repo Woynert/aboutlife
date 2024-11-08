@@ -1,5 +1,5 @@
 // config vars
-var PORT = "8080";
+var PORT = "13005";
 var HELP_SITE = "";
 var ENDPOINT_QUERY = `http://localhost:${PORT}/state`;
 var ENDPOINT_RESET = `http://localhost:${PORT}/close_tabs_reset`;
@@ -172,7 +172,7 @@ async function loop() {
   console.log("I: Background script started");
   try {
     result = await browser.storage.local.get({
-      port: "8080",
+      port: PORT,
       help_page_url: "",
     });
     if (result.port != "") {
