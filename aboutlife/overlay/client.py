@@ -1,10 +1,11 @@
 from aboutlife.context import STATE
 from aboutlife.rest.endpoints import ENDPOINT
 from dataclasses import dataclass
+from aboutlife.rest.rest import DEFAULT_PORT
 import http.client
 import json
 
-HOST = "localhost:8080"
+HOST = f"localhost:{DEFAULT_PORT}"
 
 
 @dataclass

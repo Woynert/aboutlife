@@ -1,6 +1,9 @@
 run:
 	python -m aboutlife
 
+run-obfuscated:
+	python -m aboutlife --obfuscated
+
 run-daemon:
 	python -m aboutlife --daemon
 

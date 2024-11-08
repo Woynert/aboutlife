@@ -1,8 +1,10 @@
 import time
-import subprocess
 import sys
 from aboutlife.plugin import Plugin
 from aboutlife.context import Context, STATE
+
+
+PID_PATH = "/tmp/aboutlife_sticky.pid"
 
 
 class StickyWatcherPlugin(Plugin):
@@ -11,14 +13,14 @@ class StickyWatcherPlugin(Plugin):
         active = False
 
         while True:
-            time.sleep(1)
+            time.sleep(2)
+
             with Context.get_mutex():
                 ctx = Context.get_singleton()
                 active = ctx.state == STATE.WORKING
 
             if active:
-                process = subprocess.Popen([bin_path, "--sticky"])
-                process.wait()
+                self.spawn_if_pid_is_dead(PID_PATH, f"{bin_path} --sticky")
 
     def process(self):
         pass

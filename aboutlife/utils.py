@@ -15,7 +15,8 @@ GRAB_DURATION = 5
 IDLE_TIMEOUT = 0.2
 
 
-def curr_time() -> int:
+## @return seconds
+def get_curr_time() -> int:
     return int(time.time())
 
 

@@ -10,12 +10,16 @@ sys.path.append(str(root))
 import argparse
 from aboutlife.overlay import overlay
 from aboutlife.sticky import sticky
+from aboutlife.launcher import launcher
 from aboutlife import daemon
 
 
 def main():
     parser = argparse.ArgumentParser(description="Aboutlife")
-    parser.add_argument("--daemon", action="store_true", help="Run server only")
+    parser.add_argument(
+        "--obfuscated", action="store_true", help="Launch main deamon obfuscated"
+    )
+    parser.add_argument("--daemononly", action="store_true", help="Run server only")
     parser.add_argument("--overlay", action="store_true", help="Launch overlay plugin")
     parser.add_argument("--sticky", action="store_true", help="Launch sticky plugin")
     args = parser.parse_args()
@@ -28,9 +32,13 @@ def main():
         print("I: Launching sticky")
         sticky.main()
 
-    elif args.daemon:
+    elif args.daemononly:
         print("I: Launching daemon server only")
         daemon.main(False)
+
+    elif args.obfuscated:
+        print("I: Launching daemon obfuscated")
+        launcher.main()
 
     else:
         print("I: Launching aboutlife")

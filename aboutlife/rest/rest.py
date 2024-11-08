@@ -6,6 +6,9 @@ from aboutlife.plugin import Plugin
 from aboutlife.rest.handler import Handler
 
 
+DEFAULT_PORT = 13005
+
+
 class RestPlugin(Plugin):
     def __init__(self):
         self.server = None
@@ -13,7 +16,7 @@ class RestPlugin(Plugin):
 
     def setup(self, port: int):
         self.port = port
-        self.server = HTTPServer(("0.0.0.0", port), Handler)
+        self.server = HTTPServer(("127.0.0.1", port), Handler)
         self.server.running = True
         print("D: serving rest")
 
@@ -46,4 +49,4 @@ if __name__ == "__main__":
     thread = threading.Thread(target=thread_helper, args=(plugin,))
     thread.daemon = True
     thread.start()
-    plugin.setup(8080)
+    plugin.setup(DEFAULT_PORT)
