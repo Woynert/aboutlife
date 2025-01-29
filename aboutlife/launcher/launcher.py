@@ -20,6 +20,13 @@ def main():
 
         if client.get_state() == None:
             process_cmd = [
+                # systemd cgroup disowning spawn
+                # extracted from https://stackoverflow.com/a/57041270
+                "systemd-run",
+                "--user",
+                "--scope",
+                "--slice=slice",
+                # process disowning spawn
                 "bash",
                 "-c",
                 f"( nohup sh -c '{bin_path} &' >/dev/null 2>&1 ) & ",
