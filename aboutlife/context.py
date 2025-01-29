@@ -4,19 +4,23 @@ from enum import Enum
 
 # hour range to be considered 'late'
 LATE_HOUR_LOWER = 20
-LATE_HOUR_UPPER = 6
-# (seconds)
-TOMATO_BREAK_DURATION = 5 * 60
-OBLIGATORY_BREAK_DURATION = 30
-OBLIGATORY_BREAK_DURATION_SHORT = 8
-OBLIGATORY_BREAK_DURATION_LATE = 5 * 60
-OBLIGATORY_BREAK_THRESHOLD_SHORT = 11 * 60
-OBLIGATORY_BREAK_THRESHOLD_LATE = 24 * 60
-# (chars)
-TASK_MIN_LENGTH = 14
-TASK_MAX_LENGTH = 70
-TASK_MAX_DURATION = 50  # minutes
-TASK_MAX_DURATION_LATE = 25  # minutes
+LATE_HOUR_UPPER = 4
+
+TOMATO_BREAK_SECS = 5 * 60
+
+# when it's considered a "short" session
+THRESHOLD_FOR_SHORT_BREAK_SECS = 11 * 60
+SHORT_BREAK_SECS = 8
+REGULAR_BREAK_SECS = 30
+
+THRESHOLD_LATE_FOR_SHORT_BREAK_SECS = 6 * 60
+SHORT_LATE_BREAK_SECS = 8
+REGULAR_LATE_BREAK_SECS = 5 * 60
+
+TASK_MIN_LENGTH_CHARS = 0
+TASK_MAX_LENGTH_CHARS = 70
+TASK_MAX_DURATION_MINS = 50
+TASK_MAX_DURATION_LATE_MINS = 10
 
 
 class STATE(Enum):
@@ -58,7 +62,7 @@ class Context:
             return False
 
         self.state = STATE.TOMATO_BREAK
-        self.end_time = int(time.time()) + TOMATO_BREAK_DURATION
+        self.end_time = int(time.time()) + TOMATO_BREAK_SECS
         return True
 
     def setup_work_session(
@@ -70,10 +74,10 @@ class Context:
     ) -> bool:
         if not (
             duration > 0
-            and duration <= TASK_MAX_DURATION
-            and (not Context.is_late_hour() or duration <= TASK_MAX_DURATION_LATE)
-            and len(task_info) >= TASK_MIN_LENGTH
-            and len(task_info) <= TASK_MAX_LENGTH
+            and duration <= TASK_MAX_DURATION_MINS
+            and (not Context.is_late_hour() or duration <= TASK_MAX_DURATION_LATE_MINS)
+            and len(task_info) >= TASK_MIN_LENGTH_CHARS
+            and len(task_info) <= TASK_MAX_LENGTH_CHARS
             and self.state == STATE.IDLE
         ):
             return False
@@ -86,25 +90,29 @@ class Context:
         self.end_time = int(time.time()) + duration * 60
         return True
 
+    @staticmethod
+    def calculate_break_time_secs(task_duration: int) -> int:
+        if not Context.is_late_hour():
+            if task_duration < THRESHOLD_FOR_SHORT_BREAK_SECS:
+                return SHORT_BREAK_SECS
+            else:
+                return REGULAR_BREAK_SECS
+
+        # late hour conditions
+        else:
+            if task_duration < THRESHOLD_LATE_FOR_SHORT_BREAK_SECS:
+                return SHORT_LATE_BREAK_SECS
+            else:
+                return REGULAR_LATE_BREAK_SECS
+
     def setup_obligatory_break(self) -> bool:
         if self.state != STATE.WORKING:
             return False
 
         self.state = STATE.OBLIGATORY_BREAK
-        self.end_time = int(time.time())
-        elapsed = int(time.time()) - self.start_time  # seconds from task start to now
-
-        if elapsed <= OBLIGATORY_BREAK_THRESHOLD_SHORT:
-            self.end_time += OBLIGATORY_BREAK_DURATION_SHORT
-        elif not Context.is_late_hour():
-            self.end_time += OBLIGATORY_BREAK_DURATION
-
-        # late hour conditions
-        else:
-            if elapsed < OBLIGATORY_BREAK_THRESHOLD_LATE:
-                self.end_time += OBLIGATORY_BREAK_DURATION
-            else:
-                self.end_time += OBLIGATORY_BREAK_DURATION_LATE
+        curr_time = int(time.time())
+        elapsed = curr_time - self.start_time  # seconds from task start to now
+        self.end_time = curr_time + Context.calculate_break_time_secs(elapsed)
         return True
 
     @staticmethod

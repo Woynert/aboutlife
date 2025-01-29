@@ -8,11 +8,17 @@ from typing import List, Optional
 from enum import Enum
 from datetime import datetime
 from aboutlife.plugin import Plugin
-from aboutlife.context import STATE, TASK_MIN_LENGTH, TASK_MAX_LENGTH
+from aboutlife.context import (
+    Context,
+    STATE,
+    TASK_MIN_LENGTH_CHARS,
+    TASK_MAX_LENGTH_CHARS,
+)
 from aboutlife.overlay import client
 from aboutlife.utils import get_resource_path, send_notification, keygrab_loop
 from aboutlife.overlay.feed import get_image_of_the_day, get_random_quote
 from aboutlife.common.scaled_image import ScaledImageWidget
+from aboutlife.common.misc import format_time_from_secs
 
 gi.require_version("Gtk", "3.0")
 gi.require_version("Gdk", "3.0")
@@ -121,8 +127,12 @@ class OverlayPlugin(Plugin):
         self.btn_return_home = builder.get_object("btn-return-home")
 
         # initial configuration
-        self.tbx_task.set_placeholder_text(f"Mínimo {TASK_MIN_LENGTH} letras")
-        self.tbx_task.set_max_length(TASK_MAX_LENGTH)
+        self.tbx_task.set_placeholder_text(
+            "Opcional"
+            if TASK_MIN_LENGTH_CHARS <= 0
+            else f"Mínimo {TASK_MIN_LENGTH_CHARS} letras"
+        )
+        self.tbx_task.set_max_length(TASK_MAX_LENGTH_CHARS)
         self.notebook.set_current_page(NOTEBOOK.SETUP.value)
         self.lbl_time.set_text("")
         self.lbl_waiting.set_text("")
@@ -537,13 +547,11 @@ class OverlayPlugin(Plugin):
         if self.state == STATE.TOMATO_BREAK or self.state == STATE.OBLIGATORY_BREAK:
             now = int(time.time())
             if now <= self.end_time:
-                sec = (self.end_time - now) % 60
-                min = int((self.end_time - now - sec) / 60)
-                text = f"{str(min).zfill(2)}:{str(sec).zfill(2)}"
+                formated_time = format_time_from_secs(self.end_time - now)
                 text = (
-                    f"Tomato break {text}"
+                    f"Tomato break {formated_time}"
                     if self.state == STATE.TOMATO_BREAK
-                    else f"Obligatory break {text}"
+                    else f"Obligatory break {formated_time}"
                 )
                 GLib.idle_add(self.lbl_waiting.set_text, text)
         elif self.notebook.get_current_page() == NOTEBOOK.BREAK.value:
