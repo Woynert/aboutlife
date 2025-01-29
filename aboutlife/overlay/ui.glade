@@ -190,7 +190,7 @@
                                     <property name="xscale">0.009999999776482582</property>
                                     <property name="yscale">0.009999999776482582</property>
                                     <child>
-                                      <!-- n-columns=2 n-rows=5 -->
+                                      <!-- n-columns=2 n-rows=6 -->
                                       <object class="GtkGrid">
                                         <property name="visible">True</property>
                                         <property name="can-focus">False</property>
@@ -243,7 +243,7 @@
                                           </object>
                                           <packing>
                                             <property name="left-attach">1</property>
-                                            <property name="top-attach">4</property>
+                                            <property name="top-attach">5</property>
                                           </packing>
                                         </child>
                                         <child>
@@ -318,7 +318,7 @@
                                           </object>
                                           <packing>
                                             <property name="left-attach">0</property>
-                                            <property name="top-attach">2</property>
+                                            <property name="top-attach">3</property>
                                           </packing>
                                         </child>
                                         <child>
@@ -330,7 +330,7 @@
                                           </object>
                                           <packing>
                                             <property name="left-attach">1</property>
-                                            <property name="top-attach">2</property>
+                                            <property name="top-attach">3</property>
                                           </packing>
                                         </child>
                                         <child>
@@ -342,7 +342,7 @@
                                           </object>
                                           <packing>
                                             <property name="left-attach">0</property>
-                                            <property name="top-attach">3</property>
+                                            <property name="top-attach">4</property>
                                           </packing>
                                         </child>
                                         <child>
@@ -354,8 +354,24 @@
                                           </object>
                                           <packing>
                                             <property name="left-attach">1</property>
-                                            <property name="top-attach">3</property>
+                                            <property name="top-attach">4</property>
                                           </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkLabel" id="lbl-upcoming-break-duration">
+                                            <property name="visible">True</property>
+                                            <property name="can-focus">False</property>
+                                            <property name="halign">start</property>
+                                            <property name="valign">start</property>
+                                            <property name="label" translatable="yes">Descanso de 2:30</property>
+                                          </object>
+                                          <packing>
+                                            <property name="left-attach">1</property>
+                                            <property name="top-attach">2</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
                                         </child>
                                         <child>
                                           <placeholder/>

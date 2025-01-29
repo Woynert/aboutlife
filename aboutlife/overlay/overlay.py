@@ -81,6 +81,7 @@ class OverlayPlugin(Plugin):
         self.swi_sticky_discrete = None
         self.lbl_time = None
         self.lbl_waiting = None
+        self.lbl_upcoming_break_duration = None
         self.btn_return_home = None
         self.terms = [None] * MAX_TERMS
         self.term_containers = [None] * MAX_TERMS
@@ -121,6 +122,9 @@ class OverlayPlugin(Plugin):
         self.swi_sticky_discrete = builder.get_object("swi-sticky-discrete")
         self.lbl_time = builder.get_object("lbl-time")
         self.lbl_waiting = builder.get_object("lbl-waiting")
+        self.lbl_upcoming_break_duration = builder.get_object(
+            "lbl-upcoming-break-duration"
+        )
         self.multiplexer = builder.get_object("multiplexer")
         self.tmux_dialog = builder.get_object("tmux-dialog")
         self.tmux_dialog_list = builder.get_object("tmux-dialog-list")
@@ -136,6 +140,7 @@ class OverlayPlugin(Plugin):
         self.notebook.set_current_page(NOTEBOOK.SETUP.value)
         self.lbl_time.set_text("")
         self.lbl_waiting.set_text("")
+        self.update_lbl_upcoming_break_duration()
 
         # set phrase
         lbl_phrase = builder.get_object("lbl-break-advice")
@@ -622,6 +627,14 @@ class OverlayPlugin(Plugin):
         self.trapped_on_break = False
         GLib.idle_add(self.notebook.set_current_page, NOTEBOOK.HOME.value)
 
+    def update_lbl_upcoming_break_duration(self):
+        if self.lbl_upcoming_break_duration is None or self.cbx_duration is None:
+            return
+        task_duration = int(self.cbx_duration.get_active_text() or "0") * 60
+        break_duration = Context.calculate_break_time_secs(task_duration)
+        formated_time = format_time_from_secs(break_duration)
+        self.lbl_upcoming_break_duration.set_text(f"Descanso de {formated_time}")
+
     def on_spin_combobox(self, up: bool):
         current = self.cbx_duration.get_active()
         desired = current - 1
@@ -630,6 +643,7 @@ class OverlayPlugin(Plugin):
         if desired < 0:
             return
         self.cbx_duration.set_active(desired)
+        self.update_lbl_upcoming_break_duration()
 
     def on_tomato_break(self, widget):
         print("D: triggered 'tomato break'")
