@@ -1,10 +1,10 @@
-var PORT = "8080";
+var PORT = "13005";
 
 document.addEventListener("DOMContentLoaded", function () {
   // load
   browser.storage.local
     .get({
-      port: "8080",
+      port: PORT,
       help_page_url: "",
     })
     .then((result) => {

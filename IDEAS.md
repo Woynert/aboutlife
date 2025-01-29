@@ -13,6 +13,7 @@ IDEAS
 * (core) Increase the obligatory break time at late hours (like do nothing for 2 minutes webpage)
 * (core) An option to start a task inside the overlay plugin. So the task can be completed with it opened.
 * (core) A **meta** task that exists along the usual task, it would allow to define time for a big task your working towards, and parallely use the little tasks for small well defined activities that work towards that goal.
+* (core) Limit the internet bandwidth, allow a certain amount of data to be transfered at full speed per hour, when that limit is reach set the bandwidth very low (e.g 50kb/s).
 
 
 * (overlay) (terminals) Button to reset terminal
@@ -42,6 +43,7 @@ IDEAS
 * (overlay) Dedicate a entire section of the screen to permanently show a section of the overlay. This could be done with X11 virtual screens. And would persist even when running fullscreen apps.
 * (overlay) When indicating which action to execute before starting the session, ask, what, how, and why. So that one must fill these fields before continuing.
 * (overlay) Allow to set a virtual screen resolution, i.e. Using big black borders around the main window to artificially make it smaller and therefore help in focusing.
+* (overlay) An overlay plugin to allow to inforce the task description to be on a specific language, it would only accept well spelled words, but still allowing any other form of text as long as in in ALL CAPS. For example, if set to spanish only it would be: "Leer sobre ENTITY COMPONENT SYSTEM"
 
 
 * (tray) Add "tomato break" option to tray icon, this option would end the session and enter a tomato break.

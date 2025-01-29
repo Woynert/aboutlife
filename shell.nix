@@ -15,6 +15,8 @@ pkgs.mkShell {
     pkgs.python310Packages.xlib
     pkgs.python310Packages.hatchling
     pkgs.python310Packages.requests
+    pkgs.python310Packages.setproctitle
+    pkgs.python310Packages.psutil
 
     pkgs.corepack
     pkgs.nodejs-slim

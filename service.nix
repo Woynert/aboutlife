@@ -24,9 +24,11 @@ in
       startLimitBurst = 10;
       serviceConfig = {
         # use user environment and packages
-        ExecStart = "${pkgs.bash}/bin/bash -c 'source ${config.system.build.setEnvironment}; exec ${aboutlife}/bin/aboutlife'";
+        ExecStart = "${pkgs.bash}/bin/bash -c 'source ${config.system.build.setEnvironment}; exec ${aboutlife}/bin/aboutlife --obfuscated'";
+        # do not kill spawned processes on stop
+        KillMode = "process"; 
         Restart = "always";
-        RestartSec = 3;
+        RestartSec = 60;
       };
     };
 
