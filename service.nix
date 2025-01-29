@@ -28,7 +28,7 @@ in
         # do not kill spawned processes on stop
         KillMode = "process"; 
         Restart = "always";
-        RestartSec = 3;
+        RestartSec = 60;
       };
     };
 

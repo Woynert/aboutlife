@@ -8,13 +8,10 @@ parent, root = file.parent, file.parents[1]
 sys.path.append(str(root))
 
 import argparse
-from aboutlife.overlay import overlay
-from aboutlife.sticky import sticky
-from aboutlife.launcher import launcher
-from aboutlife import daemon
 
 
 def main():
+    print("I: Booting")
     parser = argparse.ArgumentParser(description="Aboutlife")
     parser.add_argument(
         "--obfuscated", action="store_true", help="Launch main deamon obfuscated"
@@ -25,22 +22,32 @@ def main():
     args = parser.parse_args()
 
     if args.overlay:
+        from aboutlife.overlay import overlay
+
         print("I: Launching overlay")
         overlay.main()
 
     elif args.sticky:
+        from aboutlife.sticky import sticky
+
         print("I: Launching sticky")
         sticky.main()
 
     elif args.daemononly:
+        from aboutlife import daemon
+
         print("I: Launching daemon server only")
         daemon.main(False)
 
     elif args.obfuscated:
+        from aboutlife.launcher import launcher
+
         print("I: Launching daemon obfuscated")
         launcher.main()
 
     else:
+        from aboutlife import daemon
+
         print("I: Launching aboutlife")
         daemon.main()
 
