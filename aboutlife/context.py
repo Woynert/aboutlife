@@ -74,8 +74,7 @@ class Context:
     ) -> bool:
         if not (
             duration > 0
-            and duration <= TASK_MAX_DURATION_MINS
-            and (not Context.is_late_hour() or duration <= TASK_MAX_DURATION_LATE_MINS)
+            and duration <= Context.get_task_max_duration_mins()
             and len(task_info) >= TASK_MIN_LENGTH_CHARS
             and len(task_info) <= TASK_MAX_LENGTH_CHARS
             and self.state == STATE.IDLE
@@ -119,3 +118,9 @@ class Context:
     def is_late_hour() -> bool:
         curr = time.localtime().tm_hour
         return curr >= LATE_HOUR_LOWER or curr <= LATE_HOUR_UPPER
+
+    @staticmethod
+    def get_task_max_duration_mins() -> int:
+        if Context.is_late_hour():
+            return TASK_MAX_DURATION_LATE_MINS
+        return TASK_MAX_DURATION_MINS

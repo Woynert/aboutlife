@@ -141,6 +141,9 @@ class OverlayPlugin(Plugin):
         self.lbl_time.set_text("")
         self.lbl_waiting.set_text("")
         self.update_lbl_upcoming_break_duration()
+        self.cbx_duration.set_active(0)
+        self.swi_network.set_active(True)
+        self.swi_sticky_discrete.set_active(True)
 
         # set phrase
         lbl_phrase = builder.get_object("lbl-break-advice")
@@ -637,11 +640,35 @@ class OverlayPlugin(Plugin):
 
     def on_spin_combobox(self, up: bool):
         current = self.cbx_duration.get_active()
-        desired = current - 1
         if up:
             desired = current + 1
+        else:
+            desired = current - 1
+
+        # get max i to loop the combobox
+
+        max_task_duration_mins = Context.get_task_max_duration_mins()
+        combobox_item_count = self.cbx_duration.get_model().iter_n_children()
+        max_allowed_item_i = combobox_item_count
+
+        for i in range(combobox_item_count):
+            duration = int(self.cbx_duration.get_model()[i][0] or "0")
+            if duration <= max_task_duration_mins:
+                max_allowed_item_i = i
+            else:
+                break
+
+        # loop logic
+
         if desired < 0:
-            return
+            desired = max_allowed_item_i
+        elif desired <= max_allowed_item_i:
+            desired_duration = int(self.cbx_duration.get_model()[desired][0] or "0")
+            if desired_duration > Context.get_task_max_duration_mins():
+                desired = 0
+        else:
+            desired = 0
+
         self.cbx_duration.set_active(desired)
         self.update_lbl_upcoming_break_duration()
 
