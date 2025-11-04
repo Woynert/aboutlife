@@ -1,0 +1,19 @@
+meta {
+  name: start_work_session
+  type: http
+  seq: 6
+}
+
+put {
+  url: http://localhost:13005/start_work_session
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "task_info": "Work on my tesis",
+    "duration": 5,
+    "network_required": false
+  }
+}

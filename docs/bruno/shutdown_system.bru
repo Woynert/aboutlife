@@ -1,0 +1,11 @@
+meta {
+  name: shutdown_system
+  type: http
+  seq: 7
+}
+
+delete {
+  url: http://localhost:13005/shutdown_system
+  body: none
+  auth: none
+}

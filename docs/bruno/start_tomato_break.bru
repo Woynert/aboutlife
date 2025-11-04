@@ -1,0 +1,17 @@
+meta {
+  name: start_tomato_break
+  type: http
+  seq: 5
+}
+
+put {
+  url: http://localhost:13005/start_tomato_break
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "task_info": "Work on my tesis"
+  }
+}
