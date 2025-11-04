@@ -3,16 +3,18 @@ import threading
 from enum import Enum
 from typing import List
 
-# hour range to be considered 'late' ([] are inclusive)
+# hour ranges to be considered 'late'
 LATE_HOUR_PAIRS: List[List[int]] = [
-    # [20, 24],
-    # [23, 24],
     [20, 24], # 8pm - 12
     [0, 4],   # 0 - 4am
-    # [13, 13], # 1pm - 2pm
-    # [13, 15], # 1pm - 4pm
 ]
-# TODO: LATE HOURS ON CHEAT DAYS. E.G FRIDAYS, SATURDAYS
+
+# hour ranges for the overlay to appear
+OVERLAY_HOUR_PAIRS: List[List[int]] = [
+    [12, 16], # 8pm - 12
+    [20, 24], # 8pm - 12
+    [0, 4],   # 0 - 4am
+]
 
 TOMATO_BREAK_SECS = 5 * 60
 
@@ -129,6 +131,17 @@ class Context:
         else:
             curr = hour
         for hour_pair in LATE_HOUR_PAIRS:
+            if curr >= hour_pair[0] and curr <= hour_pair[1]:
+                return True
+        return False
+
+    @staticmethod
+    def is_overlay_hour(hour: int = -1) -> bool:
+        if hour == -1:
+            curr = time.localtime().tm_hour
+        else:
+            curr = hour
+        for hour_pair in OVERLAY_HOUR_PAIRS:
             if curr >= hour_pair[0] and curr <= hour_pair[1]:
                 return True
         return False

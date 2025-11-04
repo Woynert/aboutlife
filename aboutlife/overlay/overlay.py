@@ -575,6 +575,13 @@ class OverlayPlugin(Plugin):
             self.update_state_from_remote()
 
     def update_state_from_remote(self):
+
+        if not Context.is_overlay_hour():
+            print("E: overlay process. Not allowed to run at this hour.")
+            Gtk.main_quit()
+            exit(1)
+            return
+
         ctx = client.get_state()
         if not ctx:
             print("E: overlay process. couldn't connect to server")

@@ -13,7 +13,7 @@ class StickyWatcherPlugin(Plugin):
         active = False
 
         while True:
-            time.sleep(2)
+            time.sleep(5)
 
             with Context.get_mutex():
                 ctx = Context.get_singleton()

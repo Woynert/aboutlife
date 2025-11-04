@@ -12,12 +12,12 @@ class OverlayWatcherPlugin(Plugin):
         active = False
 
         while True:
-            time.sleep(1)
+            time.sleep(5)
             with Context.get_mutex():
                 ctx = Context.get_singleton()
                 active = ctx.state != STATE.WORKING
 
-            if active:
+            if active and Context.is_overlay_hour():
                 self.spawn_if_pid_is_dead(PID_PATH, f"{bin_path} --overlay")
 
     def process(self):
