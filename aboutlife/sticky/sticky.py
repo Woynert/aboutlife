@@ -74,6 +74,10 @@ class StickyPlugin(Plugin):
             self.shuffle_position()
             return True
 
+    def update_label(self):
+        if self.lbl_msg:
+            GLib.idle_add(self.lbl_msg.set_text, "🌀️ Objetivo: " + self.task_info)
+
     def reset_shuffle_time(self):
         self.tick_last_shuffle = self.tick
 
@@ -100,6 +104,7 @@ class StickyPlugin(Plugin):
         y = self.pos_vert * (sh / 2 - wh / 2 - SCREEN_MARGIN) + sh / 2 - wh / 2
         GLib.idle_add(self.window.move, x, y)
         self.hidden = False
+        self.update_label()
 
     def hide(self):
         if not self.window:
@@ -141,8 +146,7 @@ class StickyPlugin(Plugin):
 
         if self.tick % 4 == 0:  # each two seconds
             self.sync_state()
-            if self.lbl_msg:
-                GLib.idle_add(self.lbl_msg.set_text, "🌀️ Objetivo: " + self.task_info)
+            self.update_label()
 
         if (self.tick - self.tick_last_shuffle) >= SHUFFLE_DELAY:
             self.shuffle_position()

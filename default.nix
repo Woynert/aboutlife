@@ -4,7 +4,7 @@ with pkgs.python310Packages;
 
 buildPythonApplication {
   pname = "aboutlife";
-  version = "0.0.1";
+  version = "0.0.3";
   format = "pyproject";
 
   # TODO: fetch from repo

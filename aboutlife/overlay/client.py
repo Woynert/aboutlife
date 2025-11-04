@@ -1,3 +1,4 @@
+from typing import Optional
 from aboutlife.context import STATE
 from aboutlife.rest.endpoints import ENDPOINT
 from dataclasses import dataclass
@@ -16,7 +17,7 @@ class RespContext:
     sticky_discrete: bool
 
 
-def get_state() -> RespContext:
+def get_state() -> Optional[RespContext]:
     try:
         conn = http.client.HTTPConnection(HOST)
         conn.request("GET", ENDPOINT.GET_STATE.value)

@@ -16,6 +16,7 @@ IDEAS
 * (core) Limit the internet bandwidth, allow a certain amount of data to be transfered at full speed per hour, when that limit is reach set the bandwidth very low (e.g 50kb/s).
 
 
+* (overlay) on break screen show an anti eye strain activity, like safeeyes does.
 * (overlay) (terminals) Button to reset terminal
 * (overlay) Support multiple screens
 * (overlay) Show last activity info near input for comparison
@@ -37,7 +38,6 @@ IDEAS
 * (overlay) Custom workplace with the ability to wrap X11 windows, useful for developing graphical applications. This might be a little bit too much for this project since at this point it could be confused with a virtual/pseudo window manager, which it isn't and shouldn't be.
 * (overlay) A plugin in where you see a list of the last 7 days, and the upcoming 7 days, and you can specify a goal for each day, this way you can always have in mind, what "plan" do you have.
 * (overlay) Alternatively from being able to specify a custom "task". Allow the creation of "goals", goals are displayed in a list, so, the user can choose to work on a specific goal.
-* (overlay) on break screen show an anti eye strain activity, like safeeyes does.
 * (overlay) A section where you are shown a series of screens/text one by one, and you have to click next to see the next one. You have to go through all. This screens could be: Email (webview), Birthdays (text file), Calendar, or other reminders. You could open it by yourself or it could pop up randomly sometimes.
 * (overlay) Daily planner. A section that emulates the planning I do with my notebook. You can only specify, hour and goal; you could see it hovering the trayicon. And you can select a goal from there instead of writting one for starting a session.
 * (overlay) Dedicate a entire section of the screen to permanently show a section of the overlay. This could be done with X11 virtual screens. And would persist even when running fullscreen apps.
@@ -73,3 +73,8 @@ ARCHIVED
 
 
 * (sticky) "Discrete" option, in this option the sticky it's only show 3 seconds every minute. So to not disable it entirely.
+
+
+BUGS
+
+* There is a weird bug when there is no space left on the computer, multiple 'aboutlife overlay' clients will open on top of each other.

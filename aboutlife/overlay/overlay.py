@@ -27,7 +27,7 @@ from gi.repository import GObject, Gtk, Gdk, GLib, Vte, Pango
 
 GObject.type_register(Vte.Terminal)
 
-MAX_TERMS = 2
+MAX_TERMS = 1
 TERM_GAP = 6
 TERM_BORDER = 3
 # TODO: Define in config file
@@ -67,7 +67,7 @@ class OverlayPlugin(Plugin):
         self.end_time: int = int(time.time())
         self.ready: bool = False
 
-        self.TERM_FONT_SIZE = 12
+        self.TERM_FONT_SIZE = 11
         self.MASTER_PANE_SIZE = 55  # percent
         self.maximized_terminal = -1
         self.trapped_on_break: bool = False
@@ -285,7 +285,7 @@ class OverlayPlugin(Plugin):
             if not ok:
                 print("E(terminal): couldn't spawn shell")
 
-    def on_resize(self, a, b):
+    def on_resize(self, _a, _b):
         if MAX_TERMS <= 1:
             return
 
@@ -343,12 +343,12 @@ class OverlayPlugin(Plugin):
             elif event.keyval == Gdk.KEY_underscore:
                 focused_term = Gtk.Window.get_focus(self.main_window)
                 if isinstance(focused_term, Vte.Terminal):
-                    self.update_terminals_font_size(-1, focused_term)
+                    self.update_terminals_font_size(-0.5, focused_term)
                     return True
             elif event.keyval == Gdk.KEY_plus:
                 focused_term = Gtk.Window.get_focus(self.main_window)
                 if isinstance(focused_term, Vte.Terminal):
-                    self.update_terminals_font_size(1, focused_term)
+                    self.update_terminals_font_size(0.5, focused_term)
                     return True
 
         # all following events require SUPER key
@@ -600,7 +600,10 @@ class OverlayPlugin(Plugin):
                 self.trapped_on_break = True
                 GLib.idle_add(self.btn_return_home.set_visible, False)
                 GLib.idle_add(self.btn_return_home.set_sensitive, False)
-                GLib.idle_add(self.notebook.set_current_page, NOTEBOOK.BREAK.value)
+
+                # go to terminals on obligatory break
+                GLib.idle_add(self.notebook.set_current_page, NOTEBOOK.TERMINALS.value)
+                GLib.idle_add(self.cycle_terminal_focus, 0)
             elif prevstate == STATE.TOMATO_BREAK or prevstate == STATE.OBLIGATORY_BREAK:
                 self.reveal_btn_return_home()
 

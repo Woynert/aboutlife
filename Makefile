@@ -17,7 +17,7 @@ format:
 	ruff format .
 
 test:
-	python -m unittest discover tests/overlay
+	python -m unittest discover tests tests/overlay
 
 webext:
 	cd aboutlife-webext; zip -r ../extension-$(shell date +%s).zip *.js *.html icons manifest.json 

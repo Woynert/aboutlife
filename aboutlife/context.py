@@ -1,10 +1,18 @@
 import time
 import threading
 from enum import Enum
+from typing import List
 
-# hour range to be considered 'late'
-LATE_HOUR_LOWER = 20
-LATE_HOUR_UPPER = 4
+# hour range to be considered 'late' ([] are inclusive)
+LATE_HOUR_PAIRS: List[List[int]] = [
+    # [20, 24],
+    # [23, 24],
+    [20, 24], # 8pm - 12
+    [0, 4],   # 0 - 4am
+    # [13, 13], # 1pm - 2pm
+    # [13, 15], # 1pm - 4pm
+]
+# TODO: LATE HOURS ON CHEAT DAYS. E.G FRIDAYS, SATURDAYS
 
 TOMATO_BREAK_SECS = 5 * 60
 
@@ -14,13 +22,13 @@ SHORT_BREAK_SECS = 8
 REGULAR_BREAK_SECS = 30
 
 THRESHOLD_LATE_FOR_SHORT_BREAK_SECS = 6 * 60
-SHORT_LATE_BREAK_SECS = 8
+SHORT_LATE_BREAK_SECS = 60
 REGULAR_LATE_BREAK_SECS = 5 * 60
 
 TASK_MIN_LENGTH_CHARS = 0
 TASK_MAX_LENGTH_CHARS = 70
 TASK_MAX_DURATION_MINS = 50
-TASK_MAX_DURATION_LATE_MINS = 10
+TASK_MAX_DURATION_LATE_MINS = 25
 
 
 class STATE(Enum):
@@ -115,9 +123,15 @@ class Context:
         return True
 
     @staticmethod
-    def is_late_hour() -> bool:
-        curr = time.localtime().tm_hour
-        return curr >= LATE_HOUR_LOWER or curr <= LATE_HOUR_UPPER
+    def is_late_hour(hour: int = -1) -> bool:
+        if hour == -1:
+            curr = time.localtime().tm_hour
+        else:
+            curr = hour
+        for hour_pair in LATE_HOUR_PAIRS:
+            if curr >= hour_pair[0] and curr <= hour_pair[1]:
+                return True
+        return False
 
     @staticmethod
     def get_task_max_duration_mins() -> int:
