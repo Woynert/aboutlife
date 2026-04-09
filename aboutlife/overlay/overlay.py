@@ -164,6 +164,11 @@ class OverlayPlugin(Plugin):
         thread = threading.Thread(target=self.setup_image, args=(image_widgets_list,))
         thread.daemon = True
         thread.start()
+        # set custom image
+        image_container = builder.get_object("image-container-3")
+        image_widget = ScaledImageWidget(ScaledImageWidget.STYLE.SCALED)
+        image_container.add(image_widget)
+        self.setup_image_vendored(image_widget, "sitting.png")
 
         # terminal colors: hex to Gdk.RGBA
         def hex_to_rgba(hex):
@@ -257,6 +262,11 @@ class OverlayPlugin(Plugin):
             for widget in image_widget:
                 print(f"I: setting image {image_file}")
                 GLib.idle_add(widget.set_image, image_file)
+
+    def setup_image_vendored(self, image_widget: ScaledImageWidget, image_file: str):
+        image_path = get_resource_path("/overlay/feed/loop.jpg")
+        print(f"I: setting image {image_path}")
+        GLib.idle_add(image_widget.set_image, image_path)
 
     def setup_phrase(self, label_widget: List[Gtk.Label]):
         quote: Optional[str] = get_random_quote()
