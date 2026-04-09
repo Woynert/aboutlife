@@ -1,4 +1,20 @@
-{ pkgs ? import <nixpkgs> { } }:
+#{ pkgs ? import <nixpkgs> { } }: # Uncomment to use system derivation.
+{ }:
+let
+
+# Use pinned Nixpkgs derivation (nixos-24.11.713895.666e1b3f09c2).
+system = "x86_64-linux";
+mkPinnedNixpkgs = { rev, sha256 }:
+  import (builtins.fetchTarball {
+    url = "https://github.com/NixOS/nixpkgs/archive/${rev}.tar.gz";
+    inherit sha256;
+  }) { inherit system; };
+pkgs = mkPinnedNixpkgs {
+  rev = "666e1b3f09c2";
+  sha256 = "02cpqb4zdirzxfj210viim1lknpp0flvwcc1a2knmrmhl1f9dgz8";
+};
+
+in
 
 with pkgs.python310Packages;
 

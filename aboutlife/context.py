@@ -11,9 +11,10 @@ LATE_HOUR_PAIRS: List[List[int]] = [
 
 # hour ranges for the overlay to appear
 OVERLAY_HOUR_PAIRS: List[List[int]] = [
-    [12, 16], # 8pm - 12
-    [20, 24], # 8pm - 12
-    [0, 4],   # 0 - 4am
+    # [12, 16], # 8pm - 12
+    # [20, 24], # 8pm - 12
+    # [0, 4],   # 0 - 4am
+    [0, 24],   # delme
 ]
 
 TOMATO_BREAK_SECS = 5 * 60
