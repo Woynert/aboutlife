@@ -4,9 +4,7 @@ import urllib.request
 from http.server import HTTPServer
 from aboutlife.plugin import Plugin
 from aboutlife.rest.handler import Handler
-
-
-DEFAULT_PORT = 13005
+from aboutlife.context import Context
 
 
 class RestPlugin(Plugin):
@@ -49,4 +47,4 @@ if __name__ == "__main__":
     thread = threading.Thread(target=thread_helper, args=(plugin,))
     thread.daemon = True
     thread.start()
-    plugin.setup(DEFAULT_PORT)
+    plugin.setup(Context.REST_PORT)

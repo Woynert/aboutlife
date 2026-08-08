@@ -1,5 +1,6 @@
 from aboutlife.plugin import Plugin
 from aboutlife.context import Context
+from aboutlife.utils import get_resource_path
 import gi
 
 gi.require_version("Gtk", "3.0")
@@ -13,7 +14,7 @@ class TrayPlugin(Plugin):
 
     def setup(self):
         self.tray_icon = Gtk.StatusIcon()
-        self.tray_icon.set_from_icon_name("avatar-default")
+        self.tray_icon.set_from_file(get_resource_path("/tray/trayicon.png"))
         self.tray_icon.connect("activate", lambda x: print("Hello"))
 
         self.menu = Gtk.Menu()
@@ -41,6 +42,10 @@ class TrayPlugin(Plugin):
             Context.get_singleton().setup_obligatory_break()
 
 
-if __name__ == "__main__":
+def main():
     app = TrayPlugin()
     app.setup()
+
+
+if __name__ == "__main__":
+    main()

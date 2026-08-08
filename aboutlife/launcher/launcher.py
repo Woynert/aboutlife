@@ -32,7 +32,7 @@ def main():
                 "--user",
                 "--scope",
                 "--slice=slice",
-                # process disowning spawn
+                # Process disowning spawn
                 # + Ensure normal user environment
                 "/usr/bin/env",
                 "bash",

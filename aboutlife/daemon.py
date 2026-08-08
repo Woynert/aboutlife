@@ -3,10 +3,11 @@ import time
 from typing import List
 from aboutlife.plugin import Plugin
 from aboutlife.tray.tray import TrayPlugin
-from aboutlife.rest.rest import RestPlugin, DEFAULT_PORT
+from aboutlife.rest.rest import RestPlugin
 from aboutlife.overlay.watcher import OverlayWatcherPlugin
 from aboutlife.sticky.watcher import StickyWatcherPlugin
 from aboutlife.networkmanager.watcher import NetworkManagerPlugin
+from aboutlife.autoshutdown.autoshutdown import AutoShutdownPlugin
 from aboutlife.context import Context, STATE
 from aboutlife.common import obscure_process
 
@@ -54,6 +55,9 @@ def main(start_plugins: bool = True):
         plugins.append(NetworkManagerPlugin())
         plugins_args.append([])
 
+        plugins.append(AutoShutdownPlugin())
+        plugins_args.append([])
+
     for i in range(len(plugins)):
         plugin = plugins[i]
         args = plugins_args[i]
@@ -69,4 +73,4 @@ def main(start_plugins: bool = True):
     thread.start()
 
     rest = RestPlugin()
-    rest.setup(DEFAULT_PORT)
+    rest.setup(Context.REST_PORT)

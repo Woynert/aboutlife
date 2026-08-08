@@ -15,6 +15,18 @@ SCREEN_MARGIN = 60
 TICK_DURATION = 0.5  # 1 tick = 1/2 seconds
 SHUFFLE_DELAY = 60 * 1.5 * 2  # (ticks) 1.5 minutes
 DISCRETE_VISIBLE_DURATION = 10 * 2  # (ticks) 15 seconds
+ABOUT_TO_END_MINIMUM_SECS = 60
+
+CSS = b"""
+.window_alert {
+  background-color: #bb0000;
+  color: #ffffff;
+  /* color: #e5a50a; */
+}
+.window_alert > frame > border {
+  border-color: #440000;
+}
+"""
 
 
 class StickyPlugin(Plugin):
@@ -27,6 +39,7 @@ class StickyPlugin(Plugin):
         self.end_time: int = int(time.time())
         self.tick_last_shuffle: int = 0
         self.hidden: bool = True
+        self.is_about_to_end: bool = False
 
         # widgets
         self.pos_hori: int = 0
@@ -64,6 +77,16 @@ class StickyPlugin(Plugin):
         settings = Gtk.Settings.get_default()
         settings.set_property("gtk-application-prefer-dark-theme", True)
 
+        # register css
+        provider = Gtk.CssProvider()
+        provider.load_from_data(CSS)
+        screen = Gdk.Screen.get_default()
+        Gtk.StyleContext.add_provider_for_screen(
+            screen,
+            provider,
+            Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
+        )
+
         # start
         self.window.show_all()
         self.shuffle_position()
@@ -74,9 +97,14 @@ class StickyPlugin(Plugin):
             self.shuffle_position()
             return True
 
+
     def update_label(self):
         if self.lbl_msg:
-            GLib.idle_add(self.lbl_msg.set_text, "🌀️ Objetivo: " + self.task_info)
+            text = ("🌀️ Objetivo: " + self.task_info if self.task_info != "" else
+            ("Session ending soon..." if self.is_about_to_end else "Tiempo restante:"))
+
+            GLib.idle_add(self.lbl_msg.set_text, text)
+
 
     def reset_shuffle_time(self):
         self.tick_last_shuffle = self.tick
@@ -114,6 +142,12 @@ class StickyPlugin(Plugin):
         sh = screen.get_height()
         GLib.idle_add(self.window.move, sw, sh)
 
+    def turn_red(self):
+        ctx = self.window.get_style_context()
+        ctx.add_class("window_alert")
+        if self.lbl_time:
+            self.lbl_time.set_visible(False)
+
     def sync_state(self):
         ctx = client.get_state()
         if not ctx:
@@ -133,32 +167,51 @@ class StickyPlugin(Plugin):
         self.task_info = ctx.task_info
 
     def process(self):
+
         self.tick += 1
+        now = int(time.time())
 
-        # each half a second
-        if not self.hidden:
-            now = int(time.time())
-            if now <= self.end_time:
-                sec = (self.end_time - now) % 60
-                min = int((self.end_time - now - sec) / 60)
-                text = f"{str(min).zfill(2)}:{str(sec).zfill(2)}"
-                GLib.idle_add(self.lbl_time.set_text, text)
+        # Turn red if is_about_to_end.
+        if (
+            not self.is_about_to_end
+            and (self.end_time - now) <= ABOUT_TO_END_MINIMUM_SECS
+        ):
+            self.is_about_to_end = True
+            self.turn_red()
 
-        if self.tick % 4 == 0:  # each two seconds
-            self.sync_state()
-            self.update_label()
-
+        # Shuffle.
         if (self.tick - self.tick_last_shuffle) >= SHUFFLE_DELAY:
             self.shuffle_position()
 
+        # Force show if it's about to end.
+        if self.is_about_to_end and self.hidden:
+            self.hidden = False
+            self.reset_shuffle_time()
+            self.shuffle_position()
+
+        # Hide after a while.
         if (
             self.discrete
+            and not self.is_about_to_end
             and not self.hidden
             and (self.tick - self.tick_last_shuffle) >= DISCRETE_VISIBLE_DURATION
         ):
             self.hidden = True
             self.reset_shuffle_time()
             self.hide()
+
+        # Every 2 secs: Update task info.
+        if self.tick % 4 == 0:
+            self.sync_state()
+            self.update_label()
+
+        # Evert half sec: Update timer label.
+        if not self.hidden:
+            if now <= self.end_time:
+                sec = (self.end_time - now) % 60
+                min = int((self.end_time - now - sec) / 60)
+                text = f"{str(min).zfill(2)}:{str(sec).zfill(2)}"
+                GLib.idle_add(self.lbl_time.set_text, text)
 
     def cleanup(self):
         Gtk.main_quit()

@@ -30,6 +30,16 @@ Run standalone script that requires the *aboutlife* module.
 PYTHONPATH=/path/to/aboutlife:$PYTHONPATH python script.py
 ```
 
+## Debugging on Nix
+
+```sh
+nix-shell -p 'import (./default.nix) {}' # Enter runtime env
+# pwd must be first to pick up changes
+PYTHONPATH=$(pwd):$PYTHONPATH python aboutlife --help
+PYTHONPATH=$(pwd):$PYTHONPATH python aboutlife -p 9090 --daemononly
+PYTHONPATH=$(pwd):$PYTHONPATH python aboutlife -p 9090 --overlay
+```
+
 ## License
 
 * Nature images: https://freenaturestock.com/license

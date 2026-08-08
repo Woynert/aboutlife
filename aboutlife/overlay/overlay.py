@@ -165,10 +165,10 @@ class OverlayPlugin(Plugin):
         thread.daemon = True
         thread.start()
         # set custom image
-        image_container = builder.get_object("image-container-3")
-        image_widget = ScaledImageWidget(ScaledImageWidget.STYLE.SCALED)
-        image_container.add(image_widget)
-        self.setup_image_vendored(image_widget, "sitting.png")
+        # image_container = builder.get_object("image-container-3")
+        # image_widget = ScaledImageWidget(ScaledImageWidget.STYLE.SCALED)
+        # image_container.add(image_widget)
+        # self.setup_image_vendored(image_widget, "sitting.png")
 
         # terminal colors: hex to Gdk.RGBA
         def hex_to_rgba(hex):
@@ -196,11 +196,13 @@ class OverlayPlugin(Plugin):
         self.update_terminals_font_size()
 
         # signals
-        button = builder.get_object("btn-close-tabs-1")
-        button.connect("clicked", self.on_close_tabs)
-        button = builder.get_object("btn-close-tabs-2")
-        button.connect("clicked", self.on_close_tabs)
+        # button = builder.get_object("btn-close-tabs-1")
+        # button.connect("clicked", self.on_close_tabs)
+        # button = builder.get_object("btn-close-tabs-2")
+        # button.connect("clicked", self.on_close_tabs)
         button = builder.get_object("btn-tomato-1")
+        button.connect("clicked", self.on_tomato_break)
+        button = builder.get_object("btn-tomato-2")
         button.connect("clicked", self.on_tomato_break)
         button = builder.get_object("btn-shutdown-1")
         button.connect("clicked", self.on_shutdown)
@@ -569,7 +571,7 @@ class OverlayPlugin(Plugin):
                 text = (
                     f"Tomato break {formated_time}"
                     if self.state == STATE.TOMATO_BREAK
-                    else f"Obligatory break {formated_time}"
+                    else f"Take a break {formated_time}"
                 )
                 GLib.idle_add(self.lbl_waiting.set_text, text)
         elif self.notebook.get_current_page() == NOTEBOOK.BREAK.value:
@@ -618,8 +620,9 @@ class OverlayPlugin(Plugin):
                 GLib.idle_add(self.btn_return_home.set_visible, False)
                 GLib.idle_add(self.btn_return_home.set_sensitive, False)
 
-                # go to terminals on obligatory break
-                GLib.idle_add(self.notebook.set_current_page, NOTEBOOK.TERMINALS.value)
+                # on obligatory break go to either: terminals or break screen
+                GLib.idle_add(self.notebook.set_current_page,
+                    NOTEBOOK.TERMINALS.value if random.choice([True, False]) else NOTEBOOK.BREAK.value)
                 GLib.idle_add(self.cycle_terminal_focus, 0)
             elif prevstate == STATE.TOMATO_BREAK or prevstate == STATE.OBLIGATORY_BREAK:
                 self.reveal_btn_return_home()
@@ -684,7 +687,7 @@ class OverlayPlugin(Plugin):
             desired = max_allowed_item_i
         elif desired <= max_allowed_item_i:
             desired_duration = int(self.cbx_duration.get_model()[desired][0] or "0")
-            if desired_duration > Context.get_task_max_duration_mins():
+            if desired_duration > max_task_duration_mins:
                 desired = 0
         else:
             desired = 0

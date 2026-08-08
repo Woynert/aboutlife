@@ -1,12 +1,14 @@
 from typing import Optional
 from aboutlife.context import STATE
 from aboutlife.rest.endpoints import ENDPOINT
+from aboutlife.context import Context
 from dataclasses import dataclass
-from aboutlife.rest.rest import DEFAULT_PORT
 import http.client
 import json
 
-HOST = f"localhost:{DEFAULT_PORT}"
+
+def get_host() -> str:
+    return f"localhost:{Context.REST_PORT}"
 
 
 @dataclass
@@ -19,7 +21,7 @@ class RespContext:
 
 def get_state() -> Optional[RespContext]:
     try:
-        conn = http.client.HTTPConnection(HOST)
+        conn = http.client.HTTPConnection(get_host())
         conn.request("GET", ENDPOINT.GET_STATE.value)
         resp_raw = conn.getresponse()
         conn.close()
@@ -40,7 +42,7 @@ def get_state() -> Optional[RespContext]:
 
 def delete_close_tabs() -> bool:
     try:
-        conn = http.client.HTTPConnection(HOST)
+        conn = http.client.HTTPConnection(get_host())
         conn.request("DELETE", ENDPOINT.DELETE_CLOSE_TABS.value)
         resp_raw = conn.getresponse()
         conn.close()
@@ -53,7 +55,7 @@ def delete_close_tabs() -> bool:
 
 def put_start_tomato_break() -> bool:
     try:
-        conn = http.client.HTTPConnection(HOST)
+        conn = http.client.HTTPConnection(get_host())
         conn.request("PUT", ENDPOINT.PUT_START_TOMATO_BREAK.value)
         resp = conn.getresponse()
         conn.close()
@@ -78,7 +80,7 @@ def put_start_work_session(
         )
         headers = {"Content-type": "application/json"}
 
-        conn = http.client.HTTPConnection(HOST)
+        conn = http.client.HTTPConnection(get_host())
         conn.request(
             "PUT", ENDPOINT.PUT_START_WORK_SESSION.value, body=req_data, headers=headers
         )
@@ -93,7 +95,7 @@ def put_start_work_session(
 
 def delete_shutdown_system() -> bool:
     try:
-        conn = http.client.HTTPConnection(HOST)
+        conn = http.client.HTTPConnection(get_host())
         conn.request("DELETE", ENDPOINT.DELETE_SHUTDOWN_SYSTEM.value)
         resp_raw = conn.getresponse()
         conn.close()

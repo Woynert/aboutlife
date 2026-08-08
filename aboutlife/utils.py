@@ -25,6 +25,7 @@ def get_resource_path(path: str = "") -> str:
 
 
 def send_notification(title: str, message: str):
+    return
     if title == "":
         subprocess.run(["notify-send", "-r", "108", "-t", "1000", message])
     else:

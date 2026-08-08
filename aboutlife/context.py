@@ -31,7 +31,7 @@ REGULAR_LATE_BREAK_SECS = 5 * 60
 TASK_MIN_LENGTH_CHARS = 0
 TASK_MAX_LENGTH_CHARS = 70
 TASK_MAX_DURATION_MINS = 50
-TASK_MAX_DURATION_LATE_MINS = 25
+TASK_MAX_DURATION_LATE_MINS = 15
 
 
 class STATE(Enum):
@@ -45,6 +45,7 @@ class Context:
     # static vars
     _mutex = threading.Lock()
     _singleton = None
+    REST_PORT = 13005 # default port
 
     def __init__(self):
         self.reset()
@@ -68,8 +69,12 @@ class Context:
     def get_mutex(cls) -> threading.Lock:
         return cls._mutex
 
+    @classmethod
+    def set_rest_port(cls, port: int):
+        cls.REST_PORT = port
+
     def setup_tomato_break(self) -> bool:
-        if self.state != STATE.IDLE:
+        if not (self.state == STATE.IDLE or self.state == STATE.OBLIGATORY_BREAK):
             return False
 
         self.state = STATE.TOMATO_BREAK
@@ -94,8 +99,8 @@ class Context:
 
         self.state = STATE.WORKING
         self.task_info = task_info
-        self.network_required = not not network_required
-        self.sticky_discrete = not not sticky_discrete
+        self.network_required = network_required
+        self.sticky_discrete = False if Context.is_late_hour() else sticky_discrete
         self.start_time = int(time.time())
         self.end_time = int(time.time()) + duration * 60
         return True

@@ -16,7 +16,7 @@ const SITES_TO_CLOSE = [
   "x.com",
   "newgrounds.com",
   "steampowered.com",
-  "itch.io",
+  //"itch.io",
 ];
 const SITES_TO_UNLOAD = [
   "youtube.com",
